@@ -47,7 +47,7 @@ const Index = () => {
         </div>
 
         <section className="mt-12">
-          <InfiniteProducts />
+          <InfiniteProducts publicMode={!isApp} />
         </section>
       </main>
       <Footer />

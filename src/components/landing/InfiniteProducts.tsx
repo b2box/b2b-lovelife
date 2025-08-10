@@ -4,22 +4,27 @@ import ProductCard, { type Product } from "./ProductCard";
 import { Button } from "@/components/ui/button";
 import { categories } from "./data";
 import { ArrowUp, ArrowDown } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const AD_EYE = "/lovable-uploads/fa842b26-b9f1-4176-9073-6128c3c08fbc.png";
 const AD_VIRAL = "/lovable-uploads/025482cb-8da6-4438-85e8-ec4fe0abf877.png";
 
 const PAGE_SIZE = 20;
 
-const InfiniteProducts = () => {
+const InfiniteProducts = ({ publicMode = false }: { publicMode?: boolean }) => {
+  const navigate = useNavigate();
   const base = categories[Object.keys(categories)[0]]; // usar "Principales productos"
   const [page, setPage] = useState(1);
-  const [items, setItems] = useState<Product[]>(() => makePage(base, 0));
+  const [items, setItems] = useState<Product[]>(() =>
+    publicMode ? [...makePage(base, 0), ...makePage(base, 1)] : makePage(base, 0)
+  );
   const [stopped, setStopped] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const stoppedRef = useRef(false);
   const prevScrollYRef = useRef(0);
 
   useEffect(() => {
+    if (publicMode) return; // sin scroll infinito en modo público
     const el = sentinelRef.current;
     if (!el) return;
     const io = new IntersectionObserver((entries) => {
@@ -30,7 +35,7 @@ const InfiniteProducts = () => {
     }, { rootMargin: "600px" });
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [publicMode]);
 
   useEffect(() => {
     stoppedRef.current = stopped;
@@ -56,17 +61,39 @@ const InfiniteProducts = () => {
   }, [items]);
 
   return (
-    <section className="container mx-auto" aria-label="Productos infinitos">
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-6">
-        {itemsWithAds.map((node, i) =>
-          node.kind === "product" ? (
-            <ProductCard key={node.data.id + i} product={node.data} />
-          ) : (
-            <AdCard key={node.key} variant={node.variant} />
-          )
-        )}
-      </div>
-      <div ref={sentinelRef} className="h-10" />
+    <section className="container mx-auto relative" aria-label="Productos infinitos">
+      {(() => {
+        const nodes = publicMode ? itemsWithAds.slice(0, 30) : itemsWithAds;
+        return (
+          <>
+            <div className={"grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-6 " + (publicMode ? "opacity-60 select-none pointer-events-none" : "") }>
+              {nodes.map((node, i) =>
+                node.kind === "product" ? (
+                  <ProductCard key={node.data.id + i} product={node.data} />
+                ) : (
+                  <AdCard key={(node as any).key} variant={(node as any).variant} />
+                )
+              )}
+            </div>
+            {!publicMode && <div ref={sentinelRef} className="h-10" />}
+
+            {publicMode && (
+              <>
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background" />
+                <div className="absolute left-1/2 -translate-x-1/2 bottom-10 z-10">
+                  <Button
+                    onClick={() => navigate("/auth")}
+                    className="rounded-full h-14 px-8 text-lg font-semibold bg-accent text-accent-foreground hover:bg-accent/90 shadow-elevate"
+                  >
+                    Desbloquear catálogo completo
+                  </Button>
+                </div>
+              </>
+            )}
+          </>
+        );
+      })()}
+
       <Button
         onClick={() => {
           const footer = document.getElementById("site-footer");

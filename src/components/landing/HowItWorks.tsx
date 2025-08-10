@@ -42,17 +42,17 @@ const HowItWorks: React.FC = () => {
         {items.map((item) => (
           <article
             key={item.id}
-            className="rounded-2xl bg-card text-card-foreground border border-border p-4 md:p-5 flex items-start gap-3 hover-scale shadow-sm"
+            className="rounded-2xl bg-card text-card-foreground border border-border p-4 md:p-5 flex items-center gap-4 hover-scale shadow-sm"
           >
-            {/* icono sin contenedor extra */}
+            {/* icono sin contenedor extra, más grande */}
             <img
               src={item.img}
               alt={item.alt}
               loading="lazy"
               decoding="async"
-              className="w-8 h-8 md:w-10 md:h-10 object-contain"
-              width={40}
-              height={40}
+              className="w-12 h-12 md:w-14 md:h-14 object-contain"
+              width={56}
+              height={56}
             />
             <div>
               <h3 className="text-sm md:text-base font-semibold leading-snug">{item.title}</h3>
