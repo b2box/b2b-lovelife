@@ -9,8 +9,8 @@ const PromoBanner = () => {
         </button>
         <div className="h-full w-full flex items-center justify-center">
           <div className="flex items-center gap-4 md:gap-5">
-            <img src="/lovable-uploads/ed2e19ef-d11d-4782-b976-aed06c45b8db.png" alt="Logo B2BOX Trends" className="h-10 md:h-12 w-auto" loading="lazy" />
-            <p className="whitespace-nowrap text-lg md:text-2xl font-semibold">: Los productos más 🔥 para tu tienda online 🛒</p>
+            <img src="/lovable-uploads/ed2e19ef-d11d-4782-b976-aed06c45b8db.png" alt="Logo B2BOX Trends" className="h-12 md:h-14 w-auto" loading="lazy" />
+            <p className="whitespace-nowrap text-xl md:text-3xl font-semibold">: Los productos más 🔥 para tu tienda online 🛒</p>
           </div>
         </div>
       </div>
