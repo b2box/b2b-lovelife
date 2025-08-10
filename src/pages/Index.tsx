@@ -9,6 +9,7 @@ import { useLocation } from "react-router-dom";
 import HowItWorks from "@/components/landing/HowItWorks";
 import PublicCTA from "@/components/landing/PublicCTA";
 import NewArrivals from "@/components/landing/NewArrivals";
+import FloatingProducts from "@/components/landing/FloatingProducts";
 
 const jsonLd = () => ({
   "@context": "https://schema.org",
@@ -34,6 +35,9 @@ const Index = () => {
           <>
             <section className="mt-4">
               <HowItWorks />
+            </section>
+            <section className="mt-6 container mx-auto">
+              <FloatingProducts />
             </section>
             <section className="mt-6">
               <InfiniteProducts publicMode={true} />
