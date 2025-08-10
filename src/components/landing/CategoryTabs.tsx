@@ -15,11 +15,13 @@ const CategoryTabs = () => {
   return (
     <section className="container mx-auto">
       <div className="rounded-[32px] bg-brand-yellow p-6 md:p-10 shadow-elevate">
-        <h2 className="mx-1 mb-6 text-center text-5xl font-semibold md:mb-8 md:text-6xl xl:text-[65px] xl:leading-[85px]">Los mejores productos en las categorías que te interesan</h2>
-        <Tabs defaultValue={first} className="w-full">
+        <div className="mx-auto w-full rounded-[60px] bg-card px-6 py-5 md:px-12 md:py-6">
+          <h2 className="text-center text-4xl font-semibold md:text-5xl xl:text-[65px] xl:leading-[85px]">Los productos más vendidos en las categorías más buscadas</h2>
+        </div>
+        <Tabs defaultValue={first} className="w-full mt-6 md:mt-8">
           <div className="flex items-center justify-center gap-2">
-            <Button variant="outline" size="icon" className="rounded-full bg-card h-16 w-16 shadow-elevate" aria-label="Anterior">
-              <ChevronLeft />
+            <Button variant="outline" size="icon" className="rounded-full h-12 w-12 md:h-[86px] md:w-[86px] bg-[hsl(var(--brand-yellow)/0.6)] border border-foreground/20 text-foreground/80 shadow-elevate" aria-label="Anterior">
+              <ChevronLeft size={28} />
             </Button>
             <TabsList className="max-w-full flex-wrap bg-transparent p-0">
               {Object.keys(categories).map((key) => (
@@ -31,8 +33,8 @@ const CategoryTabs = () => {
                 </TabsTrigger>
               ))}
             </TabsList>
-            <Button variant="outline" size="icon" className="rounded-full bg-card h-16 w-16 shadow-elevate" aria-label="Siguiente">
-              <ChevronRight />
+            <Button variant="outline" size="icon" className="rounded-full h-12 w-12 md:h-[86px] md:w-[86px] bg-[hsl(var(--brand-yellow)/0.6)] border border-foreground/20 text-foreground/80 shadow-elevate" aria-label="Siguiente">
+              <ChevronRight size={28} />
             </Button>
           </div>
           {Object.entries(categories).map(([key, value]) => (

@@ -13,7 +13,7 @@ type Props = { product: Product };
 
 const ProductCard = ({ product }: Props) => {
   return (
-    <Card className="card-elevated hover:lift transition-transform rounded-3xl">
+    <Card className="card-elevated hover:lift transition-transform rounded-3xl border-0">
       <CardContent className="p-5 md:p-6">
         <div className="relative">
           {product.badge && (
