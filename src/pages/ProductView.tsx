@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { categories } from "@/components/landing/data";
 import type { Product } from "@/components/landing/ProductCard";
-import { ArrowUpRight, CheckCircle2 } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, Cog } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 
@@ -369,7 +369,7 @@ const ProductView = () => {
         </section>
 
         {/* Variantes */}
-        <section className="mt-8">
+        <section className="mt-8 w-full md:w-4/5">
           <h2 className="text-xl font-semibold mb-3">Variantes</h2>
           <div className="overflow-x-auto rounded-2xl border bg-card">
             <table className="min-w-[960px] w-full text-sm">
@@ -453,13 +453,43 @@ const ProductView = () => {
               </tbody>
             </table>
           </div>
-          <div className="mt-6">
-            <img
-              src="/lovable-uploads/df027d96-7b3f-4a3c-b1cd-8b9d6298f68f.png"
-              alt="Opciones de personalización, entrega confiable, pago diferido y control de calidad - ventajas del producto"
-              className="w-full rounded-2xl border object-contain"
-              loading="lazy"
-            />
+          <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4">
+              <span className="inline-flex items-center justify-center size-10 rounded-xl bg-muted text-muted-foreground" aria-hidden="true">
+                <Cog className="size-5" />
+              </span>
+              <div>
+                <h3 className="font-semibold">Opciones de personalización</h3>
+                <p className="text-sm text-muted-foreground">Si deseas personalizar tus productos, nuestro equipo en China se encargará.</p>
+              </div>
+            </article>
+            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4">
+              <span className="inline-flex items-center justify-center size-10 rounded-xl bg-muted text-muted-foreground" aria-hidden="true">
+                <Cog className="size-5" />
+              </span>
+              <div>
+                <h3 className="font-semibold">Entrega confiable</h3>
+                <p className="text-sm text-muted-foreground">Contamos con una logística optimizada para que recibas tus productos lo antes posible.</p>
+              </div>
+            </article>
+            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4">
+              <span className="inline-flex items-center justify-center size-10 rounded-xl bg-muted text-muted-foreground" aria-hidden="true">
+                <Cog className="size-5" />
+              </span>
+              <div>
+                <h3 className="font-semibold">Pago diferido</h3>
+                <p className="text-sm text-muted-foreground">Hoy solo pagas el 30%. El resto lo pagas cuando confirmemos todo desde China.</p>
+              </div>
+            </article>
+            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4">
+              <span className="inline-flex items-center justify-center size-10 rounded-xl bg-muted text-muted-foreground" aria-hidden="true">
+                <Cog className="size-5" />
+              </span>
+              <div>
+                <h3 className="font-semibold">Control de calidad</h3>
+                <p className="text-sm text-muted-foreground">Control de calidad en fábrica con estándares internacionales.</p>
+              </div>
+            </article>
           </div>
         </section>
       </main>
