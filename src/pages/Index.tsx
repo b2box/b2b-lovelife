@@ -10,6 +10,7 @@ import HowItWorks from "@/components/landing/HowItWorks";
 import PublicCTA from "@/components/landing/PublicCTA";
 import NewArrivals from "@/components/landing/NewArrivals";
 import FloatingProducts from "@/components/landing/FloatingProducts";
+import TestimonialsBanner from "@/components/landing/TestimonialsBanner";
 
 const jsonLd = () => ({
   "@context": "https://schema.org",
@@ -80,6 +81,9 @@ const Index = () => {
             <InfiniteProducts publicMode={false} />
           </section>
         )}
+        <section className="mt-16">
+          <TestimonialsBanner />
+        </section>
       </main>
       <Footer />
 
