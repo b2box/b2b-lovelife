@@ -26,27 +26,31 @@ const Navbar = () => {
             <img src="/lovable-uploads/a6ada814-1660-4b53-ba08-afcb29e598eb.png" alt="B2BOX logo" className="h-9 w-auto object-contain" />
           </Link>
 
-          {/* Categorías chip */}
-          <Button variant="brand" className="pill hidden sm:inline-flex h-12 px-6 font-semibold" aria-label="Ver categorías">
-            <Menu size={22} /> Categorías
-          </Button>
+          {/* Categorías chip (solo app) */}
+          {isApp && (
+            <Button variant="brand" className="pill hidden sm:inline-flex h-12 px-6 font-semibold" aria-label="Ver categorías">
+              <Menu size={22} /> Categorías
+            </Button>
+          )}
         </div>
 
-        {/* Search */}
-        <div className="flex flex-1 max-w-3xl items-center">
-          <div className="hidden md:flex w-full items-center overflow-hidden rounded-full border border-foreground">
-            <Search className="ml-3 size-5 opacity-60" />
-            <input
-              type="text"
-              placeholder={TEXTS[country].search}
-              aria-label="Buscar"
-              className="h-11 w-full bg-transparent px-3 text-sm outline-none placeholder:text-muted-foreground"
-            />
-            <Button variant="brand" className="h-12 rounded-none rounded-r-full px-5" aria-label="Buscar">
-              <Search size={22} />
-            </Button>
+        {/* Search (solo app) */}
+        {isApp && (
+          <div className="flex flex-1 max-w-3xl items-center">
+            <div className="hidden md:flex w-full items-center overflow-hidden rounded-full border border-foreground">
+              <Search className="ml-3 size-5 opacity-60" />
+              <input
+                type="text"
+                placeholder={TEXTS[country].search}
+                aria-label="Buscar"
+                className="h-11 w-full bg-transparent px-3 text-sm outline-none placeholder:text-muted-foreground"
+              />
+              <Button variant="brand" className="h-12 rounded-none rounded-r-full px-5" aria-label="Buscar">
+                <Search size={22} />
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
 
           <div className="hidden md:flex items-center gap-4">
             <DropdownMenu>
