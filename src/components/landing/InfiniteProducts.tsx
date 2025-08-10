@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import ProductCard, { type Product } from "./ProductCard";
-import { Card } from "@/components/ui/card";
+
 import { Button } from "@/components/ui/button";
 import { categories } from "./data";
 import { ArrowUp } from "lucide-react";
@@ -82,9 +82,7 @@ function AdCard({ variant }: { variant: "eye" | "viral" }) {
   const src = variant === "eye" ? AD_EYE : AD_VIRAL;
   const alt = variant === "eye" ? "¿No encuentras el producto que buscas?" : "¡Descubrí los productos más virales de Argentina!";
   return (
-    <Card className="card-elevated relative col-span-2 overflow-hidden rounded-[28px] md:col-span-2">
-      <img src={src} alt={alt} loading="lazy" className="w-full p-0 object-cover" />
-    </Card>
+    <img src={src} alt={alt} loading="lazy" className="col-span-2 md:col-span-2 w-full h-auto" />
   );
 }
 
