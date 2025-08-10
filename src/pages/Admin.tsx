@@ -60,7 +60,7 @@ const Admin: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 md:p-6">
+    <div className="container mx-auto p-4 md:p-6 font-sans">
       <div className="flex gap-4">
         {/* Lateral menu */}
         <aside className="w-64 shrink-0">
