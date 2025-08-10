@@ -428,6 +428,77 @@ export type Database = {
           },
         ]
       }
+      product_tags: {
+        Row: {
+          created_at: string
+          product_id: string
+          tag_id: string
+        }
+        Insert: {
+          created_at?: string
+          product_id: string
+          tag_id: string
+        }
+        Update: {
+          created_at?: string
+          product_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_tags_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_translations: {
+        Row: {
+          country_code: string
+          created_at: string
+          description: string | null
+          id: string
+          product_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          country_code: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          product_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          country_code?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          product_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_translations_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_variant_images: {
         Row: {
           alt: string | null
@@ -555,35 +626,73 @@ export type Database = {
       products: {
         Row: {
           active: boolean
+          agent_profile_id: string | null
           brand: string | null
+          bx_code: string | null
+          collection: string | null
           created_at: string
           description: string | null
+          discountable: boolean
           id: string
+          material: string | null
           name: string
           slug: string | null
+          status: Database["public"]["Enums"]["product_status"]
+          subtitle: string | null
+          supplier_link: string | null
+          supplier_model: string | null
+          type: string | null
           updated_at: string
         }
         Insert: {
           active?: boolean
+          agent_profile_id?: string | null
           brand?: string | null
+          bx_code?: string | null
+          collection?: string | null
           created_at?: string
           description?: string | null
+          discountable?: boolean
           id?: string
+          material?: string | null
           name: string
           slug?: string | null
+          status?: Database["public"]["Enums"]["product_status"]
+          subtitle?: string | null
+          supplier_link?: string | null
+          supplier_model?: string | null
+          type?: string | null
           updated_at?: string
         }
         Update: {
           active?: boolean
+          agent_profile_id?: string | null
           brand?: string | null
+          bx_code?: string | null
+          collection?: string | null
           created_at?: string
           description?: string | null
+          discountable?: boolean
           id?: string
+          material?: string | null
           name?: string
           slug?: string | null
+          status?: Database["public"]["Enums"]["product_status"]
+          subtitle?: string | null
+          supplier_link?: string | null
+          supplier_model?: string | null
+          type?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "products_agent_profile_id_fkey"
+            columns: ["agent_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -708,6 +817,27 @@ export type Database = {
         }
         Relationships: []
       }
+      tags: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          slug: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          slug?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -785,6 +915,7 @@ export type Database = {
       inventory_reason: "adjustment" | "purchase" | "sale" | "return"
       order_status: "pending" | "paid" | "fulfilled" | "cancelled" | "refunded"
       price_tier_name: "inicial" | "mayorista" | "distribuidor"
+      product_status: "draft" | "published"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -919,6 +1050,7 @@ export const Constants = {
       inventory_reason: ["adjustment", "purchase", "sale", "return"],
       order_status: ["pending", "paid", "fulfilled", "cancelled", "refunded"],
       price_tier_name: ["inicial", "mayorista", "distribuidor"],
+      product_status: ["draft", "published"],
     },
   },
 } as const

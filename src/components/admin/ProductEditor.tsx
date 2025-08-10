@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export type AdminProduct = {
   id?: string;
@@ -16,6 +18,16 @@ export type AdminProduct = {
   description?: string | null;
   slug?: string | null;
   active: boolean;
+  status?: 'draft' | 'published';
+  subtitle?: string | null;
+  bx_code?: string | null;
+  material?: string | null;
+  discountable?: boolean;
+  agent_profile_id?: string | null;
+  supplier_link?: string | null;
+  supplier_model?: string | null;
+  type?: string | null;
+  collection?: string | null;
 };
 
 export type AdminVariant = {
@@ -78,7 +90,22 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
     description: product?.description || "",
     slug: product?.slug || "",
     active: product?.active ?? true,
+    status: (product as any)?.status ?? 'draft',
+    subtitle: (product as any)?.subtitle ?? "",
+    bx_code: (product as any)?.bx_code ?? "",
+    material: (product as any)?.material ?? "",
+    discountable: (product as any)?.discountable ?? true,
+    agent_profile_id: (product as any)?.agent_profile_id ?? null,
+    supplier_link: (product as any)?.supplier_link ?? "",
+    supplier_model: (product as any)?.supplier_model ?? "",
+    type: (product as any)?.type ?? "",
+    collection: (product as any)?.collection ?? "",
   });
+
+  const [profiles, setProfiles] = useState<{id: string; display_name: string | null}[]>([]);
+  const [categories, setCategories] = useState<{id: string; name: string}[]>([]);
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
+  const [tagsText, setTagsText] = useState<string>("");
 
   useEffect(() => {
     setForm({
@@ -88,8 +115,69 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
       description: product?.description || "",
       slug: product?.slug || "",
       active: product?.active ?? true,
+      status: (product as any)?.status ?? 'draft',
+      subtitle: (product as any)?.subtitle ?? "",
+      bx_code: (product as any)?.bx_code ?? "",
+      material: (product as any)?.material ?? "",
+      discountable: (product as any)?.discountable ?? true,
+      agent_profile_id: (product as any)?.agent_profile_id ?? null,
+      supplier_link: (product as any)?.supplier_link ?? "",
+      supplier_model: (product as any)?.supplier_model ?? "",
+      type: (product as any)?.type ?? "",
+      collection: (product as any)?.collection ?? "",
     });
   }, [product]);
+
+  useEffect(() => {
+    // Load agents and categories when opening
+    if (!open) return;
+    (async () => {
+      const { data: profs } = await (supabase as any).from('profiles').select('id, display_name').limit(50);
+      setProfiles(profs || []);
+      const { data: cats } = await supabase.from('categories').select('id,name').order('name');
+      setCategories((cats || []) as any);
+      if (product?.id) {
+        const { data: pc } = await supabase.from('product_categories').select('category_id').eq('product_id', product.id);
+        setSelectedCategoryIds((pc || []).map((r: any) => r.category_id));
+        const { data: tgs } = await (supabase as any).from('product_tags').select('tags(name), tag_id').eq('product_id', product.id);
+        if (tgs && tgs.length) setTagsText((tgs as any[]).map((x: any) => x.tags?.name).filter(Boolean).join(', '));
+      } else {
+        setSelectedCategoryIds([]);
+        setTagsText("");
+      }
+    })();
+  }, [open, product?.id]);
+
+  const syncRelations = async (productId: string) => {
+    try {
+      // Categories
+      const { data: existingPC } = await supabase.from('product_categories').select('category_id').eq('product_id', productId);
+      const existingIds = new Set((existingPC || []).map((r: any) => r.category_id));
+      const desiredIds = new Set(selectedCategoryIds);
+      const toInsert = [...desiredIds].filter((id) => !existingIds.has(id)).map((id) => ({ product_id: productId, category_id: id }));
+      const toDelete = [...existingIds].filter((id) => !desiredIds.has(id));
+      if (toInsert.length) await supabase.from('product_categories').insert(toInsert);
+      if (toDelete.length) await supabase.from('product_categories').delete().eq('product_id', productId).in('category_id', toDelete);
+
+      // Tags
+      const names = Array.from(new Set((tagsText || '').split(',').map((s) => s.trim()).filter(Boolean)));
+      // Upsert tags by name
+      let tagIds: string[] = [];
+      if (names.length) {
+        const { data: up } = await (supabase as any).from('tags').upsert(names.map((n) => ({ name: n })), { onConflict: 'name' }).select('id,name');
+        tagIds = (up || []).map((r: any) => r.id);
+      }
+      const { data: existingPT } = await supabase.from('product_tags').select('tag_id').eq('product_id', productId);
+      const existingTagIds = new Set((existingPT || []).map((r: any) => r.tag_id));
+      const desiredTagIds = new Set(tagIds);
+      const ptInsert = [...desiredTagIds].filter((id) => !existingTagIds.has(id)).map((id) => ({ product_id: productId, tag_id: id }));
+      const ptDelete = [...existingTagIds].filter((id) => !desiredTagIds.has(id));
+      if (ptInsert.length) await supabase.from('product_tags').insert(ptInsert);
+      if (ptDelete.length) await supabase.from('product_tags').delete().eq('product_id', productId).in('tag_id', ptDelete);
+    } catch (e) {
+      console.error('[ProductEditor] syncRelations', e);
+    }
+  };
 
   const saveProduct = async () => {
     try {
@@ -103,6 +191,16 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
             description: form.description,
             slug: form.slug,
             active: form.active,
+            status: form.status,
+            subtitle: form.subtitle,
+            bx_code: form.bx_code,
+            material: form.material,
+            discountable: form.discountable,
+            agent_profile_id: form.agent_profile_id,
+            supplier_link: form.supplier_link,
+            supplier_model: form.supplier_model,
+            type: form.type,
+            collection: form.collection,
           })
           .eq("id", form.id);
         if (error) throw error;
@@ -115,6 +213,16 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
             description: form.description,
             slug: form.slug,
             active: form.active,
+            status: form.status,
+            subtitle: form.subtitle,
+            bx_code: form.bx_code,
+            material: form.material,
+            discountable: form.discountable,
+            agent_profile_id: form.agent_profile_id,
+            supplier_link: form.supplier_link,
+            supplier_model: form.supplier_model,
+            type: form.type,
+            collection: form.collection,
           })
           .select("id")
           .maybeSingle();
@@ -150,8 +258,32 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
                 <Input id="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
               </div>
               <div>
+                <Label>Estado</Label>
+                <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v as any })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Estado" />
+                  </SelectTrigger>
+                  <SelectContent className="z-50 bg-background">
+                    <SelectItem value="draft">Borrador</SelectItem>
+                    <SelectItem value="published">Publicado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
                 <Label htmlFor="brand">Marca</Label>
                 <Input id="brand" value={form.brand ?? ""} onChange={(e) => setForm({ ...form, brand: e.target.value })} />
+              </div>
+              <div>
+                <Label htmlFor="subtitle">Subtítulo</Label>
+                <Input id="subtitle" value={form.subtitle ?? ""} onChange={(e) => setForm({ ...form, subtitle: e.target.value })} />
+              </div>
+              <div>
+                <Label htmlFor="bx_code">BX Code</Label>
+                <Input id="bx_code" value={form.bx_code ?? ""} onChange={(e) => setForm({ ...form, bx_code: e.target.value })} />
+              </div>
+              <div>
+                <Label htmlFor="material">Material</Label>
+                <Input id="material" value={form.material ?? ""} onChange={(e) => setForm({ ...form, material: e.target.value })} />
               </div>
               <div className="md:col-span-2">
                 <Label htmlFor="description">Descripción</Label>
@@ -161,12 +293,65 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
                 <Label htmlFor="slug">Slug</Label>
                 <Input id="slug" value={form.slug ?? ""} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
               </div>
-              <div className="flex items-end">
+              <div className="flex items-end gap-3">
                 <Button type="button" variant={form.active ? "default" : "secondary"} onClick={() => setForm({ ...form, active: !form.active })}>
                   {form.active ? "Activo" : "Inactivo"}
                 </Button>
+                <div className="flex items-center gap-2">
+                  <Checkbox id="discountable" checked={!!form.discountable} onCheckedChange={(v) => setForm({ ...form, discountable: !!v })} />
+                  <Label htmlFor="discountable">Descuentable</Label>
+                </div>
+              </div>
+              <div>
+                <Label>Agente</Label>
+                <Select value={form.agent_profile_id ?? undefined} onValueChange={(v) => setForm({ ...form, agent_profile_id: v })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona agente" />
+                  </SelectTrigger>
+                  <SelectContent className="z-50 bg-background">
+                    {profiles.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>{p.display_name || p.id}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="supplier_link">Supplier Link</Label>
+                <Input id="supplier_link" value={form.supplier_link ?? ""} onChange={(e) => setForm({ ...form, supplier_link: e.target.value })} />
+              </div>
+              <div>
+                <Label htmlFor="supplier_model">Supplier Size/Model</Label>
+                <Input id="supplier_model" value={form.supplier_model ?? ""} onChange={(e) => setForm({ ...form, supplier_model: e.target.value })} />
+              </div>
+              <div>
+                <Label htmlFor="type">Tipo</Label>
+                <Input id="type" value={form.type ?? ""} onChange={(e) => setForm({ ...form, type: e.target.value })} />
+              </div>
+              <div>
+                <Label htmlFor="collection">Colección</Label>
+                <Input id="collection" value={form.collection ?? ""} onChange={(e) => setForm({ ...form, collection: e.target.value })} />
               </div>
             </div>
+
+            <Card className="p-3">
+              <h4 className="font-medium mb-2">Organización</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                {categories.map((c) => (
+                  <label key={c.id} className="flex items-center gap-2">
+                    <Checkbox
+                      checked={selectedCategoryIds.includes(c.id)}
+                      onCheckedChange={(v) => setSelectedCategoryIds((prev) => v ? [...prev, c.id] : prev.filter(id => id !== c.id))}
+                    />
+                    <span>{c.name}</span>
+                  </label>
+                ))}
+              </div>
+              <div className="mt-3">
+                <Label>Tags (separados por coma)</Label>
+                <Input value={tagsText} onChange={(e) => setTagsText(e.target.value)} placeholder="hogar, cocina, trending" />
+              </div>
+            </Card>
+
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={onClose}>Cerrar</Button>
               <Button onClick={saveProduct} disabled={saving}>{saving ? "Guardando…" : "Guardar"}</Button>
