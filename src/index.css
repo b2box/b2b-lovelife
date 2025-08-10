@@ -142,6 +142,7 @@ All colors MUST be HSL.
   .bg-gradient-primary { background: var(--gradient-primary); }
   .bg-brand-green { background-color: hsl(var(--brand-green)); }
   .bg-brand-yellow { background-color: hsl(var(--brand-yellow)); }
+  .bg-brand-violet { background-color: hsl(var(--brand-2)); color: hsl(var(--primary-foreground)); }
   .bg-gradient-trends-animated { background: var(--gradient-trends); background-size: 300% 300%; animation: gradient-shift 10s ease infinite; }
   .text-brand-green { color: hsl(var(--brand-green)); }
   .text-brand-2 { color: hsl(var(--brand-2)); }
