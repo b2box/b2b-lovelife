@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 
 export type Product = {
   id: string;
@@ -12,8 +13,13 @@ export type Product = {
 type Props = { product: Product };
 
 const ProductCard = ({ product }: Props) => {
+  const navigate = useNavigate();
   return (
-    <Card className="card-elevated hover:lift transition-transform rounded-2xl border-0">
+    <Card
+      className="card-elevated hover:lift transition-transform rounded-2xl border-0 cursor-pointer"
+      onClick={() => navigate(`/app/product/${product.id}`)}
+      aria-label={`Ver ${product.name}`}
+    >
       <CardContent className="p-[5px]">
         <div className="relative">
           {product.badge && (
