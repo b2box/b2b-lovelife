@@ -47,6 +47,7 @@ const ProductView = () => {
   const fixedBarcode = 40;
   const fixedPhotos = 1863;
   const minOrder = 100;
+  const [selectedTier, setSelectedTier] = useState<"inicial" | "mayorista" | "distribuidor">("mayorista");
 
   const rowTotal = (r: VariantRow) => {
     const base = r.qty * r.unitPrice;
@@ -171,7 +172,7 @@ const ProductView = () => {
               {/* Galería 40% */}
               <div className="rounded-[28px] bg-card p-3 md:p-4">
                 <div className="space-y-3">
-                  <div className="relative overflow-hidden rounded-[28px] bg-muted aspect-[5/4]">
+                  <div className="relative overflow-hidden rounded-[28px] bg-muted aspect-square">
                     <img
                       src={product.image}
                       alt={product.name}
@@ -217,24 +218,39 @@ const ProductView = () => {
                   <div className="px-4 pt-4">
                     <div className="grid grid-cols-3 gap-2 bg-muted rounded-full p-1">
                       {/* Inicial */}
-                      <div className="rounded-[18px] px-4 py-4 text-center text-muted-foreground">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedTier("inicial")}
+                        className={`rounded-[18px] px-4 py-4 text-center border transition-colors ${selectedTier === "inicial" ? "bg-background text-foreground border-foreground" : "text-muted-foreground border-border"}`}
+                        aria-pressed={selectedTier === "inicial"}
+                      >
                         <div className="text-sm">Inicial</div>
-                        <div className="text-2xl font-bold opacity-60">$35</div>
+                        <div className={`text-2xl font-bold ${selectedTier === "inicial" ? "" : "opacity-60"}`}>$35</div>
                         <div className="text-xs opacity-70">50 - 499 unidades</div>
-                      </div>
+                      </button>
                       {/* Mayorista destacado */}
-                      <div className="relative rounded-[18px] bg-background px-4 py-4 text-center">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedTier("mayorista")}
+                        className={`relative rounded-[18px] px-4 py-4 text-center border transition-colors ${selectedTier === "mayorista" ? "bg-background text-foreground border-foreground" : "text-muted-foreground border-border"}`}
+                        aria-pressed={selectedTier === "mayorista"}
+                      >
                         <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-foreground text-background text-xs px-3 py-1">Recomendado</span>
                         <div className="text-muted-foreground text-sm mt-1">Mayorista</div>
                         <div className="text-3xl font-bold">$300</div>
                         <div className="text-xs text-muted-foreground">500 - 1250 unidades</div>
-                      </div>
+                      </button>
                       {/* Distribuidor */}
-                      <div className="rounded-[18px] px-4 py-4 text-center text-muted-foreground">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedTier("distribuidor")}
+                        className={`rounded-[18px] px-4 py-4 text-center border transition-colors ${selectedTier === "distribuidor" ? "bg-background text-foreground border-foreground" : "text-muted-foreground border-border"}`}
+                        aria-pressed={selectedTier === "distribuidor"}
+                      >
                         <div className="text-sm">Distribuidor</div>
-                        <div className="text-2xl font-bold opacity-60">$725</div>
+                        <div className={`text-2xl font-bold ${selectedTier === "distribuidor" ? "" : "opacity-60"}`}>$725</div>
                         <div className="text-xs opacity-70">+1250 unidades</div>
-                      </div>
+                      </button>
                     </div>
                   </div>
 
