@@ -3,6 +3,7 @@ import ProductCard, { type Product } from "./ProductCard";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { categories } from "./data";
+import { ArrowUp } from "lucide-react";
 
 const AD_EYE = "/lovable-uploads/5a3a8096-def0-4f8a-a36d-905bdd36f321.png";
 const AD_VIRAL = "/lovable-uploads/afc4e94f-2af3-46e7-9495-9d0699b28aaa.png";
@@ -49,7 +50,7 @@ const InfiniteProducts = () => {
 
   return (
     <section className="container mx-auto" aria-label="Productos infinitos">
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-6">
         {itemsWithAds.map((node, i) =>
           node.kind === "product" ? (
             <ProductCard key={node.data.id + i} product={node.data} />
@@ -59,6 +60,13 @@ const InfiniteProducts = () => {
         )}
       </div>
       <div ref={sentinelRef} className="h-10" />
+      <Button
+        onClick={() => document.getElementById("site-footer")?.scrollIntoView({ behavior: "smooth" })}
+        className="fixed bottom-6 right-6 z-50 pill bg-background/90 px-4 py-2 shadow-elevate backdrop-blur"
+        variant="secondary"
+      >
+        <ArrowUp className="mr-2" size={18} /> Mostrar footer
+      </Button>
     </section>
   );
 };

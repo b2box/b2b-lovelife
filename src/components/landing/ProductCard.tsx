@@ -30,8 +30,6 @@ const ProductCard = ({ product }: Props) => {
             loading="lazy"
             className="aspect-square w-full rounded-md object-cover"
           />
-          {/* Watermark */}
-          <span className="absolute left-3 bottom-3 z-10 text-sm font-semibold text-foreground/20 select-none">B2BOX</span>
           {/* Viral badge */}
           {product.viral && (
             <img src="/lovable-uploads/984b614e-1f6b-484a-8b88-5c741374625b.png" alt="Viral ahora" className="absolute right-3 bottom-3 z-20 h-6 w-auto md:h-7 select-none" loading="lazy" />

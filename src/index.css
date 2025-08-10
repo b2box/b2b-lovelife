@@ -144,7 +144,7 @@ All colors MUST be HSL.
   .text-brand-2 { color: hsl(var(--brand-2)); }
   .shadow-elevate { box-shadow: var(--shadow-elevate); }
   .shadow-glow { box-shadow: var(--shadow-glow); }
-  .card-elevated { @apply rounded-lg border bg-card text-card-foreground; box-shadow: var(--shadow-elevate); }
+  .card-elevated { @apply rounded-lg bg-card text-card-foreground; box-shadow: var(--shadow-elevate); }
   .pill { @apply rounded-full; }
   .badge-viral { background: linear-gradient(90deg, hsl(var(--viral-orange)), hsl(var(--viral-red))); border-radius: 9999px; }
   .text-gradient-primary { background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; color: transparent; }
