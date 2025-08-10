@@ -20,7 +20,7 @@ const Footer = () => {
         </div>
 
         <div>
-          <h3 className="mb-3 text-sm font-semibold">Para tu negocio</h3>
+          <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-muted-foreground"><img src="/lovable-uploads/307e7943-73c1-4b73-9a3a-020177aab39e.png" alt="Icono Para tu negocio" className="h-4 w-4" loading="lazy" /><span>Para tu negocio</span></h3>
           <div className="flex flex-col gap-3">
             <a href="#brands" aria-label="B2BOX Brands">
               <img
@@ -50,7 +50,7 @@ const Footer = () => {
         </div>
 
         <div>
-          <h3 className="mb-3 text-sm font-semibold">Comprar</h3>
+          <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-muted-foreground"><img src="/lovable-uploads/a463cd78-cb2e-4fe6-b892-0d5bf0faaba4.png" alt="Icono Comprar" className="h-4 w-4" loading="lazy" /><span>Comprar</span></h3>
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li><a href="#como" className="story-link hover:text-foreground">¿Cómo comprar?</a></li>
             <li><a href="#productos" className="story-link hover:text-foreground">Nuestros productos</a></li>
@@ -61,7 +61,7 @@ const Footer = () => {
         </div>
 
         <div>
-          <h3 className="mb-3 text-sm font-semibold">Nosotros</h3>
+          <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-muted-foreground"><img src="/lovable-uploads/c0fa3188-b174-4754-9c07-abc53f21dfce.png" alt="Icono Nosotros" className="h-4 w-4" loading="lazy" /><span>Nosotros</span></h3>
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li><a href="#registro" className="story-link hover:text-foreground">Regístrate en B2BOX</a></li>
             <li><a href="#partners" className="story-link hover:text-foreground">Partners</a></li>
@@ -72,7 +72,7 @@ const Footer = () => {
         </div>
 
         <div>
-          <h3 className="mb-3 text-sm font-semibold">Legal</h3>
+          <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-muted-foreground"><img src="/lovable-uploads/2275c0b0-3ef0-454c-aa91-f8110f929178.png" alt="Icono Legal" className="h-4 w-4" loading="lazy" /><span>Legal</span></h3>
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li><a href="#tyc" className="story-link hover:text-foreground">Términos y condiciones</a></li>
             <li><a href="#priv" className="story-link hover:text-foreground">Política de privacidad</a></li>
