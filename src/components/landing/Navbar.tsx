@@ -9,9 +9,8 @@ const Navbar = () => {
       <div className="container mx-auto flex h-20 items-center justify-between gap-4">
         {/* Left cluster */}
         <div className="flex items-center gap-4 md:gap-6">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-md bg-gradient-primary" aria-hidden />
-            <span className="text-2xl font-bold">B2BOX</span>
+          <Link to="/" className="flex items-center gap-3">
+            <img src="/lovable-uploads/a6ada814-1660-4b53-ba08-afcb29e598eb.png" alt="B2BOX logo" className="h-9 w-auto object-contain" />
           </Link>
 
           {/* Categorías chip */}
@@ -63,9 +62,9 @@ const Navbar = () => {
       {/* Row 2 */}
       <div className="border-t">
         <div className="container mx-auto flex flex-wrap items-center gap-4 py-3 text-sm">
-          <a href="#trends" className="flex items-center gap-1 font-semibold text-gradient-primary"><span>🔥</span> TRENDS</a>
-          <a href="#academy" className="font-semibold text-brand-2">ACADEMY</a>
-          <a href="#brands" className="font-semibold text-brand-green">BRANDS</a>
+          <a href="#trends" className="flex items-center"><img src="/lovable-uploads/573f686c-7492-4309-a3ef-8a941e81ec6e.png" alt="B2BOX TRENDS" className="h-6 w-auto" loading="lazy" /></a>
+          <a href="#academy" className="flex items-center"><img src="/lovable-uploads/a43adb22-d4de-4fa7-bc78-f8ac44f2dc81.png" alt="B2BOX ACADEMY" className="h-6 w-auto" loading="lazy" /></a>
+          <a href="#brands" className="flex items-center"><img src="/lovable-uploads/f311b60a-adbd-4b8b-8fce-7615166a2895.png" alt="B2BOX BRANDS" className="h-6 w-auto" loading="lazy" /></a>
           <span className="mx-2 hidden h-4 w-px bg-border md:inline-block" />
           <a href="#nosotros" className="font-semibold">Nosotros</a>
           <a href="#moda-fem" className="flex items-center gap-2 text-muted-foreground hover:text-foreground"><Shirt /> Moda femenina</a>
