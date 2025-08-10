@@ -16,69 +16,57 @@ import { cn } from "@/lib/utils";
 
 const products: Product[] = [
   {
-    id: "p1",
+    id: "m1",
     name: "Espejo LED de tocador",
-    image: "/lovable-uploads/984b614e-1f6b-484a-8b88-5c741374625b.png",
+    image: "/lovable-uploads/79463da2-0dc9-4c83-96c9-3677be1bf69c.png",
     prices: [
       { qty: "10u", price: "$9.90" },
       { qty: "50u", price: "$8.70" },
       { qty: "100u", price: "$7.95" },
     ],
-    className: "right-8 top-2 size-32 md:size-40",
+    className: "right-8 top-2 size-36 md:size-44",
     delay: "0s",
   },
   {
-    id: "p2",
-    name: "Cama para mascotas",
-    image: "/lovable-uploads/21382621-126b-47f0-b6bd-c776ea5ff0aa.png",
+    id: "b1",
+    name: "Cama mullida para mascotas",
+    image: "/lovable-uploads/7a8a643e-3ea5-4717-b5ca-f242ff62d732.png",
     prices: [
       { qty: "10u", price: "$14.50" },
       { qty: "50u", price: "$12.90" },
       { qty: "100u", price: "$11.80" },
     ],
-    className: "right-36 top-10 size-44 md:size-56",
+    className: "right-36 top-10 size-48 md:size-60",
     delay: "0.6s",
   },
   {
-    id: "p3",
-    name: "Organizador plegable",
-    image: "/lovable-uploads/af8639df-1761-4ec1-b905-8d948d403ae4.png",
+    id: "c1",
+    name: "Caja plegable organizadora",
+    image: "/lovable-uploads/69675e75-c039-4caa-b986-0ca69f803697.png",
     prices: [
       { qty: "10u", price: "$4.20" },
       { qty: "50u", price: "$3.60" },
       { qty: "100u", price: "$3.20" },
     ],
-    className: "right-[15rem] top-28 size-24 md:size-28",
+    className: "right-[15rem] top-28 size-28 md:size-32",
     delay: "0.2s",
   },
   {
-    id: "p4",
-    name: "Taza térmica",
-    image: "/lovable-uploads/a463cd78-cb2e-4fe6-b892-0d5bf0faaba4.png",
-    prices: [
-      { qty: "10u", price: "$6.80" },
-      { qty: "50u", price: "$5.90" },
-      { qty: "100u", price: "$5.40" },
-    ],
-    className: "right-40 bottom-0 size-20 md:size-24",
-    delay: "1s",
-  },
-  {
-    id: "p5",
-    name: "Dispensador portátil",
-    image: "/lovable-uploads/605c29b4-eaf8-468d-8622-625ff4afafd8.png",
+    id: "s1",
+    name: "Mini selladora portátil",
+    image: "/lovable-uploads/53cba60a-bd73-41ec-8674-dd70914769dc.png",
     prices: [
       { qty: "10u", price: "$3.40" },
       { qty: "50u", price: "$2.90" },
       { qty: "100u", price: "$2.60" },
     ],
-    className: "right-6 top-24 size-20 md:size-24",
-    delay: "0.3s",
+    className: "right-6 top-24 size-24 md:size-28",
+    delay: "1s",
   },
 ];
 
 const bubbleBase =
-  "group absolute flex items-center justify-center rounded-full border border-border bg-card/80 shadow-elevate backdrop-blur-sm overflow-hidden will-change-transform";
+  "group absolute flex items-center justify-center rounded-full border border-border bg-card/80 shadow-elevate backdrop-blur-sm overflow-visible will-change-transform";
 
 const PriceAtom = ({ label }: { label: string }) => (
   <span className="pointer-events-none inline-flex items-center rounded-full border border-border bg-background text-foreground shadow-sm px-2 py-0.5 text-[10px] md:text-xs font-medium">
@@ -95,24 +83,33 @@ const FloatingProducts: React.FC = () => {
           className={cn(bubbleBase, p.className)}
           style={{ animation: "float 7s ease-in-out infinite", animationDelay: p.delay }}
         >
-          <img
+<img
             src={p.image}
             alt={`${p.name} - producto mayorista para ecommerce`}
             loading="lazy"
             decoding="async"
-            className="w-[72%] h-[72%] object-contain select-none"
+            className="w-[72%] h-[72%] object-contain select-none animate-[spin_20s_linear_infinite]"
           />
 
-          {/* Price atoms around the bubble */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute -top-3 -right-5 opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200" style={{ animation: "float 6s ease-in-out infinite" }}>
-              <PriceAtom label={`${p.prices[0].qty} · ${p.prices[0].price}`} />
-            </div>
-            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 delay-100" style={{ animation: "float 7s ease-in-out infinite", animationDelay: "0.2s" }}>
-              <PriceAtom label={`${p.prices[1].qty} · ${p.prices[1].price}`} />
-            </div>
-            <div className="absolute -top-3 -left-5 opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 delay-200" style={{ animation: "float 8s ease-in-out infinite", animationDelay: "0.4s" }}>
-              <PriceAtom label={`${p.prices[2].qty} · ${p.prices[2].price}`} />
+{/* Electron-style orbiting prices */}
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <div className="relative w-[85%] h-[85%] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-[spin_12s_linear_infinite]">
+                {p.prices.map((pr, idx) => {
+                  const angles = [0, 120, 240];
+                  const angle = angles[idx % angles.length];
+                  const radius = 56; // px
+                  return (
+                    <div
+                      key={idx}
+                      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                      style={{ transform: `rotate(${angle}deg) translateX(${radius}px) rotate(-${angle}deg)` }}
+                    >
+                      <PriceAtom label={`${pr.qty} · ${pr.price}`} />
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
