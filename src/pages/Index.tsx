@@ -31,9 +31,14 @@ const Index = () => {
       <main>
         <Hero />
         {!isApp && (
-          <section className="mt-4">
-            <HowItWorks />
-          </section>
+          <>
+            <section className="mt-4">
+              <HowItWorks />
+            </section>
+            <section className="mt-6">
+              <InfiniteProducts publicMode={true} />
+            </section>
+          </>
         )}
         {isApp && (
           <section className="mt-6">
@@ -61,9 +66,11 @@ const Index = () => {
           </>
         )}
 
-        <section className="mt-12">
-          <InfiniteProducts publicMode={!isApp} />
-        </section>
+        {isApp && (
+          <section className="mt-12">
+            <InfiniteProducts publicMode={false} />
+          </section>
+        )}
       </main>
       <Footer />
 

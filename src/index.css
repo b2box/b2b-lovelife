@@ -59,6 +59,7 @@ All colors MUST be HSL.
     --brand-2: 286 77% 55%; /* vibrant violet */
     --brand-green: 108 100% 80%; /* B2BOX green #ABFF97 */
     --brand-yellow: 53 96% 64%; /* #FBE74D */
+    --brand-violet-soft: 260 100% 88%; /* light lavender for surfaces */
 
     /* Ad-specific */
     --ad-viral: 205 60% 67%; /* #77B2DD */
@@ -143,6 +144,7 @@ All colors MUST be HSL.
   .bg-brand-green { background-color: hsl(var(--brand-green)); }
   .bg-brand-yellow { background-color: hsl(var(--brand-yellow)); }
   .bg-brand-violet { background-color: hsl(var(--brand-2)); color: hsl(var(--primary-foreground)); }
+  .bg-brand-violet-soft { background-color: hsl(var(--brand-violet-soft)); color: hsl(var(--primary-foreground)); }
   .bg-gradient-trends-animated { background: var(--gradient-trends); background-size: 300% 300%; animation: gradient-shift 10s ease infinite; }
   .text-brand-green { color: hsl(var(--brand-green)); }
   .text-brand-2 { color: hsl(var(--brand-2)); }

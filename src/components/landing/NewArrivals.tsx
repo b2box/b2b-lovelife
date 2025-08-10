@@ -12,7 +12,7 @@ const NewArrivals = () => {
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-stretch">
         <button
           onClick={() => navigate("/auth")}
-          className="relative overflow-hidden rounded-[28px] bg-brand-violet p-4 md:p-6 animate-fade-in flex items-end justify-center h-40 md:h-48 md:col-span-2"
+          className="relative overflow-hidden rounded-[28px] bg-brand-violet-soft animate-fade-in flex items-end justify-center h-full md:col-span-2"
           aria-label="Explorar lo más nuevo en B2BOX"
         >
           <img
