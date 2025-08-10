@@ -8,13 +8,18 @@ const Hero = () => {
         <div className="rounded-[26px] bg-card px-6 md:px-10 py-8 md:py-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div>
-              <h1 className="text-3xl md:text-5xl font-extrabold leading-tight">
-                Productos Virales al por Mayor para Ecommerce
-              </h1>
-              <p className="mt-4 text-lg md:text-xl text-muted-foreground">
-                Compra directamente desde <span className="font-semibold">China</span>, con precios mayoristas y
-                optimizados para vender en Mercado Libre, Amazon y Shopify.
-              </p>
+              <h1 className="sr-only">Productos Virales al por Mayor para Ecommerce</h1>
+              <div className="relative w-full max-w-[720px]">
+                <img
+                  src="/lovable-uploads/c1e692ce-7b88-4b5f-b994-7fc876f5c8d3.png"
+                  alt="Productos virales al por mayor desde China para eCommerce - compatible con Mercado Libre, Amazon y Shopify"
+                  loading="eager"
+                  decoding="async"
+                  className="w-full h-auto object-contain"
+                  width={1440}
+                  height={380}
+                />
+              </div>
 
               <div className="mt-6 flex items-stretch gap-3">
                 <Button variant="pill" className="h-12 px-5 font-semibold" aria-label="Ver categorías">
