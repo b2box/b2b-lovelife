@@ -5,6 +5,7 @@ import PromoBanner from "@/components/landing/PromoBanner";
 import CategoryShowcase from "@/components/landing/CategoryShowcase";
 import Footer from "@/components/landing/Footer";
 import InfiniteProducts from "@/components/landing/InfiniteProducts";
+import { useLocation } from "react-router-dom";
 
 const jsonLd = () => ({
   "@context": "https://schema.org",
@@ -19,14 +20,18 @@ const jsonLd = () => ({
 });
 
 const Index = () => {
+  const location = useLocation();
+  const isApp = location.pathname.startsWith("/app");
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       <main>
         <Hero />
-        <section className="mt-6">
-          <CategoryTabs />
-        </section>
+        {isApp && (
+          <section className="mt-6">
+            <CategoryTabs />
+          </section>
+        )}
         <section className="mt-6">
           <CategoryShowcase />
         </section>
