@@ -16,18 +16,24 @@ const InfiniteProducts = () => {
   const [items, setItems] = useState<Product[]>(() => makePage(base, 0));
   const [stopped, setStopped] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const stoppedRef = useRef(false);
 
   useEffect(() => {
     const el = sentinelRef.current;
     if (!el) return;
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
+        if (stoppedRef.current) return;
         if (e.isIntersecting) setPage((p) => p + 1);
       });
     }, { rootMargin: "600px" });
     io.observe(el);
     return () => io.disconnect();
   }, []);
+
+  useEffect(() => {
+    stoppedRef.current = stopped;
+  }, [stopped]);
 
   useEffect(() => {
     if (page <= 1) return;
@@ -62,6 +68,7 @@ const InfiniteProducts = () => {
       <div ref={sentinelRef} className="h-10" />
       <Button
         onClick={() => {
+          setStopped(true);
           const footer = document.getElementById("site-footer");
           footer?.scrollIntoView({ behavior: "smooth" });
           if (footer) {
