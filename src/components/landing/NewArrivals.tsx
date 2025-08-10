@@ -2,6 +2,7 @@
 import ProductCard from "./ProductCard";
 import { categories } from "./data";
 import { useNavigate } from "react-router-dom";
+import { ArrowUpRight } from "lucide-react";
 const NewArrivals = () => {
   const navigate = useNavigate();
   const firstKey = Object.keys(categories)[0];
@@ -18,9 +19,12 @@ const NewArrivals = () => {
           <img
             src="/lovable-uploads/675a800a-12eb-4949-a34c-e4dbc08e2680.png"
             alt="Lo más nuevo en B2BOX - ilustración"
-            className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[120%] w-auto pointer-events-none select-none"
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[84%] w-auto pointer-events-none select-none"
             loading="lazy"
           />
+          <span className="absolute bottom-3 right-3 grid size-10 md:size-12 place-items-center rounded-full border border-white/70 text-white/90 hover:bg-white/10" aria-hidden="true">
+            <ArrowUpRight />
+          </span>
         </button>
 
         {products.map((p, idx) => (
