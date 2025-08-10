@@ -24,23 +24,23 @@ const CategoryTabs = () => {
           <h2 className="text-center whitespace-nowrap text-[22px] font-semibold md:text-[30px] xl:text-[38px] xl:leading-[48px]">Los productos más vendidos en las categorías más buscadas</h2>
         </div>
         <Tabs defaultValue={first} className="w-full mt-6 md:mt-8">
-          <div className="mx-auto max-w-[1240px] flex items-center gap-3">
+          <div className="mx-auto max-w-[1240px] flex items-center gap-2">
             <Button
               variant="outline"
               size="icon"
               className="rounded-full h-11 w-11 md:h-12 md:w-12 bg-card border border-foreground/20 text-foreground shadow-none"
               aria-label="Anterior"
-              onClick={() => scrollRef.current?.scrollBy({ left: -260, behavior: "smooth" })}
+              onClick={() => scrollRef.current?.scrollBy({ left: -220, behavior: "smooth" })}
             >
               <ChevronLeft size={22} />
             </Button>
-            <div className="flex items-center gap-3 flex-1 overflow-hidden">
-              <TabsList className="bg-transparent p-0 flex gap-3">
+            <div className="flex items-center gap-2 flex-1 overflow-hidden">
+              <TabsList className="bg-transparent p-0 flex gap-2">
                 {staticKeys.map((key) => (
                   <TabsTrigger
                     key={key}
                     value={key}
-                    className="pill rounded-full h-12 px-6 text-base font-semibold leading-none bg-card border border-foreground/20 data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:border-transparent shrink-0 w-[220px] md:w-[230px] xl:w-[240px] justify-center"
+                    className="pill rounded-full h-10 px-5 text-sm md:text-base font-semibold leading-none bg-card border border-foreground/20 data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:border-transparent shrink-0 w-[180px] md:w-[200px] xl:w-[220px] justify-center"
                   >
                     {tabIcons[key] && (
                       <img src={tabIcons[key]} alt={`Icono ${key}`} className="mr-2 h-4 w-4 md:h-5 md:w-5 object-contain" loading="lazy" />
@@ -50,13 +50,13 @@ const CategoryTabs = () => {
                 ))}
               </TabsList>
               <div className="relative flex-1 overflow-hidden">
-                <div ref={scrollRef} className="flex items-center gap-3 overflow-x-auto scroll-smooth py-1">
-                  <TabsList className="bg-transparent p-0 flex gap-3">
+                <div ref={scrollRef} className="flex items-center gap-2 overflow-x-auto scroll-smooth py-1">
+                  <TabsList className="bg-transparent p-0 flex gap-2">
                     {restKeys.map((key) => (
                       <TabsTrigger
                         key={key}
                         value={key}
-                        className="pill rounded-full h-12 px-6 text-base font-semibold leading-none bg-card border border-foreground/20 data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:border-transparent shrink-0 w-[220px] md:w-[230px] xl:w-[240px] justify-center"
+                        className="pill rounded-full h-10 px-5 text-sm md:text-base font-semibold leading-none bg-card border border-foreground/20 data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:border-transparent shrink-0 w-[180px] md:w-[200px] xl:w-[220px] justify-center"
                       >
                         {tabIcons[key] && (
                           <img src={tabIcons[key]} alt={`Icono ${key}`} className="mr-2 h-4 w-4 md:h-5 md:w-5 object-contain" loading="lazy" />
@@ -75,7 +75,7 @@ const CategoryTabs = () => {
               size="icon"
               className="rounded-full h-11 w-11 md:h-12 md:w-12 bg-card border border-foreground/20 text-foreground shadow-none"
               aria-label="Siguiente"
-              onClick={() => scrollRef.current?.scrollBy({ left: 260, behavior: "smooth" })}
+              onClick={() => scrollRef.current?.scrollBy({ left: 220, behavior: "smooth" })}
             >
               <ChevronRight size={22} />
             </Button>
