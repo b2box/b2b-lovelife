@@ -6,6 +6,7 @@ import CategoryShowcase from "@/components/landing/CategoryShowcase";
 import Footer from "@/components/landing/Footer";
 import InfiniteProducts from "@/components/landing/InfiniteProducts";
 import { useLocation } from "react-router-dom";
+import HowItWorks from "@/components/landing/HowItWorks";
 
 const jsonLd = () => ({
   "@context": "https://schema.org",
@@ -27,6 +28,11 @@ const Index = () => {
       <Navbar />
       <main>
         <Hero />
+        {!isApp && (
+          <section className="mt-4">
+            <HowItWorks />
+          </section>
+        )}
         {isApp && (
           <section className="mt-6">
             <CategoryTabs />
