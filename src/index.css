@@ -57,7 +57,7 @@ All colors MUST be HSL.
     /* Brand tokens */
     --brand: 28 92% 54%; /* warm orange */
     --brand-2: 286 77% 55%; /* vibrant violet */
-    --brand-green: 100 75% 65%; /* lime green for header chips */
+    --brand-green: 108 100% 80%; /* B2BOX green #ABFF97 */
 
     /* Gradients & effects */
     --gradient-primary: linear-gradient(135deg, hsl(var(--brand)) 0%, hsl(var(--brand-2)) 100%);

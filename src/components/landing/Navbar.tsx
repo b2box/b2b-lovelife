@@ -4,7 +4,7 @@ import { Menu, Search, ShoppingBag, ShoppingCart, ClipboardList, UserRound, Chev
 
 const Navbar = () => {
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 font-display">
       {/* Row 1 */}
       <div className="container mx-auto flex h-20 items-center justify-between gap-4">
         {/* Left cluster */}
@@ -14,7 +14,7 @@ const Navbar = () => {
           </Link>
 
           {/* Categorías chip */}
-          <Button variant="brand" className="pill hidden sm:inline-flex h-10 px-5">
+          <Button variant="brand" className="pill hidden sm:inline-flex h-10 px-5 font-medium">
             <Menu size={20} /> Categorías
           </Button>
         </div>
@@ -42,7 +42,7 @@ const Navbar = () => {
             <div className="grid h-8 w-8 place-content-center rounded-full border text-lg">🇦🇷</div>
             <ChevronDown className="opacity-70" />
           </div>
-          <div className="hidden lg:flex items-center gap-6 text-sm">
+          <div className="hidden lg:flex items-center gap-6 text-sm font-medium">
             <div className="flex flex-col items-center">
               <ShoppingCart />
               <span>Carrito</span>
@@ -66,11 +66,11 @@ const Navbar = () => {
           <a href="#academy" className="flex items-center"><img src="/lovable-uploads/a43adb22-d4de-4fa7-bc78-f8ac44f2dc81.png" alt="B2BOX ACADEMY" className="h-6 w-auto" loading="lazy" /></a>
           <a href="#brands" className="flex items-center"><img src="/lovable-uploads/f311b60a-adbd-4b8b-8fce-7615166a2895.png" alt="B2BOX BRANDS" className="h-6 w-auto" loading="lazy" /></a>
           <span className="mx-2 hidden h-4 w-px bg-border md:inline-block" />
-          <a href="#nosotros" className="font-semibold">Nosotros</a>
-          <a href="#moda-fem" className="flex items-center gap-2 text-muted-foreground hover:text-foreground"><Shirt /> Moda femenina</a>
-          <a href="#moda-mas" className="flex items-center gap-2 text-muted-foreground hover:text-foreground"><ShoppingBag /> Moda masculina</a>
-          <a href="#salud" className="flex items-center gap-2 text-muted-foreground hover:text-foreground"><Heart /> Salud y bienestar</a>
-          <a href="#wearable" className="flex items-center gap-2 text-muted-foreground hover:text-foreground"><Watch /> Tecnología wearable</a>
+          <a href="#nosotros" className="font-medium">Nosotros</a>
+          <a href="#moda-fem" className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-medium"><Shirt /> Moda femenina</a>
+          <a href="#moda-mas" className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-medium"><ShoppingBag /> Moda masculina</a>
+          <a href="#salud" className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-medium"><Heart /> Salud y bienestar</a>
+          <a href="#wearable" className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-medium"><Watch /> Tecnología wearable</a>
         </div>
       </div>
     </header>
