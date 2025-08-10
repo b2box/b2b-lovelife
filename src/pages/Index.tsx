@@ -36,11 +36,11 @@ const Index = () => {
             <section className="mt-4">
               <HowItWorks />
             </section>
-            <section className="mt-6 container mx-auto">
-              <FloatingProducts />
-            </section>
             <section className="mt-6">
               <InfiniteProducts publicMode={true} />
+            </section>
+            <section className="mt-6 container mx-auto">
+              <FloatingProducts />
             </section>
           </>
         )}
