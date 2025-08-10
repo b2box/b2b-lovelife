@@ -44,7 +44,7 @@ const Navbar = () => {
           </div>
           <div className="hidden lg:flex items-center gap-6 text-base font-medium">
             <div className="flex flex-col items-center">
-              <ShoppingCart />
+              <img src="/lovable-uploads/e2255b3e-fa3e-47a1-89ec-bb042bcdd4e0.png" alt="Icono Carrito" className="h-7 w-7 object-contain" loading="lazy" />
               <span>Carrito</span>
             </div>
             <div className="flex flex-col items-center">
@@ -52,7 +52,7 @@ const Navbar = () => {
               <span>Pedidos</span>
             </div>
             <div className="flex flex-col items-center">
-              <UserRound />
+              <img src="/lovable-uploads/c21caebf-b694-4e86-b07c-b08a51d325ab.png" alt="Icono Perfil" className="h-7 w-7 object-contain" loading="lazy" />
               <span>Perfil</span>
             </div>
           </div>
@@ -67,10 +67,10 @@ const Navbar = () => {
           <a href="#brands" className="flex items-center"><img src="/lovable-uploads/f311b60a-adbd-4b8b-8fce-7615166a2895.png" alt="B2BOX BRANDS" className="h-6 w-auto" loading="lazy" /></a>
           <span className="mx-2 hidden h-4 w-px bg-border md:inline-block" />
           <a href="#nosotros" className="font-medium text-base">Nosotros</a>
-          <a href="#moda-fem" className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-medium text-base"><img src="/lovable-uploads/3540fd6e-b065-4aa3-88ba-0f846e478aa4.png" alt="Icono Moda femenina" className="h-5 w-5 object-contain" loading="lazy" /> Moda femenina</a>
-          <a href="#moda-mas" className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-medium text-base"><img src="/lovable-uploads/ace1cdfb-9b6b-4d0d-9704-94deadd382ca.png" alt="Icono Moda masculina" className="h-5 w-5 object-contain" loading="lazy" /> Moda masculina</a>
-          <a href="#salud" className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-medium text-base"><img src="/lovable-uploads/02411991-41a0-44d3-9a3b-f28e1ccd340f.png" alt="Icono Salud y bienestar" className="h-5 w-5 object-contain" loading="lazy" /> Salud y bienestar</a>
-          <a href="#wearable" className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-medium text-base"><img src="/lovable-uploads/f8e92033-43e5-4587-a12d-3936192f4be6.png" alt="Icono Tecnología wearable" className="h-5 w-5 object-contain" loading="lazy" /> Tecnología wearable</a>
+          <a href="#moda-fem" className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-medium text-base"><img src="/lovable-uploads/ca6fd2f2-92d9-43f6-955b-e4f140912e9e.png" alt="Icono Moda femenina" className="h-5 w-5 object-contain" loading="lazy" /> Moda femenina</a>
+          <a href="#moda-mas" className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-medium text-base"><img src="/lovable-uploads/32edb77f-ead7-4e0e-9638-b2049b7f5e31.png" alt="Icono Moda masculina" className="h-5 w-5 object-contain" loading="lazy" /> Moda masculina</a>
+          <a href="#salud" className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-medium text-base"><img src="/lovable-uploads/af8639df-1761-4ec1-b905-8d948d403ae4.png" alt="Icono Salud y bienestar" className="h-5 w-5 object-contain" loading="lazy" /> Salud y bienestar</a>
+          <a href="#wearable" className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-medium text-base"><img src="/lovable-uploads/1487d271-1ed1-4085-afb4-b90508b2221e.png" alt="Icono Tecnología wearable" className="h-5 w-5 object-contain" loading="lazy" /> Tecnología wearable</a>
         </div>
       </div>
     </header>
