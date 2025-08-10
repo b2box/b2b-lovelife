@@ -3,7 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 const PromoBanner = () => {
   return (
     <section className="container mx-auto">
-      <div className="rounded-[28px] bg-gradient-trends-animated px-4 md:px-6 py-3 md:py-[5px] relative text-primary-foreground shadow-elevate">
+      <div className="rounded-[28px] bg-gradient-trends-animated px-4 md:px-6 py-[17px] md:py-[7px] relative text-primary-foreground shadow-elevate">
         <button className="absolute top-3 right-3 grid size-10 md:size-12 place-items-center rounded-full border border-white/70 text-white/90 hover:bg-white/10" aria-label="Explorar Trends">
           <ArrowUpRight />
         </button>
