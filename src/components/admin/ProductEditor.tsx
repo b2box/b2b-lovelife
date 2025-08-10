@@ -21,6 +21,8 @@ export type AdminProduct = {
   status?: 'draft' | 'published';
   subtitle?: string | null;
   bx_code?: string | null;
+  verified_product?: boolean;
+  verified_video?: boolean;
   material?: string | null;
   discountable?: boolean;
   agent_profile_id?: string | null;
@@ -93,6 +95,8 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
     status: (product as any)?.status ?? 'draft',
     subtitle: (product as any)?.subtitle ?? "",
     bx_code: (product as any)?.bx_code ?? "",
+    verified_product: (product as any)?.verified_product ?? false,
+    verified_video: (product as any)?.verified_video ?? false,
     material: (product as any)?.material ?? "",
     discountable: (product as any)?.discountable ?? true,
     agent_profile_id: (product as any)?.agent_profile_id ?? null,
@@ -106,6 +110,12 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
   const [categories, setCategories] = useState<{id: string; name: string}[]>([]);
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
   const [tagsText, setTagsText] = useState<string>("");
+  const [translations, setTranslations] = useState<Record<string, { id?: string; title: string; description: string }>>({
+    cn: { title: "", description: "" },
+    ar: { title: "", description: "" },
+    co: { title: "", description: "" },
+  });
+  const agentOptions = useMemo(() => profiles.filter((p) => ['kerwin', 'jessica'].includes((p.display_name || '').toLowerCase())), [profiles]);
 
   useEffect(() => {
     setForm({
@@ -118,6 +128,8 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
       status: (product as any)?.status ?? 'draft',
       subtitle: (product as any)?.subtitle ?? "",
       bx_code: (product as any)?.bx_code ?? "",
+      verified_product: (product as any)?.verified_product ?? false,
+      verified_video: (product as any)?.verified_video ?? false,
       material: (product as any)?.material ?? "",
       discountable: (product as any)?.discountable ?? true,
       agent_profile_id: (product as any)?.agent_profile_id ?? null,
@@ -129,7 +141,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
   }, [product]);
 
   useEffect(() => {
-    // Load agents and categories when opening
+    // Load agents, categories, tags and translations when opening
     if (!open) return;
     (async () => {
       const { data: profs } = await (supabase as any).from('profiles').select('id, display_name').limit(50);
@@ -141,9 +153,25 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
         setSelectedCategoryIds((pc || []).map((r: any) => r.category_id));
         const { data: tgs } = await (supabase as any).from('product_tags').select('tags(name), tag_id').eq('product_id', product.id);
         if (tgs && tgs.length) setTagsText((tgs as any[]).map((x: any) => x.tags?.name).filter(Boolean).join(', '));
+
+        const { data: trans } = await supabase
+          .from('product_translations')
+          .select('id, country_code, title, description')
+          .eq('product_id', product.id);
+        const base: Record<string, { id?: string; title: string; description: string }> = {
+          cn: { title: "", description: "" },
+          ar: { title: "", description: "" },
+          co: { title: "", description: "" },
+        };
+        (trans || []).forEach((t: any) => {
+          const code = (t.country_code || '').toLowerCase();
+          if (base[code] !== undefined) base[code] = { id: t.id, title: t.title || '', description: t.description || '' };
+        });
+        setTranslations(base);
       } else {
         setSelectedCategoryIds([]);
         setTagsText("");
+        setTranslations({ cn: { title: "", description: "" }, ar: { title: "", description: "" }, co: { title: "", description: "" } });
       }
     })();
   }, [open, product?.id]);
@@ -194,6 +222,8 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
             status: form.status,
             subtitle: form.subtitle,
             bx_code: form.bx_code,
+            verified_product: form.verified_product ?? false,
+            verified_video: form.verified_video ?? false,
             material: form.material,
             discountable: form.discountable,
             agent_profile_id: form.agent_profile_id,
@@ -216,6 +246,8 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
             status: form.status,
             subtitle: form.subtitle,
             bx_code: form.bx_code,
+            verified_product: form.verified_product ?? false,
+            verified_video: form.verified_video ?? false,
             material: form.material,
             discountable: form.discountable,
             agent_profile_id: form.agent_profile_id,
@@ -239,24 +271,226 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
     }
   };
 
+  const saveTranslations = async () => {
+    if (!form.id) {
+      toast({ title: "Primero guarda el producto", description: "Crea el producto antes de agregar traducciones.", variant: "default" });
+      return;
+    }
+    try {
+      const payload: any[] = [];
+      (['cn','ar','co'] as const).forEach((code) => {
+        const t = (translations as any)[code];
+        if (!t) return;
+        const hasContent = (t.title && t.title.trim()) || (t.description && t.description.trim());
+        if (!hasContent) return;
+        if (t.id) payload.push({ id: t.id, product_id: form.id, country_code: code, title: t.title, description: t.description });
+        else payload.push({ product_id: form.id, country_code: code, title: t.title, description: t.description });
+      });
+      if (payload.length) await (supabase as any).from('product_translations').upsert(payload);
+      toast({ title: "Guardado", description: "Traducciones guardadas." });
+    } catch (e) {
+      console.error(e);
+      toast({ title: "Error", description: "No se pudieron guardar las traducciones.", variant: "destructive" });
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="max-w-5xl">
         <DialogHeader>
           <DialogTitle>{isEdit ? "Editar producto" : "Nuevo producto"}</DialogTitle>
         </DialogHeader>
-        <Tabs defaultValue="basicos" className="w-full">
-          <TabsList>
-            <TabsTrigger value="basicos">Básicos</TabsTrigger>
-            {form.id && <TabsTrigger value="variantes">Variantes</TabsTrigger>}
-          </TabsList>
+          <Tabs defaultValue="producto" className="w-full">
+            <TabsList>
+              <TabsTrigger value="producto">Producto</TabsTrigger>
+              {form.id && <TabsTrigger value="multilingual">Contenido</TabsTrigger>}
+              <TabsTrigger value="supplier">Proveedor</TabsTrigger>
+              {form.id && <TabsTrigger value="variantes">Variantes</TabsTrigger>}
+              <TabsTrigger value="agente">Agente</TabsTrigger>
+              <TabsTrigger value="status">Status</TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="basicos" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="name">Nombre</Label>
-                <Input id="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            <TabsContent value="producto" className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="name">Título</Label>
+                  <Input
+                    id="name"
+                    value={form.name}
+                    onChange={(e) => {
+                      const newName = e.target.value;
+                      setForm((prev) => {
+                        const autoPrev = slugify(prev.name || "");
+                        const shouldUpdateSlug = !prev.slug || prev.slug === autoPrev;
+                        return { ...prev, name: newName, slug: shouldUpdateSlug ? slugify(newName) : prev.slug };
+                      });
+                    }}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="slug">Handle (editable)</Label>
+                  <Input id="slug" value={form.slug ?? ""} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
+                </div>
+                <div>
+                  <Label htmlFor="bx_code">BX Code</Label>
+                  <Input id="bx_code" value={form.bx_code ?? ""} onChange={(e) => setForm({ ...form, bx_code: e.target.value })} />
+                </div>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2">
+                    <Checkbox
+                      id="verified_product"
+                      checked={!!form.verified_product}
+                      onCheckedChange={(v) => setForm({ ...form, verified_product: !!v })}
+                    />
+                    <span>Verified product</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <Checkbox
+                      id="verified_video"
+                      checked={!!form.verified_video}
+                      onCheckedChange={(v) => setForm({ ...form, verified_video: !!v })}
+                    />
+                    <span>Verified video</span>
+                  </label>
+                </div>
               </div>
+
+              <Card className="p-3">
+                <h4 className="font-medium mb-2">Organización</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                  {categories.map((c) => (
+                    <label key={c.id} className="flex items-center gap-2">
+                      <Checkbox
+                        checked={selectedCategoryIds.includes(c.id)}
+                        onCheckedChange={(v) => setSelectedCategoryIds((prev) => v ? [...prev, c.id] : prev.filter(id => id !== c.id))}
+                      />
+                      <span>{c.name}</span>
+                    </label>
+                  ))}
+                </div>
+                <div className="mt-3">
+                  <Label>Tags (separados por coma)</Label>
+                  <Input value={tagsText} onChange={(e) => setTagsText(e.target.value)} placeholder="hogar, cocina, trending" />
+                </div>
+              </Card>
+
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={onClose}>Cerrar</Button>
+                <Button onClick={saveProduct} disabled={saving}>{saving ? "Guardando…" : "Guardar"}</Button>
+              </div>
+            </TabsContent>
+
+            {form.id && (
+              <TabsContent value="multilingual" className="space-y-4">
+                <div className="grid grid-cols-1 gap-6">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <img src="/images/flags/ar.svg" alt="Bandera Argentina" className="h-4 w-6" />
+                      <h4 className="font-medium">Español (AR)</h4>
+                    </div>
+                    <Input
+                      placeholder="Título (AR)"
+                      value={translations.ar.title}
+                      onChange={(e) => setTranslations({ ...translations, ar: { ...translations.ar, title: e.target.value } })}
+                    />
+                    <Textarea
+                      placeholder="Descripción (AR)"
+                      value={translations.ar.description}
+                      onChange={(e) => setTranslations({ ...translations, ar: { ...translations.ar, description: e.target.value } })}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <img src="/images/flags/co.svg" alt="Bandera Colombia" className="h-4 w-6" />
+                      <h4 className="font-medium">Español (CO)</h4>
+                    </div>
+                    <Input
+                      placeholder="Título (CO)"
+                      value={translations.co.title}
+                      onChange={(e) => setTranslations({ ...translations, co: { ...translations.co, title: e.target.value } })}
+                    />
+                    <Textarea
+                      placeholder="Descripción (CO)"
+                      value={translations.co.description}
+                      onChange={(e) => setTranslations({ ...translations, co: { ...translations.co, description: e.target.value } })}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex h-4 w-6 items-center justify-center rounded bg-muted text-xs">CN</span>
+                      <h4 className="font-medium">Chino (CN)</h4>
+                    </div>
+                    <Input
+                      placeholder="Título (CN)"
+                      value={translations.cn.title}
+                      onChange={(e) => setTranslations({ ...translations, cn: { ...translations.cn, title: e.target.value } })}
+                    />
+                    <Textarea
+                      placeholder="Descripción (CN)"
+                      value={translations.cn.description}
+                      onChange={(e) => setTranslations({ ...translations, cn: { ...translations.cn, description: e.target.value } })}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" onClick={onClose}>Cerrar</Button>
+                  <Button onClick={saveTranslations}>Guardar traducciones</Button>
+                </div>
+              </TabsContent>
+            )}
+
+            <TabsContent value="supplier" className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="supplier_link">Supplier Link</Label>
+                  <Input id="supplier_link" value={form.supplier_link ?? ""} onChange={(e) => setForm({ ...form, supplier_link: e.target.value })} />
+                </div>
+                <div>
+                  <Label htmlFor="supplier_model">Supplier Size/Model</Label>
+                  <Input id="supplier_model" value={form.supplier_model ?? ""} onChange={(e) => setForm({ ...form, supplier_model: e.target.value })} />
+                </div>
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={onClose}>Cerrar</Button>
+                <Button onClick={saveProduct} disabled={saving}>{saving ? "Guardando…" : "Guardar"}</Button>
+              </div>
+            </TabsContent>
+
+            {form.id && (
+              <TabsContent value="variantes">
+                <VariantsEditor productId={form.id!} />
+              </TabsContent>
+            )}
+
+            <TabsContent value="agente" className="space-y-4">
+              <div>
+                <Label>Agente</Label>
+                <Select value={form.agent_profile_id ?? undefined} onValueChange={(v) => setForm({ ...form, agent_profile_id: v })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona agente" />
+                  </SelectTrigger>
+                  <SelectContent className="z-50 bg-background">
+                    {agentOptions.length === 0 && (
+                      <SelectItem value="" disabled>
+                        No se encontraron agentes (Kerwin/Jessica)
+                      </SelectItem>
+                    )}
+                    {agentOptions.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>{p.display_name || p.id}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={onClose}>Cerrar</Button>
+                <Button onClick={saveProduct} disabled={saving}>{saving ? "Guardando…" : "Guardar"}</Button>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="status" className="space-y-4">
               <div>
                 <Label>Estado</Label>
                 <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v as any })}>
@@ -269,101 +503,12 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
                   </SelectContent>
                 </Select>
               </div>
-              <div>
-                <Label htmlFor="brand">Marca</Label>
-                <Input id="brand" value={form.brand ?? ""} onChange={(e) => setForm({ ...form, brand: e.target.value })} />
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={onClose}>Cerrar</Button>
+                <Button onClick={saveProduct} disabled={saving}>{saving ? "Guardando…" : "Guardar"}</Button>
               </div>
-              <div>
-                <Label htmlFor="subtitle">Subtítulo</Label>
-                <Input id="subtitle" value={form.subtitle ?? ""} onChange={(e) => setForm({ ...form, subtitle: e.target.value })} />
-              </div>
-              <div>
-                <Label htmlFor="bx_code">BX Code</Label>
-                <Input id="bx_code" value={form.bx_code ?? ""} onChange={(e) => setForm({ ...form, bx_code: e.target.value })} />
-              </div>
-              <div>
-                <Label htmlFor="material">Material</Label>
-                <Input id="material" value={form.material ?? ""} onChange={(e) => setForm({ ...form, material: e.target.value })} />
-              </div>
-              <div className="md:col-span-2">
-                <Label htmlFor="description">Descripción</Label>
-                <Textarea id="description" value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} />
-              </div>
-              <div>
-                <Label htmlFor="slug">Slug</Label>
-                <Input id="slug" value={form.slug ?? ""} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
-              </div>
-              <div className="flex items-end gap-3">
-                <Button type="button" variant={form.active ? "default" : "secondary"} onClick={() => setForm({ ...form, active: !form.active })}>
-                  {form.active ? "Activo" : "Inactivo"}
-                </Button>
-                <div className="flex items-center gap-2">
-                  <Checkbox id="discountable" checked={!!form.discountable} onCheckedChange={(v) => setForm({ ...form, discountable: !!v })} />
-                  <Label htmlFor="discountable">Descuentable</Label>
-                </div>
-              </div>
-              <div>
-                <Label>Agente</Label>
-                <Select value={form.agent_profile_id ?? undefined} onValueChange={(v) => setForm({ ...form, agent_profile_id: v })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona agente" />
-                  </SelectTrigger>
-                  <SelectContent className="z-50 bg-background">
-                    {profiles.map((p) => (
-                      <SelectItem key={p.id} value={p.id}>{p.display_name || p.id}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="supplier_link">Supplier Link</Label>
-                <Input id="supplier_link" value={form.supplier_link ?? ""} onChange={(e) => setForm({ ...form, supplier_link: e.target.value })} />
-              </div>
-              <div>
-                <Label htmlFor="supplier_model">Supplier Size/Model</Label>
-                <Input id="supplier_model" value={form.supplier_model ?? ""} onChange={(e) => setForm({ ...form, supplier_model: e.target.value })} />
-              </div>
-              <div>
-                <Label htmlFor="type">Tipo</Label>
-                <Input id="type" value={form.type ?? ""} onChange={(e) => setForm({ ...form, type: e.target.value })} />
-              </div>
-              <div>
-                <Label htmlFor="collection">Colección</Label>
-                <Input id="collection" value={form.collection ?? ""} onChange={(e) => setForm({ ...form, collection: e.target.value })} />
-              </div>
-            </div>
-
-            <Card className="p-3">
-              <h4 className="font-medium mb-2">Organización</h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                {categories.map((c) => (
-                  <label key={c.id} className="flex items-center gap-2">
-                    <Checkbox
-                      checked={selectedCategoryIds.includes(c.id)}
-                      onCheckedChange={(v) => setSelectedCategoryIds((prev) => v ? [...prev, c.id] : prev.filter(id => id !== c.id))}
-                    />
-                    <span>{c.name}</span>
-                  </label>
-                ))}
-              </div>
-              <div className="mt-3">
-                <Label>Tags (separados por coma)</Label>
-                <Input value={tagsText} onChange={(e) => setTagsText(e.target.value)} placeholder="hogar, cocina, trending" />
-              </div>
-            </Card>
-
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={onClose}>Cerrar</Button>
-              <Button onClick={saveProduct} disabled={saving}>{saving ? "Guardando…" : "Guardar"}</Button>
-            </div>
-          </TabsContent>
-
-          {form.id && (
-            <TabsContent value="variantes">
-              <VariantsEditor productId={form.id!} />
             </TabsContent>
-          )}
-        </Tabs>
+          </Tabs>
       </DialogContent>
     </Dialog>
   );
