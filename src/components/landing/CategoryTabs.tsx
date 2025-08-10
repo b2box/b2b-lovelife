@@ -15,10 +15,10 @@ const CategoryTabs = () => {
   return (
     <section className="container mx-auto">
       <div className="rounded-[32px] bg-brand-yellow p-6 md:p-10 shadow-elevate">
-        <h2 className="mx-1 mb-5 text-center text-4xl font-extrabold md:mb-6 md:text-5xl xl:text-6xl">Los productos más vendidos en las categorías más buscadas</h2>
+        <h2 className="mx-1 mb-6 text-center text-5xl font-semibold md:mb-8 md:text-6xl xl:text-[65px] xl:leading-[85px]">Los mejores productos en las categorías que te interesan</h2>
         <Tabs defaultValue={first} className="w-full">
           <div className="flex items-center justify-center gap-2">
-            <Button variant="outline" size="icon" className="rounded-full" aria-label="Anterior">
+            <Button variant="outline" size="icon" className="rounded-full bg-card h-16 w-16 shadow-elevate" aria-label="Anterior">
               <ChevronLeft />
             </Button>
             <TabsList className="max-w-full flex-wrap bg-transparent p-0">
@@ -31,13 +31,13 @@ const CategoryTabs = () => {
                 </TabsTrigger>
               ))}
             </TabsList>
-            <Button variant="outline" size="icon" className="rounded-full" aria-label="Siguiente">
+            <Button variant="outline" size="icon" className="rounded-full bg-card h-16 w-16 shadow-elevate" aria-label="Siguiente">
               <ChevronRight />
             </Button>
           </div>
           {Object.entries(categories).map(([key, value]) => (
             <TabsContent key={key} value={key}>
-              <ProductGrid products={value.slice(0,5)} />
+              <ProductGrid products={value.slice(0,5)} fiveCols />
             </TabsContent>
           ))}
         </Tabs>
