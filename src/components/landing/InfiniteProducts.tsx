@@ -3,7 +3,7 @@ import ProductCard, { type Product } from "./ProductCard";
 
 import { Button } from "@/components/ui/button";
 import { categories } from "./data";
-import { ArrowUp, ArrowDown } from "lucide-react";
+import { ArrowUp, ArrowDown, Unlock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const AD_EYE = "/lovable-uploads/fa842b26-b9f1-4176-9073-6128c3c08fbc.png";
@@ -90,7 +90,7 @@ const InfiniteProducts = ({ publicMode = false }: { publicMode?: boolean }) => {
             </nav>
             <div
               className={"grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-6 " + (publicMode ? "select-none pointer-events-none" : "") }
-              style={publicMode ? { WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 55%, rgba(0,0,0,0.05) 80%, rgba(0,0,0,0) 100%)', maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 55%, rgba(0,0,0,0.05) 80%, rgba(0,0,0,0) 100%)' } : undefined}
+              style={publicMode ? { WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 70%, rgba(0,0,0,0.08) 90%, rgba(0,0,0,0) 100%)', maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 70%, rgba(0,0,0,0.08) 90%, rgba(0,0,0,0) 100%)' } : undefined}
             >
               {nodes.map((node, i) =>
                 node.kind === "product" ? (
@@ -104,12 +104,14 @@ const InfiniteProducts = ({ publicMode = false }: { publicMode?: boolean }) => {
 
             {publicMode && (
               <>
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent via-background/80 to-background" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent via-background/70 to-background" />
                 <div className="absolute left-1/2 -translate-x-1/2 bottom-10 z-10">
                   <Button
                     onClick={() => navigate("/auth")}
-                    className="rounded-full h-14 px-8 text-lg font-semibold bg-accent text-accent-foreground hover:bg-accent/90 shadow-elevate"
+                    className="rounded-full h-14 px-8 text-lg font-semibold bg-accent text-accent-foreground hover:bg-accent/90 shadow-elevate flex items-center gap-2"
+                    aria-label="Desbloquear catálogo completo"
                   >
+                    <Unlock className="h-5 w-5" />
                     Desbloquear catálogo completo
                   </Button>
                 </div>
