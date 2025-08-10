@@ -34,9 +34,7 @@ const ProductCard = ({ product }: Props) => {
           <span className="absolute left-3 bottom-3 z-10 text-sm font-semibold text-foreground/20 select-none">B2BOX</span>
           {/* Viral badge */}
           {product.viral && (
-            <span className="absolute left-3 bottom-3 z-20 badge-viral px-3 py-1 text-xs font-semibold text-background shadow-sm">
-              🔥 VIRAL AHORA
-            </span>
+            <img src="/lovable-uploads/984b614e-1f6b-484a-8b88-5c741374625b.png" alt="Viral ahora" className="absolute left-3 bottom-3 z-20 h-7 w-auto md:h-8 select-none" loading="lazy" />
           )}
         </div>
         <div className="mt-3">

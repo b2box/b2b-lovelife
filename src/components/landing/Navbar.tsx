@@ -4,7 +4,7 @@ import { Menu, Search, ShoppingBag, ShoppingCart, ClipboardList, UserRound, Chev
 
 const Navbar = () => {
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-40 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       {/* Row 1 */}
       <div className="container mx-auto flex h-20 items-center justify-between gap-4">
         {/* Left cluster */}
@@ -60,7 +60,7 @@ const Navbar = () => {
       </div>
 
       {/* Row 2 */}
-      <div className="border-t">
+      <div>
         <div className="container mx-auto flex flex-wrap items-center gap-4 py-3 text-sm">
           <a href="#trends" className="flex items-center"><img src="/lovable-uploads/573f686c-7492-4309-a3ef-8a941e81ec6e.png" alt="B2BOX TRENDS" className="h-6 w-auto" loading="lazy" /></a>
           <a href="#academy" className="flex items-center"><img src="/lovable-uploads/a43adb22-d4de-4fa7-bc78-f8ac44f2dc81.png" alt="B2BOX ACADEMY" className="h-6 w-auto" loading="lazy" /></a>
