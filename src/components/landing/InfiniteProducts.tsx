@@ -61,7 +61,15 @@ const InfiniteProducts = () => {
       </div>
       <div ref={sentinelRef} className="h-10" />
       <Button
-        onClick={() => document.getElementById("site-footer")?.scrollIntoView({ behavior: "smooth" })}
+        onClick={() => {
+          const footer = document.getElementById("site-footer");
+          footer?.scrollIntoView({ behavior: "smooth" });
+          if (footer) {
+            footer.classList.add("ring-2","ring-primary/50","ring-offset-2","ring-offset-background","animate-pulse");
+            setTimeout(() => footer.classList.remove("animate-pulse"), 1200);
+            setTimeout(() => footer.classList.remove("ring-2","ring-primary/50","ring-offset-2","ring-offset-background"), 1600);
+          }
+        }}
         className="fixed bottom-6 right-6 z-50 pill bg-background/90 px-4 py-2 shadow-elevate backdrop-blur"
         variant="secondary"
       >
