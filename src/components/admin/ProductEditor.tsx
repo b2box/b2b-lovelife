@@ -57,6 +57,7 @@ export type AdminVariant = {
   cbm_per_carton: number | null;
   has_battery: boolean;
   is_clothing: boolean;
+  attributes?: any;
 };
 
 export type VariantPriceTier = {
@@ -177,7 +178,10 @@ const [tagsText, setTagsText] = useState<string>("");
     // Load agents, categories, tags and translations when opening
     if (!open) return;
     (async () => {
-      const { data: profs } = await (supabase as any).from('profiles').select('id, display_name').limit(50);
+      const { data: profs } = await supabase
+        .from('profiles')
+        .select('id, display_name')
+        .or('display_name.ilike.kerwin%,display_name.ilike.jessica%,display_name.ilike.gabriel%');
       setProfiles(profs || []);
 const { data: cats } = await supabase.from('categories').select('id,name,parent_id').order('name');
 setCategories((cats || []) as any);
@@ -724,6 +728,7 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
           cbm_per_carton: v.cbm_per_carton,
           has_battery: v.has_battery,
           is_clothing: v.is_clothing,
+          attributes: v.attributes,
         })
         .eq("id", v.id);
       if (error) throw error;
@@ -736,6 +741,14 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
       setSaving(false);
     }
   };
+
+  const attrs: any = v.attributes ?? {};
+  const pkg = attrs.packaging ?? { packed: true, cny_price: 0, required: false };
+  const ensureMarkets = (m?: any) => ({
+    AR: Array.from({ length: 3 }, (_, i) => (m?.AR?.[i] ?? { percent: 0, price: 0 })),
+    COL: Array.from({ length: 3 }, (_, i) => (m?.COL?.[i] ?? { percent: 0, price: 0 })),
+  });
+  const markets = ensureMarkets(attrs.markets);
 
   return (
     <Card className="p-4 space-y-4">
@@ -759,85 +772,205 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-8 gap-3">
-        <div>
-          <Label>Largo (cm)</Label>
-          <Input type="number" value={v.length_cm ?? 0} onChange={(e) => setV({ ...v, length_cm: Number(e.target.value) })} />
-        </div>
-        <div>
-          <Label>Ancho (cm)</Label>
-          <Input type="number" value={v.width_cm ?? 0} onChange={(e) => setV({ ...v, width_cm: Number(e.target.value) })} />
-        </div>
-        <div>
-          <Label>Alto (cm)</Label>
-          <Input type="number" value={v.height_cm ?? 0} onChange={(e) => setV({ ...v, height_cm: Number(e.target.value) })} />
-        </div>
-        <div>
-          <Label>Peso (kg)</Label>
-          <Input type="number" value={v.weight_kg ?? 0} onChange={(e) => setV({ ...v, weight_kg: Number(e.target.value) })} />
-        </div>
-        <div>
-          <Label>Caja L (cm)</Label>
-          <Input type="number" value={v.box_length_cm ?? 0} onChange={(e) => setV({ ...v, box_length_cm: Number(e.target.value) })} />
-        </div>
-        <div>
-          <Label>Caja A (cm)</Label>
-          <Input type="number" value={v.box_width_cm ?? 0} onChange={(e) => setV({ ...v, box_width_cm: Number(e.target.value) })} />
-        </div>
-        <div>
-          <Label>Caja H (cm)</Label>
-          <Input type="number" value={v.box_height_cm ?? 0} onChange={(e) => setV({ ...v, box_height_cm: Number(e.target.value) })} />
-        </div>
-        <div>
-          <Label>Caja Peso (kg)</Label>
-          <Input type="number" value={v.box_weight_kg ?? 0} onChange={(e) => setV({ ...v, box_weight_kg: Number(e.target.value) })} />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div>
-          <Label>PCS/CTN</Label>
-          <Input type="number" value={v.pcs_per_carton ?? 0} onChange={(e) => setV({ ...v, pcs_per_carton: Number(e.target.value) })} />
-        </div>
-        <div>
-          <Label>CBM/CTN</Label>
-          <Input type="number" value={v.cbm_per_carton ?? 0} onChange={(e) => setV({ ...v, cbm_per_carton: Number(e.target.value) })} />
-        </div>
-        <div>
-          <Label>Moneda</Label>
-          <Input value={v.currency} onChange={(e) => setV({ ...v, currency: e.target.value })} />
-        </div>
-        <div>
-          <Label>Precio base</Label>
-          <Input type="number" value={v.price ?? 0} onChange={(e) => setV({ ...v, price: Number(e.target.value) })} />
+      {/* Sección 1: Dimensiones */}
+      <div>
+        <h4 className="font-medium mb-2">Dimensiones</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card className="p-3">
+            <h5 className="text-sm font-medium mb-2">Producto</h5>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div>
+                <Label>Largo (cm)</Label>
+                <Input type="number" value={v.length_cm ?? 0} onChange={(e) => setV({ ...v, length_cm: Number(e.target.value) })} />
+              </div>
+              <div>
+                <Label>Ancho (cm)</Label>
+                <Input type="number" value={v.width_cm ?? 0} onChange={(e) => setV({ ...v, width_cm: Number(e.target.value) })} />
+              </div>
+              <div>
+                <Label>Alto (cm)</Label>
+                <Input type="number" value={v.height_cm ?? 0} onChange={(e) => setV({ ...v, height_cm: Number(e.target.value) })} />
+              </div>
+              <div>
+                <Label>Peso (kg)</Label>
+                <Input type="number" value={v.weight_kg ?? 0} onChange={(e) => setV({ ...v, weight_kg: Number(e.target.value) })} />
+              </div>
+            </div>
+          </Card>
+          <Card className="p-3">
+            <h5 className="text-sm font-medium mb-2">Caja</h5>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div>
+                <Label>Caja L (cm)</Label>
+                <Input type="number" value={v.box_length_cm ?? 0} onChange={(e) => setV({ ...v, box_length_cm: Number(e.target.value) })} />
+              </div>
+              <div>
+                <Label>Caja A (cm)</Label>
+                <Input type="number" value={v.box_width_cm ?? 0} onChange={(e) => setV({ ...v, box_width_cm: Number(e.target.value) })} />
+              </div>
+              <div>
+                <Label>Caja H (cm)</Label>
+                <Input type="number" value={v.box_height_cm ?? 0} onChange={(e) => setV({ ...v, box_height_cm: Number(e.target.value) })} />
+              </div>
+              <div>
+                <Label>Caja Peso (kg)</Label>
+                <Input type="number" value={v.box_weight_kg ?? 0} onChange={(e) => setV({ ...v, box_weight_kg: Number(e.target.value) })} />
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div>
-          <Label>Batería</Label>
-          <Button variant={v.has_battery ? "default" : "secondary"} onClick={() => setV({ ...v, has_battery: !v.has_battery })}>
-            {v.has_battery ? "Sí" : "No"}
-          </Button>
+      {/* Sección 2: Packaging */}
+      <Card className="p-3">
+        <h4 className="font-medium mb-2">Packaging</h4>
+        <div className="flex items-center justify-between mb-3">
+          <Label>Empaque incluido</Label>
+          <Switch
+            checked={!!pkg.packed}
+            onCheckedChange={(val) => {
+              const next = { ...attrs, packaging: { ...pkg, packed: !!val } };
+              setV({ ...v, attributes: next });
+            }}
+          />
         </div>
-        <div>
-          <Label>Ropa</Label>
-          <Button variant={v.is_clothing ? "default" : "secondary"} onClick={() => setV({ ...v, is_clothing: !v.is_clothing })}>
-            {v.is_clothing ? "Sí" : "No"}
-          </Button>
+        {!pkg.packed && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div>
+              <Label>Precio empaque (CNY)</Label>
+              <Input
+                type="number"
+                value={pkg.cny_price ?? 0}
+                onChange={(e) => {
+                  const next = { ...attrs, packaging: { ...pkg, cny_price: Number(e.target.value) } };
+                  setV({ ...v, attributes: next });
+                }}
+              />
+            </div>
+            <div className="flex items-end">
+              <label className="flex items-center justify-between w-full">
+                <span>Requerido</span>
+                <Switch
+                  checked={!!pkg.required}
+                  onCheckedChange={(val) => {
+                    const next = { ...attrs, packaging: { ...pkg, required: !!val } };
+                    setV({ ...v, attributes: next });
+                  }}
+                />
+              </label>
+            </div>
+          </div>
+        )}
+      </Card>
+
+      {/* Sección 3: Extras */}
+      <Card className="p-3">
+        <h4 className="font-medium mb-2">Extras</h4>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div>
+            <Label>Batería</Label>
+            <Button variant={v.has_battery ? "default" : "secondary"} onClick={() => setV({ ...v, has_battery: !v.has_battery })}>
+              {v.has_battery ? "Sí" : "No"}
+            </Button>
+          </div>
+          <div>
+            <Label>Ropa</Label>
+            <Button variant={v.is_clothing ? "default" : "secondary"} onClick={() => setV({ ...v, is_clothing: !v.is_clothing })}>
+              {v.is_clothing ? "Sí" : "No"}
+            </Button>
+          </div>
+          <div>
+            <Label>Stock</Label>
+            <Input type="number" value={v.stock} onChange={(e) => setV({ ...v, stock: Number(e.target.value) })} />
+          </div>
         </div>
-        <div>
-          <Label>Stock</Label>
-          <Input type="number" value={v.stock} onChange={(e) => setV({ ...v, stock: Number(e.target.value) })} />
+      </Card>
+
+      {/* Sección 4: Packaging atributos */}
+      <Card className="p-3">
+        <h4 className="font-medium mb-2">Atributos de Packaging</h4>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div>
+            <Label>PCS/CTN</Label>
+            <Input type="number" value={v.pcs_per_carton ?? 0} onChange={(e) => setV({ ...v, pcs_per_carton: Number(e.target.value) })} />
+          </div>
+          <div>
+            <Label>CBM/CTN</Label>
+            <Input type="number" value={v.cbm_per_carton ?? 0} onChange={(e) => setV({ ...v, cbm_per_carton: Number(e.target.value) })} />
+          </div>
         </div>
-      </div>
+      </Card>
+
+      {/* Sección 5: Supplier tiers */}
+      <Card className="p-3">
+        <h4 className="font-medium mb-2">Proveedor (3 tiers)</h4>
+        <VariantTiers variantId={v.id} />
+      </Card>
+
+      {/* Sección 6: Precio por mercado (AR, COL) */}
+      <Card className="p-3">
+        <h4 className="font-medium mb-2">Precio por mercado</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {(["AR", "COL"] as const).map((mk) => (
+            <Card key={mk} className="p-3">
+              <h5 className="text-sm font-medium mb-2">{mk}</h5>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {markets[mk].map((t, i) => (
+                  <div key={i} className="space-y-2">
+                    <div className="text-xs text-muted-foreground">Tier {i + 1}</div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <Label>% incremento</Label>
+                        <Input
+                          type="number"
+                          value={t.percent}
+                          onChange={(e) => {
+                            const next = ensureMarkets(v.attributes?.markets);
+                            next[mk][i].percent = Number(e.target.value);
+                            setV({ ...v, attributes: { ...attrs, markets: next } });
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <Label>Precio</Label>
+                        <Input
+                          type="number"
+                          value={t.price}
+                          onChange={(e) => {
+                            const next = ensureMarkets(v.attributes?.markets);
+                            next[mk][i].price = Number(e.target.value);
+                            setV({ ...v, attributes: { ...attrs, markets: next } });
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          ))}
+        </div>
+      </Card>
+
+      {/* Sección 7: Media */}
+      <Card className="p-3">
+        <h4 className="font-medium mb-2">Media</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+          <div>
+            <Label>URL de video</Label>
+            <Input
+              placeholder="https://…"
+              value={attrs.video_url ?? ""}
+              onChange={(e) => setV({ ...v, attributes: { ...attrs, video_url: e.target.value } })}
+            />
+          </div>
+        </div>
+        <VariantImages variantId={v.id} />
+      </Card>
 
       <div className="flex justify-end gap-2">
         <Button onClick={save} disabled={saving}>{saving ? "Guardando…" : "Guardar Variante"}</Button>
       </div>
-
-      <VariantTiers variantId={v.id} />
-      <VariantImages variantId={v.id} />
     </Card>
   );
 };
@@ -866,9 +999,13 @@ const VariantTiers: React.FC<{ variantId: string }> = ({ variantId }) => {
   useEffect(() => { load(); }, [variantId]);
 
   const addRow = async () => {
+    if (rows.length >= 3) {
+      toast({ title: "Límite alcanzado", description: "Solo 3 tiers de proveedor.", variant: "default" });
+      return;
+    }
     const { data, error } = await (supabase as any)
       .from("variant_price_tiers")
-      .insert({ product_variant_id: variantId, tier: 'inicial', min_qty: 1, currency: 'USD', unit_price: 0 })
+      .insert({ product_variant_id: variantId, tier: 'tier', min_qty: 1, currency: 'CNY', unit_price: 0 })
       .select("*")
       .maybeSingle();
     if (error) {
@@ -903,7 +1040,7 @@ const VariantTiers: React.FC<{ variantId: string }> = ({ variantId }) => {
   return (
     <div className="space-y-2">
       <div className="flex justify-between items-center">
-        <h4 className="font-medium">Precios por tiers</h4>
+        <h4 className="font-medium">Precios proveedor (CNY)</h4>
         <Button size="sm" variant="outline" onClick={addRow}>Agregar tier</Button>
       </div>
       {loading && <p>Cargando precios…</p>}
