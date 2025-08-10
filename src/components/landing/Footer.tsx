@@ -3,38 +3,82 @@ import { Facebook, Instagram, Linkedin, Youtube } from "lucide-react";
 const Footer = () => {
   return (
     <footer id="site-footer" className="mt-16 bg-background">
-      <div className="container mx-auto grid gap-8 py-12 md:grid-cols-4">
+      <div className="container mx-auto grid gap-8 py-12 md:grid-cols-5">
         <div>
-          <div className="mb-3 flex items-center gap-2">
-            <div className="h-8 w-8 rounded-md bg-gradient-primary" />
-            <span className="text-xl font-bold">B2BOX</span>
+          <div className="mb-3">
+            <img
+              src="/lovable-uploads/2aff48ef-50fd-47c3-9885-87de596ab734.png"
+              alt="Logo B2BOX"
+              className="h-10 w-auto md:h-12"
+              loading="lazy"
+            />
           </div>
-          <p className="text-sm text-muted-foreground">
-            Productos virales al por mayor. Compra desde China como si compraras localmente.
+          <p className="mt-4 text-base font-semibold">Productos Virales al por Mayor</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Compra desde China como si compraras localmente.
           </p>
         </div>
+
         <div>
           <h3 className="mb-3 text-sm font-semibold">Para tu negocio</h3>
-          <ul className="space-y-2 text-sm text-muted-foreground">
-            <li><a href="#brands" className="hover:text-foreground">Brands</a></li>
-            <li><a href="#trends" className="hover:text-foreground">Trends</a></li>
-            <li><a href="#academy" className="hover:text-foreground">Academy</a></li>
-          </ul>
+          <div className="flex flex-col gap-3">
+            <a href="#brands" aria-label="B2BOX Brands">
+              <img
+                src="/lovable-uploads/5a1d0f95-e676-471f-9aab-89aac7f82c18.png"
+                alt="B2BOX Brands"
+                className="h-9 w-auto hover-scale"
+                loading="lazy"
+              />
+            </a>
+            <a href="#trends" aria-label="B2BOX Trends">
+              <img
+                src="/lovable-uploads/21382621-126b-47f0-b6bd-c776ea5ff0aa.png"
+                alt="B2BOX Trends"
+                className="h-9 w-auto hover-scale"
+                loading="lazy"
+              />
+            </a>
+            <a href="#academy" aria-label="B2BOX Academy">
+              <img
+                src="/lovable-uploads/40992dee-8dd3-4691-86b1-75ba530085f6.png"
+                alt="B2BOX Academy"
+                className="h-9 w-auto hover-scale"
+                loading="lazy"
+              />
+            </a>
+          </div>
         </div>
+
         <div>
           <h3 className="mb-3 text-sm font-semibold">Comprar</h3>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li><a href="#como" className="hover:text-foreground">¿Cómo comprar?</a></li>
-            <li><a href="#envios" className="hover:text-foreground">Precios y envíos</a></li>
-            <li><a href="#faq" className="hover:text-foreground">Preguntas frecuentes</a></li>
+            <li><a href="#como" className="story-link hover:text-foreground">¿Cómo comprar?</a></li>
+            <li><a href="#productos" className="story-link hover:text-foreground">Nuestros productos</a></li>
+            <li><a href="#envios" className="story-link hover:text-foreground">Precios y envíos</a></li>
+            <li><a href="#pagos" className="story-link hover:text-foreground">Métodos de pago</a></li>
+            <li><a href="#faq" className="story-link hover:text-foreground">Preguntas frecuentes</a></li>
           </ul>
         </div>
+
+        <div>
+          <h3 className="mb-3 text-sm font-semibold">Nosotros</h3>
+          <ul className="space-y-2 text-sm text-muted-foreground">
+            <li><a href="#registro" className="story-link hover:text-foreground">Regístrate en B2BOX</a></li>
+            <li><a href="#partners" className="story-link hover:text-foreground">Partners</a></li>
+            <li><a href="#group" className="story-link hover:text-foreground">B2BOX Group</a></li>
+            <li><a href="#eventos" className="story-link hover:text-foreground">Eventos</a></li>
+            <li><a href="#contacto" className="story-link hover:text-foreground">Contacto</a></li>
+          </ul>
+        </div>
+
         <div>
           <h3 className="mb-3 text-sm font-semibold">Legal</h3>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li><a href="#tyc" className="hover:text-foreground">Términos y condiciones</a></li>
-            <li><a href="#priv" className="hover:text-foreground">Política de privacidad</a></li>
-            <li><a href="#devol" className="hover:text-foreground">Política de devoluciones</a></li>
+            <li><a href="#tyc" className="story-link hover:text-foreground">Términos y condiciones</a></li>
+            <li><a href="#priv" className="story-link hover:text-foreground">Política de privacidad</a></li>
+            <li><a href="#devol" className="story-link hover:text-foreground">Política de devoluciones</a></li>
+            <li><a href="#metodos-aceptados" className="story-link hover:text-foreground">Métodos de pago aceptados</a></li>
+            <li><a href="#certificaciones" className="story-link hover:text-foreground">Certificaciones de seguridad</a></li>
           </ul>
         </div>
       </div>
