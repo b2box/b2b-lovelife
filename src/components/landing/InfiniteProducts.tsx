@@ -6,7 +6,7 @@ import { categories } from "./data";
 import { ArrowUp } from "lucide-react";
 
 const AD_EYE = "/lovable-uploads/fa842b26-b9f1-4176-9073-6128c3c08fbc.png";
-const AD_VIRAL = "/lovable-uploads/afc4e94f-2af3-46e7-9495-9d0699b28aaa.png";
+const AD_VIRAL = "/lovable-uploads/025482cb-8da6-4438-85e8-ec4fe0abf877.png";
 
 const PAGE_SIZE = 20;
 
