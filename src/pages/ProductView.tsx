@@ -5,7 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { categories } from "@/components/landing/data";
 import type { Product } from "@/components/landing/ProductCard";
 import { ArrowUpRight, Truck, Pencil, BadgeDollarSign, CheckCircle2 } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const findProductById = (id?: string): Product | undefined => {
   if (!id) return undefined;
@@ -166,23 +166,40 @@ const ProductView = () => {
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {/* Galería */}
-          <section className="md:col-span-1 lg:col-span-2 rounded-2xl bg-card shadow-elevate p-3 md:p-4">
-            <div className="relative overflow-hidden rounded-xl bg-muted aspect-[4/3] md:aspect-[5/4]">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="absolute inset-0 h-full w-full object-cover"
-                loading="lazy"
-              />
-              {/* Badge viral placeholder si existe */}
-              {product.viral && (
+          <section className="md:col-span-1 lg:col-span-2 rounded-[28px] bg-card shadow-elevate p-3 md:p-4">
+            <div className="space-y-3">
+              <div className="relative overflow-hidden rounded-[28px] bg-muted aspect-[5/4]">
                 <img
-                  src="/lovable-uploads/984b614e-1f6b-484a-8b88-5c741374625b.png"
-                  alt="Viral ahora"
-                  className="absolute left-3 top-3 h-8 w-auto select-none"
+                  src={product.image}
+                  alt={product.name}
+                  className="absolute inset-0 h-full w-full object-cover"
                   loading="lazy"
                 />
-              )}
+                {/* Viral badge */}
+                {product.viral && (
+                  <img
+                    src="/lovable-uploads/984b614e-1f6b-484a-8b88-5c741374625b.png"
+                    alt="Viral ahora"
+                    className="absolute left-3 top-3 h-8 w-auto select-none"
+                    loading="lazy"
+                  />
+                )}
+                {/* Contador y flecha */}
+                <span className="absolute top-3 right-3 rounded-full bg-black/50 text-white text-xs px-2 py-1">1 de 9</span>
+                <button className="absolute right-3 top-1/2 -translate-y-1/2 grid size-10 place-items-center rounded-full bg-black/40 text-white hover:bg-black/60" aria-label="Siguiente imagen">›</button>
+              </div>
+
+              {/* Thumbnails */}
+              <div className="flex items-center gap-3">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="relative h-16 w-16 md:h-18 md:w-18 overflow-hidden rounded-xl ring-1 ring-border bg-muted">
+                    <img src={product.image} alt={`${product.name} miniatura ${i + 1}`} className="h-full w-full object-cover" loading="lazy" />
+                    {i === 4 && (
+                      <div className="absolute inset-0 grid place-items-center bg-black/40 text-white text-sm font-medium">+4</div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           </section>
 
@@ -193,43 +210,41 @@ const ProductView = () => {
             </header>
 
             {/* Barra de precios por tiers (placeholder 1:1 estructura) */}
-            <article className="rounded-2xl bg-card text-card-foreground border shadow-elevate overflow-hidden">
-              <div className="grid grid-cols-3">
-                {/* Inicial */}
-                <div className="p-4 md:p-5 text-center">
-                  <div className="text-muted-foreground text-sm">Inicial</div>
-                  <div className="text-2xl font-bold">$35</div>
-                  <div className="text-xs text-muted-foreground mt-1">50 - 499 unidades</div>
-                </div>
-                {/* Mayorista destacado */}
-                <div className="relative p-4 md:p-5 text-center bg-primary/5">
-                  <div className="absolute inset-x-4 -top-3 mx-auto w-max rounded-full bg-primary text-primary-foreground text-xs px-3 py-1 shadow-elevate">
-                    Recomendado
+            <article className="rounded-[28px] bg-card text-card-foreground border shadow-elevate overflow-hidden">
+              <div className="px-4 pt-4">
+                <div className="grid grid-cols-3 gap-2 bg-muted rounded-full p-1">
+                  {/* Inicial */}
+                  <div className="rounded-[18px] px-4 py-4 text-center text-muted-foreground">
+                    <div className="text-sm">Inicial</div>
+                    <div className="text-2xl font-bold opacity-60">$35</div>
+                    <div className="text-xs opacity-70">50 - 499 unidades</div>
                   </div>
-                  <div className="text-muted-foreground text-sm mt-2">Mayorista</div>
-                  <div className="text-2xl font-bold">$300</div>
-                  <div className="text-xs text-muted-foreground mt-1">500 - 1250 unidades</div>
-                </div>
-                {/* Distribuidor */}
-                <div className="p-4 md:p-5 text-center opacity-70">
-                  <div className="text-muted-foreground text-sm">Distribuidor</div>
-                  <div className="text-2xl font-bold">$725</div>
-                  <div className="text-xs text-muted-foreground mt-1">+1250 unidades</div>
+                  {/* Mayorista destacado */}
+                  <div className="relative rounded-[18px] bg-background px-4 py-4 text-center shadow-sm">
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-foreground text-background text-xs px-3 py-1 shadow-elevate">Recomendado</span>
+                    <div className="text-muted-foreground text-sm mt-1">Mayorista</div>
+                    <div className="text-3xl font-bold">$300</div>
+                    <div className="text-xs text-muted-foreground">500 - 1250 unidades</div>
+                  </div>
+                  {/* Distribuidor */}
+                  <div className="rounded-[18px] px-4 py-4 text-center text-muted-foreground">
+                    <div className="text-sm">Distribuidor</div>
+                    <div className="text-2xl font-bold opacity-60">$725</div>
+                    <div className="text-xs opacity-70">+1250 unidades</div>
+                  </div>
                 </div>
               </div>
 
               {/* Faja inferior: tendencia + Trends con flecha */}
-              <div className="flex items-center justify-between gap-3 bg-secondary/40 px-4 py-3">
-                <div className="text-sm">
-                  <span className="text-muted-foreground">Producto en tendencia en</span>{" "}
-                  <strong className="text-foreground">Mercado Libre</strong>
+              <div className="flex items-center justify-between gap-3 px-4 py-3 bg-yellow-300/90">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <span>Producto en tendencia en</span>
+                  <span className="rounded bg-yellow-200 px-2 py-0.5">mercado libre</span>
                 </div>
-                <button
-                  className="inline-flex items-center gap-2 rounded-full border border-white/60 px-3 py-2 text-sm hover:bg-white/10"
-                  aria-label="Ver más en Trends"
-                >
-                  <span>Ver más en Trends</span>
-                  <span className="grid size-8 place-items-center rounded-full border border-white/70 text-white/90 hover:bg-white/10">
+                <button className="inline-flex items-center gap-2 text-sm font-medium" aria-label="Ver más en Trends">
+                  <span>Ver más en</span>
+                  <span className="rounded bg-orange-200 px-2 py-0.5">TRENDS</span>
+                  <span className="grid size-8 place-items-center rounded-full border border-black/30 text-black/70 bg-white/70 hover:bg-white">
                     <ArrowUpRight />
                   </span>
                 </button>
