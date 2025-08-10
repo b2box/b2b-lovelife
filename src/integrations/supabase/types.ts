@@ -155,6 +155,77 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_price_tiers: {
+        Row: {
+          created_at: string
+          profile_id: string
+          tier: Database["public"]["Enums"]["price_tier_name"]
+        }
+        Insert: {
+          created_at?: string
+          profile_id: string
+          tier: Database["public"]["Enums"]["price_tier_name"]
+        }
+        Update: {
+          created_at?: string
+          profile_id?: string
+          tier?: Database["public"]["Enums"]["price_tier_name"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_price_tiers_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_movements: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          note: string | null
+          product_variant_id: string
+          quantity: number
+          reason: Database["public"]["Enums"]["inventory_reason"]
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          product_variant_id: string
+          quantity: number
+          reason?: Database["public"]["Enums"]["inventory_reason"]
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          product_variant_id?: string
+          quantity?: number
+          reason?: Database["public"]["Enums"]["inventory_reason"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_movements_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_product_variant_id_fkey"
+            columns: ["product_variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_items: {
         Row: {
           created_at: string
@@ -464,6 +535,105 @@ export type Database = {
         }
         Relationships: []
       }
+      promotion_categories: {
+        Row: {
+          category_id: string
+          promotion_id: string
+        }
+        Insert: {
+          category_id: string
+          promotion_id: string
+        }
+        Update: {
+          category_id?: string
+          promotion_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promotion_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "promotion_categories_promotion_id_fkey"
+            columns: ["promotion_id"]
+            isOneToOne: false
+            referencedRelation: "promotions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      promotion_products: {
+        Row: {
+          product_id: string
+          promotion_id: string
+        }
+        Insert: {
+          product_id: string
+          promotion_id: string
+        }
+        Update: {
+          product_id?: string
+          promotion_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promotion_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "promotion_products_promotion_id_fkey"
+            columns: ["promotion_id"]
+            isOneToOne: false
+            referencedRelation: "promotions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      promotions: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string | null
+          ends_at: string | null
+          id: string
+          name: string
+          starts_at: string | null
+          type: Database["public"]["Enums"]["discount_type"]
+          updated_at: string
+          value: number
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          name: string
+          starts_at?: string | null
+          type: Database["public"]["Enums"]["discount_type"]
+          updated_at?: string
+          value: number
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          name?: string
+          starts_at?: string | null
+          type?: Database["public"]["Enums"]["discount_type"]
+          updated_at?: string
+          value?: number
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -499,6 +669,8 @@ export type Database = {
       address_type: "shipping" | "billing"
       app_role: "admin" | "user"
       cart_status: "active" | "abandoned" | "converted"
+      discount_type: "percentage" | "fixed"
+      inventory_reason: "adjustment" | "purchase" | "sale" | "return"
       order_status: "pending" | "paid" | "fulfilled" | "cancelled" | "refunded"
       price_tier_name: "inicial" | "mayorista" | "distribuidor"
     }
@@ -631,6 +803,8 @@ export const Constants = {
       address_type: ["shipping", "billing"],
       app_role: ["admin", "user"],
       cart_status: ["active", "abandoned", "converted"],
+      discount_type: ["percentage", "fixed"],
+      inventory_reason: ["adjustment", "purchase", "sale", "return"],
       order_status: ["pending", "paid", "fulfilled", "cancelled", "refunded"],
       price_tier_name: ["inicial", "mayorista", "distribuidor"],
     },
