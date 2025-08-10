@@ -24,7 +24,8 @@ const products: Product[] = [
       { qty: "50u", price: "$8.70" },
       { qty: "100u", price: "$7.95" },
     ],
-    className: "right-8 top-2 size-28 md:size-36",
+    // más espacio entre burbujas
+    className: "right-6 top-4 size-28 md:size-36",
     delay: "0s",
   },
   {
@@ -36,7 +37,7 @@ const products: Product[] = [
       { qty: "50u", price: "$12.90" },
       { qty: "100u", price: "$11.80" },
     ],
-    className: "right-20 top-20 size-36 md:size-44",
+    className: "right-28 top-8 size-40 md:size-48",
     delay: "0.6s",
   },
   {
@@ -48,7 +49,7 @@ const products: Product[] = [
       { qty: "50u", price: "$3.60" },
       { qty: "100u", price: "$3.20" },
     ],
-    className: "right-40 top-24 size-20 md:size-24",
+    className: "right-56 top-24 size-20 md:size-24",
     delay: "0.2s",
   },
   {
@@ -60,7 +61,7 @@ const products: Product[] = [
       { qty: "50u", price: "$5.90" },
       { qty: "100u", price: "$5.40" },
     ],
-    className: "right-28 bottom-4 size-16 md:size-20",
+    className: "right-40 bottom-2 size-16 md:size-20",
     delay: "1s",
   },
   {
@@ -72,7 +73,7 @@ const products: Product[] = [
       { qty: "50u", price: "$2.90" },
       { qty: "100u", price: "$2.60" },
     ],
-    className: "right-4 top-16 size-16 md:size-20",
+    className: "right-10 top-20 size-16 md:size-20",
     delay: "0.3s",
   },
 ];
@@ -82,7 +83,7 @@ const bubbleBase =
 
 const FloatingProducts: React.FC = () => {
   return (
-    <div className="relative h-64" aria-label="Productos destacados flotantes">
+    <div className="relative h-72 md:h-80" aria-label="Productos destacados flotantes">
       {products.map((p) => (
         <div
           key={p.id}
@@ -100,7 +101,7 @@ const FloatingProducts: React.FC = () => {
           {/* Hover price card */}
           <div className="pointer-events-none absolute z-10 -top-2 left-1/2 -translate-x-1/2 -translate-y-full opacity-0 group-hover:opacity-100 group-hover:translate-y-[-0.25rem] transition-all duration-200">
             <div className="rounded-xl bg-popover text-popover-foreground border border-border shadow-elevate px-3 py-2 min-w-[160px] animate-fade-in">
-              <p className="text-xs font-semibold line-clamp-1">{p.name}</p>
+              <p className="text-[11px] font-semibold line-clamp-1">{p.name}</p>
               <ul className="mt-1 text-[10px] md:text-xs space-y-1">
                 {p.prices.map((pr, idx) => (
                   <li key={idx} className="flex items-center justify-between">
@@ -119,7 +120,7 @@ const FloatingProducts: React.FC = () => {
         {`
           @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-14px); }
           }
         `}
       </style>
