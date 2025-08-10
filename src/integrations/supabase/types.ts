@@ -652,6 +652,44 @@ export type Database = {
         }
         Relationships: []
       }
+      variant_price_tiers: {
+        Row: {
+          created_at: string
+          currency: string
+          id: string
+          min_qty: number
+          product_variant_id: string
+          tier: Database["public"]["Enums"]["price_tier_name"]
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          id?: string
+          min_qty?: number
+          product_variant_id: string
+          tier: Database["public"]["Enums"]["price_tier_name"]
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          id?: string
+          min_qty?: number
+          product_variant_id?: string
+          tier?: Database["public"]["Enums"]["price_tier_name"]
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_vpt_variant"
+            columns: ["product_variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

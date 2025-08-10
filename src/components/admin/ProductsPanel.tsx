@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
+import ProductEditor from "./ProductEditor";
 
 type Product = {
   id: string;
@@ -32,6 +33,8 @@ async function toggleActive(id: string, active: boolean) {
 const ProductsPanel: React.FC = () => {
   const { toast } = useToast();
   const qc = useQueryClient();
+  const [editorOpen, setEditorOpen] = React.useState(false);
+  const [selected, setSelected] = React.useState<Product | null>(null);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin", "products"],
@@ -58,7 +61,10 @@ const ProductsPanel: React.FC = () => {
 
   return (
     <Card className="p-4 md:p-6">
-      <h2 className="text-xl font-semibold mb-4">Productos</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold">Productos</h2>
+        <Button size="sm" onClick={() => { setSelected(null); setEditorOpen(true); }}>Nuevo</Button>
+      </div>
       {isLoading && <p>Cargando…</p>}
       {error && <p className="text-destructive">Error al cargar productos.</p>}
       {!isLoading && data && (
