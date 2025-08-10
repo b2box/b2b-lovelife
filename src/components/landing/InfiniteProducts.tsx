@@ -13,10 +13,14 @@ const PAGE_SIZE = 20;
 
 const InfiniteProducts = ({ publicMode = false }: { publicMode?: boolean }) => {
   const navigate = useNavigate();
-  const base = categories[Object.keys(categories)[0]]; // usar "Principales productos"
+  const categoryKeys = Object.keys(categories);
+  const [category, setCategory] = useState<string>(categoryKeys[0]);
+  const base = useMemo(() => categories[category] ?? [], [category]);
   const [page, setPage] = useState(1);
   const [items, setItems] = useState<Product[]>(() =>
-    publicMode ? [...makePage(base, 0), ...makePage(base, 1)] : makePage(base, 0)
+    publicMode
+      ? [...makePage(categories[categoryKeys[0]], 0), ...makePage(categories[categoryKeys[0]], 1)]
+      : makePage(categories[categoryKeys[0]], 0)
   );
   const [stopped, setStopped] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -40,6 +44,12 @@ const InfiniteProducts = ({ publicMode = false }: { publicMode?: boolean }) => {
   useEffect(() => {
     stoppedRef.current = stopped;
   }, [stopped]);
+
+  // Reset when category or mode changes
+  useEffect(() => {
+    setPage(1);
+    setItems(publicMode ? [...makePage(base, 0), ...makePage(base, 1)] : makePage(base, 0));
+  }, [category, base, publicMode]);
 
   useEffect(() => {
     if (page <= 1) return;
@@ -66,7 +76,22 @@ const InfiniteProducts = ({ publicMode = false }: { publicMode?: boolean }) => {
         const nodes = publicMode ? itemsWithAds.slice(0, 30) : itemsWithAds;
         return (
           <>
-            <div className={"grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-6 " + (publicMode ? "opacity-60 select-none pointer-events-none" : "") }>
+            <nav className="mb-4 flex items-center gap-2 overflow-x-auto py-1" aria-label="Filtros de categorías">
+              {categoryKeys.map((key) => (
+                <Button
+                  key={key}
+                  onClick={() => setCategory(key)}
+                  variant={key === category ? "default" : "outline"}
+                  className="rounded-full h-9 px-4 whitespace-nowrap"
+                >
+                  {key}
+                </Button>
+              ))}
+            </nav>
+            <div
+              className={"grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-6 " + (publicMode ? "select-none pointer-events-none" : "") }
+              style={publicMode ? { WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 55%, rgba(0,0,0,0.05) 80%, rgba(0,0,0,0) 100%)', maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 55%, rgba(0,0,0,0.05) 80%, rgba(0,0,0,0) 100%)' } : undefined}
+            >
               {nodes.map((node, i) =>
                 node.kind === "product" ? (
                   <ProductCard key={node.data.id + i} product={node.data} />
@@ -79,7 +104,7 @@ const InfiniteProducts = ({ publicMode = false }: { publicMode?: boolean }) => {
 
             {publicMode && (
               <>
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent via-background/80 to-background" />
                 <div className="absolute left-1/2 -translate-x-1/2 bottom-10 z-10">
                   <Button
                     onClick={() => navigate("/auth")}
