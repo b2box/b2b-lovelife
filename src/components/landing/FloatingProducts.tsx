@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 // Simple floating product bubbles with hover price atoms around the circle
 // Images use existing project assets
 
-type WatchItem = { id: string; image: string; name: string };
+type WatchItem = { id: string; image: string; name: string; price: number };
 
 const sources = [
   "/lovable-uploads/83d31804-342f-45bb-ad07-50bdf9aeb177.png",
@@ -15,11 +15,13 @@ const sources = [
 
 const COLS = 7;
 const ROWS = 4;
+const BASE_PRICES = [12.99, 18.99, 24.99, 29.99];
 
 const items: WatchItem[] = Array.from({ length: ROWS * COLS }, (_, i) => ({
   id: `w-${i}`,
   name: "Producto destacado",
   image: sources[i % sources.length],
+  price: Math.round((BASE_PRICES[i % BASE_PRICES.length] + (i % 3) * 2) * 100) / 100,
 }));
 
 const itemBase =
@@ -50,7 +52,7 @@ const FloatingProducts: React.FC = () => {
 
   useEffect(() => {
     if (hoverManual) return;
-    const id = setInterval(() => setAutoIndex((i) => (i + 1) % path.length), 900);
+    const id = setInterval(() => setAutoIndex((i) => (i + 1) % path.length), 480);
     return () => clearInterval(id);
   }, [hoverManual, path.length]);
 
@@ -78,7 +80,7 @@ const FloatingProducts: React.FC = () => {
     return {
       transform: `translate(${tx}px, ${ty}px) scale(${scale})`,
       zIndex: Math.round(scale * 10),
-      transition: "transform 220ms cubic-bezier(0.4,0,0.2,1)",
+      transition: "transform 360ms cubic-bezier(0.4,0,0.2,1)",
     } as React.CSSProperties;
   };
 
@@ -113,6 +115,11 @@ const FloatingProducts: React.FC = () => {
                     decoding="async"
                     className="w-full h-full object-cover select-none"
                   />
+                  {active.r === r && active.c === idx && (
+                    <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-brand-green text-foreground text-[10px] md:text-xs font-semibold px-2 py-1 rounded-full shadow-elevate-green border border-border animate-fade-in">
+                      {`$${it.price.toFixed(2)}`}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
