@@ -34,8 +34,8 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Search (solo app) */}
-        {isApp && (
+        {/* Centro: buscador en app, navegación en público */}
+        {isApp ? (
           <div className="flex flex-1 max-w-3xl items-center">
             <div className="hidden md:flex w-full items-center overflow-hidden rounded-full border border-foreground">
               <Search className="ml-3 size-5 opacity-60" />
@@ -50,6 +50,14 @@ const Navbar = () => {
               </Button>
             </div>
           </div>
+        ) : (
+          <nav className="hidden md:flex flex-1 items-center justify-center gap-6">
+            <a href="#como-funciona" className="font-medium text-base">¿Cómo funciona?</a>
+            <a href="#trends" className="flex items-center"><img src="/lovable-uploads/3284b10e-56cc-46ef-a341-58865573fb05.png" alt="B2BOX TRENDS" className="h-7 w-auto" loading="lazy" /></a>
+            <a href="#academy" className="flex items-center"><img src="/lovable-uploads/af0d583e-0c30-487a-9e16-cfc5e804cbd4.png" alt="B2BOX ACADEMY" className="h-7 w-auto" loading="lazy" /></a>
+            <a href="#brands" className="flex items-center"><img src="/lovable-uploads/605c29b4-eaf8-468d-8622-625ff4afafd8.png" alt="B2BOX BRANDS" className="h-7 w-auto" loading="lazy" /></a>
+            <a href="#nosotros" className="font-medium text-base">{TEXTS[country].us}</a>
+          </nav>
         )}
 
           <div className="hidden md:flex items-center gap-4">
