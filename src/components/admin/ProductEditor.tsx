@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Package, Languages, Truck, Layers, UserSquare, Settings } from "lucide-react";
 
@@ -117,7 +118,13 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
     ar: { title: "", description: "" },
     co: { title: "", description: "" },
   });
-  const agentOptions = useMemo(() => profiles.filter((p) => ['kerwin', 'jessica'].includes((p.display_name || '').toLowerCase())), [profiles]);
+  const agentOptions = useMemo(() => {
+    const allowed = ["kerwin", "jessica", "gabriel"];
+    return profiles.filter((p) => {
+      const name = (p.display_name || "").toLowerCase();
+      return allowed.some((a) => name === a || name.includes(a));
+    });
+  }, [profiles]);
 
   useEffect(() => {
     setForm({
@@ -337,50 +344,60 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
                   <Label htmlFor="bx_code">BX Code</Label>
                   <Input id="bx_code" value={form.bx_code ?? ""} onChange={(e) => setForm({ ...form, bx_code: e.target.value })} />
                 </div>
-                  <div className="flex items-center gap-4">
-                    <label className="flex items-center gap-2">
-                      <Checkbox
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <label className="flex items-center justify-between gap-3">
+                      <span>Verified product</span>
+                      <Switch
                         id="verified_product"
                         checked={!!form.verified_product}
                         onCheckedChange={(v) => setForm({ ...form, verified_product: !!v })}
                       />
-                      <span>Verified product</span>
                     </label>
-                    <label className="flex items-center gap-2">
-                      <Checkbox
+                    <label className="flex items-center justify-between gap-3">
+                      <span>Verified video</span>
+                      <Switch
                         id="verified_video"
                         checked={!!form.verified_video}
                         onCheckedChange={(v) => setForm({ ...form, verified_video: !!v })}
                       />
-                      <span>Verified video</span>
                     </label>
-                    <label className="flex items-center gap-2">
-                      <Checkbox
+                    <label className="flex items-center justify-between gap-3">
+                      <span>Discountable</span>
+                      <Switch
                         id="discountable"
                         checked={!!form.discountable}
                         onCheckedChange={(v) => setForm({ ...form, discountable: !!v })}
                       />
-                      <span>Discountable</span>
                     </label>
                   </div>
               </div>
 
               <Card className="p-3">
                 <h4 className="font-medium mb-2">Organización</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                  {categories.map((c) => (
-                    <label key={c.id} className="flex items-center gap-2">
-                      <Checkbox
-                        checked={selectedCategoryIds.includes(c.id)}
-                        onCheckedChange={(v) => setSelectedCategoryIds((prev) => v ? [...prev, c.id] : prev.filter(id => id !== c.id))}
-                      />
-                      <span>{c.name}</span>
-                    </label>
-                  ))}
-                </div>
-                <div className="mt-3">
-                  <Label htmlFor="collection">Colección</Label>
-                  <Input id="collection" value={form.collection ?? ""} onChange={(e) => setForm({ ...form, collection: e.target.value })} placeholder="Ej: Verano 2025" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label className="mb-2 block">Categorías</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {categories.map((c) => (
+                        <label key={c.id} className="flex items-center gap-2">
+                          <Checkbox
+                            checked={selectedCategoryIds.includes(c.id)}
+                            onCheckedChange={(v) => setSelectedCategoryIds((prev) => v ? [...prev, c.id] : prev.filter(id => id !== c.id))}
+                          />
+                          <span>{c.name}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="collection">Colección</Label>
+                    <Input
+                      id="collection"
+                      value={form.collection ?? ""}
+                      onChange={(e) => setForm({ ...form, collection: e.target.value })}
+                      placeholder="Ej: Verano 2025"
+                    />
+                  </div>
                 </div>
               </Card>
 
@@ -488,7 +505,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
                   <SelectContent className="z-50 bg-background">
                     {agentOptions.length === 0 && (
                       <SelectItem value="no-agents" disabled>
-                        No se encontraron agentes (Kerwin/Jessica)
+                        No se encontraron agentes (Kerwin/Jessica/Gabriel)
                       </SelectItem>
                     )}
                     {agentOptions.map((p) => (
@@ -504,17 +521,13 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
             </TabsContent>
 
             <TabsContent value="status" className="space-y-4">
-              <div>
-                <Label>Estado</Label>
-                <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v as any })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Estado" />
-                  </SelectTrigger>
-                  <SelectContent className="z-50 bg-background">
-                    <SelectItem value="draft">Borrador</SelectItem>
-                    <SelectItem value="published">Publicado</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="published">Publicado</Label>
+                <Switch
+                  id="published"
+                  checked={form.status === 'published'}
+                  onCheckedChange={(v) => setForm({ ...form, status: v ? 'published' : 'draft' })}
+                />
               </div>
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={onClose}>Cerrar</Button>
