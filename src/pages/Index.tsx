@@ -4,6 +4,7 @@ import CategoryTabs from "@/components/landing/CategoryTabs";
 import PromoBanner from "@/components/landing/PromoBanner";
 import CategoryShowcase from "@/components/landing/CategoryShowcase";
 import Footer from "@/components/landing/Footer";
+import InfiniteProducts from "@/components/landing/InfiniteProducts";
 
 const jsonLd = () => ({
   "@context": "https://schema.org",
@@ -33,6 +34,10 @@ const Index = () => {
         <div className="mt-8">
           <PromoBanner />
         </div>
+
+        <section className="mt-12">
+          <InfiniteProducts />
+        </section>
       </main>
       <Footer />
 
