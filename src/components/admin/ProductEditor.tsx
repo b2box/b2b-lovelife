@@ -110,9 +110,10 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
   });
 
   const [profiles, setProfiles] = useState<{id: string; display_name: string | null}[]>([]);
-  const [categories, setCategories] = useState<{id: string; name: string}[]>([]);
-  const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
-  const [tagsText, setTagsText] = useState<string>("");
+const [categories, setCategories] = useState<{id: string; name: string; parent_id: string | null}[]>([]);
+const [selectedParentIds, setSelectedParentIds] = useState<string[]>([]);
+const [selectedSubcategoryIds, setSelectedSubcategoryIds] = useState<string[]>([]);
+const [tagsText, setTagsText] = useState<string>("");
   const [translations, setTranslations] = useState<Record<string, { id?: string; title: string; description: string }>>({
     cn: { title: "", description: "" },
     ar: { title: "", description: "" },
@@ -155,13 +156,27 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
     (async () => {
       const { data: profs } = await (supabase as any).from('profiles').select('id, display_name').limit(50);
       setProfiles(profs || []);
-      const { data: cats } = await supabase.from('categories').select('id,name').order('name');
-      setCategories((cats || []) as any);
-      if (product?.id) {
-        const { data: pc } = await supabase.from('product_categories').select('category_id').eq('product_id', product.id);
-        setSelectedCategoryIds((pc || []).map((r: any) => r.category_id));
-        const { data: tgs } = await (supabase as any).from('product_tags').select('tags(name), tag_id').eq('product_id', product.id);
-        if (tgs && tgs.length) setTagsText((tgs as any[]).map((x: any) => x.tags?.name).filter(Boolean).join(', '));
+const { data: cats } = await supabase.from('categories').select('id,name,parent_id').order('name');
+setCategories((cats || []) as any);
+if (product?.id) {
+  const { data: pc } = await supabase.from('product_categories').select('category_id').eq('product_id', product.id);
+  const chosen = new Set<string>((pc || []).map((r: any) => r.category_id as string));
+  const parents = new Set<string>();
+  const subs = new Set<string>();
+  (cats || []).forEach((c: any) => {
+    if (chosen.has(c.id)) {
+      if (c.parent_id) {
+        subs.add(c.id);
+        parents.add(c.parent_id);
+      } else {
+        parents.add(c.id);
+      }
+    }
+  });
+  setSelectedParentIds([...parents]);
+  setSelectedSubcategoryIds([...subs]);
+  const { data: tgs } = await (supabase as any).from('product_tags').select('tags(name), tag_id').eq('product_id', product.id);
+  if (tgs && tgs.length) setTagsText((tgs as any[]).map((x: any) => x.tags?.name).filter(Boolean).join(', '));
 
         const { data: trans } = await supabase
           .from('product_translations')
@@ -178,7 +193,8 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
         });
         setTranslations(base);
       } else {
-        setSelectedCategoryIds([]);
+setSelectedParentIds([]);
+        setSelectedSubcategoryIds([]);
         setTagsText("");
         setTranslations({ cn: { title: "", description: "" }, ar: { title: "", description: "" }, co: { title: "", description: "" } });
       }
@@ -190,11 +206,13 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
       // Categories
       const { data: existingPC } = await supabase.from('product_categories').select('category_id').eq('product_id', productId);
       const existingIds = new Set((existingPC || []).map((r: any) => r.category_id));
-      const desiredIds = new Set(selectedCategoryIds);
-      const toInsert = [...desiredIds].filter((id) => !existingIds.has(id)).map((id) => ({ product_id: productId, category_id: id }));
-      const toDelete = [...existingIds].filter((id) => !desiredIds.has(id));
-      if (toInsert.length) await supabase.from('product_categories').insert(toInsert);
-      if (toDelete.length) await supabase.from('product_categories').delete().eq('product_id', productId).in('category_id', toDelete);
+const desiredIds = new Set<string>([...selectedParentIds, ...selectedSubcategoryIds]);
+      const toInsert = [...desiredIds]
+        .filter((id) => !existingIds.has(id))
+        .map((id) => ({ product_id: productId, category_id: id as string }));
+      const toDelete = [...existingIds].filter((id) => !desiredIds.has(id as string));
+      if (toInsert.length) await supabase.from('product_categories').insert(toInsert as any);
+      if (toDelete.length) await supabase.from('product_categories').delete().eq('product_id', productId).in('category_id', toDelete as any);
 
       // Tags
       const names = Array.from(new Set((tagsText || '').split(',').map((s) => s.trim()).filter(Boolean)));
@@ -218,7 +236,12 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
 
   const saveProduct = async () => {
     try {
-      setSaving(true);
+setSaving(true);
+      if (selectedParentIds.length === 0 || selectedSubcategoryIds.length === 0) {
+        toast({ title: "Falta organización", description: "Selecciona al menos una categoría y una subcategoría.", variant: "destructive" });
+        setSaving(false);
+        return;
+      }
       if (isEdit && form.id) {
         const { error } = await supabase
           .from("products")
@@ -241,8 +264,9 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
             type: form.type,
             collection: form.collection,
           })
-          .eq("id", form.id);
+.eq("id", form.id);
         if (error) throw error;
+        await syncRelations(form.id!);
       } else {
         const { data, error } = await supabase
           .from("products")
@@ -374,15 +398,25 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
 
               <Card className="p-3">
                 <h4 className="font-medium mb-2">Organización</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label className="mb-2 block">Categorías</Label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {categories.map((c) => (
+                      {categories.filter((c) => !c.parent_id).map((c) => (
                         <label key={c.id} className="flex items-center gap-2">
                           <Checkbox
-                            checked={selectedCategoryIds.includes(c.id)}
-                            onCheckedChange={(v) => setSelectedCategoryIds((prev) => v ? [...prev, c.id] : prev.filter(id => id !== c.id))}
+                            checked={selectedParentIds.includes(c.id)}
+                            onCheckedChange={(v) => {
+                              if (v) {
+                                setSelectedParentIds((prev) => (prev.includes(c.id) ? prev : [...prev, c.id]));
+                              } else {
+                                setSelectedParentIds((prev) => prev.filter((id) => id !== c.id));
+                                setSelectedSubcategoryIds((prev) => prev.filter((sid) => {
+                                  const sc = categories.find((x) => x.id === sid);
+                                  return sc?.parent_id !== c.id;
+                                }));
+                              }
+                            }}
                           />
                           <span>{c.name}</span>
                         </label>
@@ -390,14 +424,37 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="collection">Colección</Label>
-                    <Input
-                      id="collection"
-                      value={form.collection ?? ""}
-                      onChange={(e) => setForm({ ...form, collection: e.target.value })}
-                      placeholder="Ej: Verano 2025"
-                    />
+                    <Label className="mb-2 block">Subcategorías</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {categories
+                        .filter((sc) => sc.parent_id && selectedParentIds.includes(sc.parent_id))
+                        .map((sc) => (
+                          <label key={sc.id} className="flex items-center gap-2">
+                            <Checkbox
+                              checked={selectedSubcategoryIds.includes(sc.id)}
+                              onCheckedChange={(v) => {
+                                if (v) {
+                                  setSelectedSubcategoryIds((prev) => (prev.includes(sc.id) ? prev : [...prev, sc.id]));
+                                  if (sc.parent_id) setSelectedParentIds((prev) => (prev.includes(sc.parent_id!) ? prev : [...prev, sc.parent_id!]));
+                                } else {
+                                  setSelectedSubcategoryIds((prev) => prev.filter((id) => id !== sc.id));
+                                }
+                              }}
+                            />
+                            <span>{sc.name}</span>
+                          </label>
+                        ))}
+                    </div>
                   </div>
+                </div>
+                <div className="mt-4">
+                  <Label htmlFor="collection">Colección (opcional)</Label>
+                  <Input
+                    id="collection"
+                    value={form.collection ?? ""}
+                    onChange={(e) => setForm({ ...form, collection: e.target.value })}
+                    placeholder="Ej: Verano 2025"
+                  />
                 </div>
               </Card>
 
