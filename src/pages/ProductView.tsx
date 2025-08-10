@@ -164,122 +164,127 @@ const ProductView = () => {
           <span className="text-foreground">{product.name}</span>
         </nav>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {/* Galería */}
-          <section className="md:col-span-1 lg:col-span-2 rounded-[28px] bg-card shadow-elevate p-3 md:p-4">
-            <div className="space-y-3">
-              <div className="relative overflow-hidden rounded-[28px] bg-muted aspect-[5/4]">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="absolute inset-0 h-full w-full object-cover"
-                  loading="lazy"
-                />
-                {/* Viral badge */}
-                {product.viral && (
-                  <img
-                    src="/lovable-uploads/984b614e-1f6b-484a-8b88-5c741374625b.png"
-                    alt="Viral ahora"
-                    className="absolute left-3 top-3 h-8 w-auto select-none"
-                    loading="lazy"
-                  />
-                )}
-                {/* Contador y flecha */}
-                <span className="absolute top-3 right-3 rounded-full bg-black/50 text-white text-xs px-2 py-1">1 de 9</span>
-                <button className="absolute right-3 top-1/2 -translate-y-1/2 grid size-10 place-items-center rounded-full bg-black/40 text-white hover:bg-black/60" aria-label="Siguiente imagen">›</button>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-[4fr_1fr]">
+          {/* Columna izquierda (80%): Galería 40% + Detalles 60% */}
+          <section>
+            <div className="grid grid-cols-1 md:grid-cols-[2fr_3fr] gap-4">
+              {/* Galería 40% */}
+              <div className="rounded-[28px] bg-card shadow-elevate p-3 md:p-4">
+                <div className="space-y-3">
+                  <div className="relative overflow-hidden rounded-[28px] bg-muted aspect-[5/4]">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="absolute inset-0 h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                    {/* Viral badge */}
+                    {product.viral && (
+                      <img
+                        src="/lovable-uploads/984b614e-1f6b-484a-8b88-5c741374625b.png"
+                        alt="Viral ahora"
+                        className="absolute left-3 top-3 h-8 w-auto select-none"
+                        loading="lazy"
+                      />
+                    )}
+                    {/* Contador y flecha */}
+                    <span className="absolute top-3 right-3 rounded-full bg-black/50 text-white text-xs px-2 py-1">1 de 9</span>
+                    <button className="absolute right-3 top-1/2 -translate-y-1/2 grid size-10 place-items-center rounded-full bg-black/40 text-white hover:bg-black/60" aria-label="Siguiente imagen">›</button>
+                  </div>
+
+                  {/* Thumbnails */}
+                  <div className="flex items-center gap-3">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <div key={i} className="relative h-16 w-16 md:h-18 md:w-18 overflow-hidden rounded-xl ring-1 ring-border bg-muted">
+                        <img src={product.image} alt={`${product.name} miniatura ${i + 1}`} className="h-full w-full object-cover" loading="lazy" />
+                        {i === 4 && (
+                          <div className="absolute inset-0 grid place-items-center bg-black/40 text-white text-sm font-medium">+4</div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
-              {/* Thumbnails */}
-              <div className="flex items-center gap-3">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="relative h-16 w-16 md:h-18 md:w-18 overflow-hidden rounded-xl ring-1 ring-border bg-muted">
-                    <img src={product.image} alt={`${product.name} miniatura ${i + 1}`} className="h-full w-full object-cover" loading="lazy" />
-                    {i === 4 && (
-                      <div className="absolute inset-0 grid place-items-center bg-black/40 text-white text-sm font-medium">+4</div>
-                    )}
+              {/* Detalles + Tramos 60% */}
+              <div className="space-y-4">
+                <header>
+                  <h1 className="text-2xl md:text-3xl font-semibold leading-tight">{product.name}</h1>
+                </header>
+
+                {/* Barra de precios por tiers */}
+                <article className="rounded-[28px] bg-card text-card-foreground border shadow-elevate overflow-hidden">
+                  <div className="px-4 pt-4">
+                    <div className="grid grid-cols-3 gap-2 bg-muted rounded-full p-1">
+                      {/* Inicial */}
+                      <div className="rounded-[18px] px-4 py-4 text-center text-muted-foreground">
+                        <div className="text-sm">Inicial</div>
+                        <div className="text-2xl font-bold opacity-60">$35</div>
+                        <div className="text-xs opacity-70">50 - 499 unidades</div>
+                      </div>
+                      {/* Mayorista destacado */}
+                      <div className="relative rounded-[18px] bg-background px-4 py-4 text-center shadow-sm">
+                        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-foreground text-background text-xs px-3 py-1 shadow-elevate">Recomendado</span>
+                        <div className="text-muted-foreground text-sm mt-1">Mayorista</div>
+                        <div className="text-3xl font-bold">$300</div>
+                        <div className="text-xs text-muted-foreground">500 - 1250 unidades</div>
+                      </div>
+                      {/* Distribuidor */}
+                      <div className="rounded-[18px] px-4 py-4 text-center text-muted-foreground">
+                        <div className="text-sm">Distribuidor</div>
+                        <div className="text-2xl font-bold opacity-60">$725</div>
+                        <div className="text-xs opacity-70">+1250 unidades</div>
+                      </div>
+                    </div>
                   </div>
-                ))}
+
+                  {/* Faja inferior: tendencia + Trends con flecha */}
+                  <div className="flex items-center justify-between gap-3 px-4 py-3 bg-yellow-300/90">
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                      <span>Producto en tendencia en</span>
+                      <span className="rounded bg-yellow-200 px-2 py-0.5">mercado libre</span>
+                    </div>
+                    <button className="inline-flex items-center gap-2 text-sm font-medium" aria-label="Ver más en Trends">
+                      <span>Ver más en</span>
+                      <span className="rounded bg-orange-200 px-2 py-0.5">TRENDS</span>
+                      <span className="grid size-8 place-items-center rounded-full border border-black/30 text-black/70 bg-white/70 hover:bg-white">
+                        <ArrowUpRight />
+                      </span>
+                    </button>
+                  </div>
+                </article>
               </div>
             </div>
           </section>
 
-          {/* Panel derecho: Título + barra de precios */}
-          <section className="md:col-span-1 space-y-4">
-            <header>
-              <h1 className="text-2xl md:text-3xl font-semibold leading-tight">{product.name}</h1>
-            </header>
+          {/* Columna derecha (20%): Resumen sticky */}
+          <aside className="hidden md:block sticky top-24 self-start h-max rounded-2xl bg-card text-card-foreground border shadow-elevate p-4">
+            <div className="flex items-center justify-between text-sm text-muted-foreground">
+              <span>Orden mínima $100</span>
+              <CheckCircle2 className="opacity-60" />
+            </div>
 
-            {/* Barra de precios por tiers (placeholder 1:1 estructura) */}
-            <article className="rounded-[28px] bg-card text-card-foreground border shadow-elevate overflow-hidden">
-              <div className="px-4 pt-4">
-                <div className="grid grid-cols-3 gap-2 bg-muted rounded-full p-1">
-                  {/* Inicial */}
-                  <div className="rounded-[18px] px-4 py-4 text-center text-muted-foreground">
-                    <div className="text-sm">Inicial</div>
-                    <div className="text-2xl font-bold opacity-60">$35</div>
-                    <div className="text-xs opacity-70">50 - 499 unidades</div>
-                  </div>
-                  {/* Mayorista destacado */}
-                  <div className="relative rounded-[18px] bg-background px-4 py-4 text-center shadow-sm">
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-foreground text-background text-xs px-3 py-1 shadow-elevate">Recomendado</span>
-                    <div className="text-muted-foreground text-sm mt-1">Mayorista</div>
-                    <div className="text-3xl font-bold">$300</div>
-                    <div className="text-xs text-muted-foreground">500 - 1250 unidades</div>
-                  </div>
-                  {/* Distribuidor */}
-                  <div className="rounded-[18px] px-4 py-4 text-center text-muted-foreground">
-                    <div className="text-sm">Distribuidor</div>
-                    <div className="text-2xl font-bold opacity-60">$725</div>
-                    <div className="text-xs opacity-70">+1250 unidades</div>
-                  </div>
-                </div>
-              </div>
+            <button
+              onClick={addToCart}
+              className="mt-4 w-full rounded-xl bg-green-500 text-white py-3 font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+              aria-label="Añadir al carrito"
+              disabled={totals.total < minOrder}
+            >
+              Añadir al carrito
+            </button>
 
-              {/* Faja inferior: tendencia + Trends con flecha */}
-              <div className="flex items-center justify-between gap-3 px-4 py-3 bg-yellow-300/90">
-                <div className="flex items-center gap-2 text-sm font-medium">
-                  <span>Producto en tendencia en</span>
-                  <span className="rounded bg-yellow-200 px-2 py-0.5">mercado libre</span>
-                </div>
-                <button className="inline-flex items-center gap-2 text-sm font-medium" aria-label="Ver más en Trends">
-                  <span>Ver más en</span>
-                  <span className="rounded bg-orange-200 px-2 py-0.5">TRENDS</span>
-                  <span className="grid size-8 place-items-center rounded-full border border-black/30 text-black/70 bg-white/70 hover:bg-white">
-                    <ArrowUpRight />
-                  </span>
-                </button>
-              </div>
-            </article>
+            <div className="mt-4 space-y-1 text-sm">
+              <div className="flex justify-between"><span>Productos ({totals.items})</span><span>${totals.products.toFixed(2)}</span></div>
+              <div className="flex justify-between"><span>Complementos</span><span>${totals.complements.toFixed(2)}</span></div>
+              <div className="flex justify-between font-semibold text-base pt-1 border-t"><span>Total</span><span>${totals.total.toFixed(2)}</span></div>
+            </div>
 
-            {/* Resumen de pedido lateral */}
-            <aside className="rounded-2xl bg-card text-card-foreground border shadow-elevate p-4">
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span>Orden mínima $100</span>
-                <CheckCircle2 className="opacity-60" />
-              </div>
-
-              <button
-                onClick={addToCart}
-                className="mt-4 w-full rounded-xl bg-green-500 text-white py-3 font-medium hover:opacity-90 transition-opacity"
-                aria-label="Añadir al carrito"
-                disabled={totals.total < minOrder}
-              >
-                Añadir al carrito
-              </button>
-
-              <div className="mt-4 space-y-1 text-sm">
-                <div className="flex justify-between"><span>Productos ({totals.items})</span><span>${totals.products.toFixed(2)}</span></div>
-                <div className="flex justify-between"><span>Complementos</span><span>${totals.complements.toFixed(2)}</span></div>
-                <div className="flex justify-between font-semibold text-base pt-1 border-t"><span>Total</span><span>${totals.total.toFixed(2)}</span></div>
-              </div>
-
-              <div className="mt-4 grid grid-cols-3 gap-2 text-xs text-muted-foreground">
-                <div className="rounded-lg border p-2 flex items-center gap-2"><Truck className="h-4 w-4" /> Método de envío</div>
-                <div className="rounded-lg border p-2 flex items-center gap-2"><Pencil className="h-4 w-4" /> Personalizar</div>
-                <div className="rounded-lg border p-2 flex items-center gap-2"><BadgeDollarSign className="h-4 w-4" /> Precios claros</div>
-              </div>
-            </aside>
-          </section>
+            <div className="mt-4 grid grid-cols-3 gap-2 text-xs text-muted-foreground">
+              <div className="rounded-lg border p-2 flex items-center gap-2"><Truck className="h-4 w-4" /> Método de envío</div>
+              <div className="rounded-lg border p-2 flex items-center gap-2"><Pencil className="h-4 w-4" /> Personalizar</div>
+              <div className="rounded-lg border p-2 flex items-center gap-2"><BadgeDollarSign className="h-4 w-4" /> Precios claros</div>
+            </div>
+          </aside>
         </div>
 
         {/* Descripción y características */}
