@@ -13,8 +13,8 @@ type Props = { product: Product };
 
 const ProductCard = ({ product }: Props) => {
   return (
-    <Card className="card-elevated hover:lift transition-transform rounded-3xl border-0">
-      <CardContent className="p-5 md:p-6">
+    <Card className="card-elevated hover:lift transition-transform rounded-2xl border-0">
+      <CardContent className="p-4 md:p-5">
         <div className="relative">
           {product.badge && (
             <img
@@ -36,7 +36,7 @@ const ProductCard = ({ product }: Props) => {
           )}
         </div>
         <div className="mt-3">
-          <div className="text-3xl font-bold">${product.price.toFixed(2)}</div>
+          <div className="text-2xl font-bold">${product.price.toFixed(2)}</div>
           <p className="truncate text-sm text-muted-foreground">{product.name}</p>
         </div>
       </CardContent>

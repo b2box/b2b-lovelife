@@ -14,26 +14,26 @@ const CategoryTabs = () => {
   const first = Object.keys(categories)[0] as keyof typeof categories;
   return (
     <section className="container mx-auto">
-      <div className="rounded-[32px] bg-brand-yellow px-6 py-8 md:px-12 md:py-12 shadow-elevate">
-        <div className="mx-auto max-w-5xl xl:max-w-[1200px] rounded-[60px] bg-card px-6 py-6 md:px-12 md:py-7 xl:py-8">
-          <h2 className="text-center text-[32px] font-semibold md:text-[44px] xl:text-[65px] xl:leading-[85px]">Los productos más vendidos en las categorías más buscadas</h2>
+      <div className="rounded-[32px] bg-brand-yellow px-6 py-8 md:px-10 md:py-10 shadow-elevate">
+        <div className="mx-auto max-w-3xl md:max-w-[900px] xl:max-w-[1100px] rounded-[60px] bg-card px-6 py-5 md:px-10 md:py-6 xl:py-7">
+          <h2 className="text-center text-[28px] font-semibold md:text-[36px] xl:text-[48px] xl:leading-[60px]">Los productos más vendidos en las categorías más buscadas</h2>
         </div>
         <Tabs defaultValue={first} className="w-full mt-6 md:mt-8">
           <div className="flex items-center justify-center gap-2">
-            <Button variant="outline" size="icon" className="rounded-full h-12 w-12 md:h-[86px] md:w-[86px] bg-[hsl(var(--brand-yellow)/0.6)] border border-foreground/20 text-foreground/80 shadow-elevate" aria-label="Anterior">
+            <Button variant="outline" size="icon" className="rounded-full h-11 w-11 bg-[hsl(var(--brand-yellow)/0.6)] border border-foreground/20 text-foreground/80 shadow-elevate" aria-label="Anterior">
               <ChevronLeft size={28} />
             </Button>
-            <TabsList className="max-w-full flex flex-wrap items-center justify-center gap-3 md:gap-4 bg-transparent p-0">
+            <TabsList className="max-w-full flex flex-wrap items-center justify-center gap-3 md:gap-3 bg-transparent p-0">
               {Object.keys(categories).map((key) => (
-                <TabsTrigger key={key} value={key} className="pill m-1 h-12 md:h-14 px-6 md:px-8 text-base md:text-lg font-semibold bg-card shadow-elevate data-[state=active]:bg-foreground data-[state=active]:text-background">
+                <TabsTrigger key={key} value={key} className="pill m-1 h-12 px-6 md:px-7 text-base font-semibold bg-card shadow-elevate data-[state=active]:bg-foreground data-[state=active]:text-background">
                   {tabIcons[key] && (
-                    <img src={tabIcons[key]} alt={`Icono ${key}`} className="mr-2 h-5 w-5 object-contain" loading="lazy" />
+                    <img src={tabIcons[key]} alt={`Icono ${key}`} className="mr-2 h-4 w-4 md:h-5 md:w-5 object-contain" loading="lazy" />
                   )}
                   {key}
                 </TabsTrigger>
               ))}
             </TabsList>
-            <Button variant="outline" size="icon" className="rounded-full h-12 w-12 md:h-[86px] md:w-[86px] bg-[hsl(var(--brand-yellow)/0.6)] border border-foreground/20 text-foreground/80 shadow-elevate" aria-label="Siguiente">
+            <Button variant="outline" size="icon" className="rounded-full h-11 w-11 bg-[hsl(var(--brand-yellow)/0.6)] border border-foreground/20 text-foreground/80 shadow-elevate" aria-label="Siguiente">
               <ChevronRight size={28} />
             </Button>
           </div>
