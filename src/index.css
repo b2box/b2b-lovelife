@@ -60,6 +60,10 @@ All colors MUST be HSL.
     --brand-green: 108 100% 80%; /* B2BOX green #ABFF97 */
     --brand-yellow: 53 96% 64%; /* #FBE74D */
 
+    /* Badges */
+    --viral-orange: 24 100% 55%;
+    --viral-red: 0 85% 55%;
+
     /* Gradients & effects */
     --gradient-primary: linear-gradient(135deg, hsl(var(--brand)) 0%, hsl(var(--brand-2)) 100%);
     /* Trends animated gradient palette */
@@ -142,6 +146,7 @@ All colors MUST be HSL.
   .shadow-glow { box-shadow: var(--shadow-glow); }
   .card-elevated { @apply rounded-lg border bg-card text-card-foreground; box-shadow: var(--shadow-elevate); }
   .pill { @apply rounded-full; }
+  .badge-viral { background: linear-gradient(90deg, hsl(var(--viral-orange)), hsl(var(--viral-red))); border-radius: 9999px; }
   .text-gradient-primary { background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; color: transparent; }
 }
 

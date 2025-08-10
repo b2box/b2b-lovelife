@@ -6,6 +6,7 @@ export type Product = {
   price: number;
   image: string;
   badge?: string;
+  viral?: boolean;
 };
 
 type Props = { product: Product };
@@ -19,7 +20,7 @@ const ProductCard = ({ product }: Props) => {
             <img
               src="/lovable-uploads/9381e44b-152c-428f-bc02-75c74feb59d6.png"
               alt="B2BOX Verified badge"
-              className="absolute right-3 top-3 z-10 h-8 w-auto drop-shadow-md"
+              className="absolute right-3 top-3 z-20 h-8 w-auto drop-shadow-md"
               loading="lazy"
             />
           )}
@@ -29,6 +30,14 @@ const ProductCard = ({ product }: Props) => {
             loading="lazy"
             className="aspect-square w-full rounded-md object-cover"
           />
+          {/* Watermark */}
+          <span className="absolute left-3 bottom-3 z-10 text-sm font-semibold text-foreground/20 select-none">B2BOX</span>
+          {/* Viral badge */}
+          {product.viral && (
+            <span className="absolute left-3 bottom-3 z-20 badge-viral px-3 py-1 text-xs font-semibold text-background shadow-sm">
+              🔥 VIRAL AHORA
+            </span>
+          )}
         </div>
         <div className="mt-3">
           <div className="text-2xl font-bold">${product.price.toFixed(2)}</div>
