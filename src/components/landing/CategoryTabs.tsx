@@ -20,12 +20,12 @@ const CategoryTabs = () => {
         </div>
         <Tabs defaultValue={first} className="w-full mt-6 md:mt-8">
           <div className="flex items-center justify-center gap-2">
-            <Button variant="outline" size="icon" className="rounded-full h-11 w-11 bg-[hsl(var(--brand-yellow)/0.6)] border border-foreground/20 text-foreground/80 shadow-elevate" aria-label="Anterior">
-              <ChevronLeft size={28} />
+            <Button variant="outline" size="icon" className="rounded-full h-11 w-11 md:h-12 md:w-12 bg-card border border-foreground/20 text-foreground shadow-none" aria-label="Anterior">
+              <ChevronLeft size={22} />
             </Button>
             <TabsList className="max-w-full flex flex-wrap items-center justify-center gap-3 md:gap-3 bg-transparent p-0">
               {Object.keys(categories).map((key) => (
-                <TabsTrigger key={key} value={key} className="pill m-1 h-12 px-6 md:px-7 text-base font-semibold bg-card shadow-elevate data-[state=active]:bg-foreground data-[state=active]:text-background">
+                <TabsTrigger key={key} value={key} className="pill m-1 h-12 px-6 md:px-7 text-base font-semibold bg-card data-[state=active]:bg-foreground data-[state=active]:text-background">
                   {tabIcons[key] && (
                     <img src={tabIcons[key]} alt={`Icono ${key}`} className="mr-2 h-4 w-4 md:h-5 md:w-5 object-contain" loading="lazy" />
                   )}
@@ -33,8 +33,8 @@ const CategoryTabs = () => {
                 </TabsTrigger>
               ))}
             </TabsList>
-            <Button variant="outline" size="icon" className="rounded-full h-11 w-11 bg-[hsl(var(--brand-yellow)/0.6)] border border-foreground/20 text-foreground/80 shadow-elevate" aria-label="Siguiente">
-              <ChevronRight size={28} />
+            <Button variant="outline" size="icon" className="rounded-full h-11 w-11 md:h-12 md:w-12 bg-card border border-foreground/20 text-foreground shadow-none" aria-label="Siguiente">
+              <ChevronRight size={22} />
             </Button>
           </div>
           {Object.entries(categories).map(([key, value]) => (

@@ -37,7 +37,7 @@ const ProductCard = ({ product }: Props) => {
         </div>
         <div className="mt-3">
           <div className="text-2xl font-bold">${product.price.toFixed(2)}</div>
-          <p className="truncate text-sm text-muted-foreground">{product.name}</p>
+          <p className="text-sm text-muted-foreground">{product.name}</p>
         </div>
       </CardContent>
     </Card>
