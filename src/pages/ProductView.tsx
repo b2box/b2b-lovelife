@@ -217,40 +217,48 @@ const ProductView = () => {
                 {/* Barra de precios por tiers */}
                 <article className="rounded-[28px] bg-card text-card-foreground border overflow-hidden">
                   <div className="px-4 pt-4">
-                    <div className="grid grid-cols-3 gap-2 bg-muted rounded-full p-1">
+                    <div className="grid grid-cols-3 gap-4 bg-muted rounded-[24px] p-4">
                       {/* Inicial */}
                       <button
                         type="button"
                         onClick={() => setSelectedTier("inicial")}
-                        className={`rounded-[18px] px-4 py-4 text-center border transition-colors ${selectedTier === "inicial" ? "bg-background text-foreground border-foreground" : "text-muted-foreground border-border"}`}
+                        className="text-center"
                         aria-pressed={selectedTier === "inicial"}
                       >
-                        <div className="text-sm">Inicial</div>
-                        <div className={`text-2xl font-bold ${selectedTier === "inicial" ? "" : "opacity-60"}`}>$35</div>
-                        <div className="text-xs opacity-70">50 - 499 unidades</div>
+                        <div className="text-lg md:text-xl font-semibold">Inicial</div>
+                        <div className={`mt-2 rounded-2xl border px-6 py-5 ${selectedTier === "inicial" ? "border-foreground text-foreground" : "border-border text-muted-foreground"}`}>
+                          <div className={`text-3xl font-bold ${selectedTier === "inicial" ? "" : "opacity-60"}`}>$35</div>
+                          <div className="text-xs opacity-70">50 – 499 unidades</div>
+                        </div>
                       </button>
                       {/* Mayorista destacado */}
                       <button
                         type="button"
                         onClick={() => setSelectedTier("mayorista")}
-                        className={`relative rounded-[18px] px-4 py-4 text-center border transition-colors ${selectedTier === "mayorista" ? "bg-background text-foreground border-foreground" : "text-muted-foreground border-border"}`}
+                        className="text-center"
                         aria-pressed={selectedTier === "mayorista"}
                       >
-                        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-foreground text-background text-xs px-3 py-1">Recomendado</span>
-                        <div className="text-muted-foreground text-sm mt-1">Mayorista</div>
-                        <div className="text-3xl font-bold">$300</div>
-                        <div className="text-xs text-muted-foreground">500 - 1250 unidades</div>
+                        <div className="text-lg md:text-xl font-semibold">Mayorista</div>
+                        <div className={`relative mt-2 rounded-2xl border px-6 py-5 ${selectedTier === "mayorista" ? "border-foreground" : "border-border"}`}>
+                          {selectedTier === "mayorista" && (
+                            <span className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-foreground text-background text-xs px-3 py-1">Recomendado</span>
+                          )}
+                          <div className="text-3xl font-bold">$300</div>
+                          <div className="text-xs text-muted-foreground">500 – 1250 unidades</div>
+                        </div>
                       </button>
                       {/* Distribuidor */}
                       <button
                         type="button"
                         onClick={() => setSelectedTier("distribuidor")}
-                        className={`rounded-[18px] px-4 py-4 text-center border transition-colors ${selectedTier === "distribuidor" ? "bg-background text-foreground border-foreground" : "text-muted-foreground border-border"}`}
+                        className="text-center"
                         aria-pressed={selectedTier === "distribuidor"}
                       >
-                        <div className="text-sm">Distribuidor</div>
-                        <div className={`text-2xl font-bold ${selectedTier === "distribuidor" ? "" : "opacity-60"}`}>$725</div>
-                        <div className="text-xs opacity-70">+1250 unidades</div>
+                        <div className="text-lg md:text-xl font-semibold">Distribuidor</div>
+                        <div className={`mt-2 rounded-2xl border px-6 py-5 ${selectedTier === "distribuidor" ? "border-foreground text-foreground" : "border-border text-muted-foreground"}`}>
+                          <div className={`text-3xl font-bold ${selectedTier === "distribuidor" ? "" : "opacity-60"}`}>$725</div>
+                          <div className="text-xs opacity-70">+1250 unidades</div>
+                        </div>
                       </button>
                     </div>
                   </div>
@@ -300,8 +308,8 @@ const ProductView = () => {
               {/* Método de envío */}
               <HoverCard>
                 <HoverCardTrigger asChild>
-                  <div className="relative rounded-2xl border p-3 bg-background cursor-default">
-                    <img src="/lovable-uploads/bcaad47c-1390-4a6e-a192-4c5279337cf3.png" alt="Método de envío" className="h-5 w-auto opacity-60" loading="lazy" />
+                  <div className="relative rounded-2xl border p-3 bg-background cursor-default aspect-square flex flex-col items-center justify-center text-center">
+                    <img src="/lovable-uploads/bcaad47c-1390-4a6e-a192-4c5279337cf3.png" alt="Método de envío" className="h-6 w-auto opacity-60" loading="lazy" />
                     <span className="mt-2 block">Método de envío</span>
                     <img src="/lovable-uploads/b649a871-c178-4c15-bd9b-de67f426d03e.png" alt="Ayuda" className="absolute top-2 right-2 h-4 w-4 opacity-60" loading="lazy" />
                   </div>
@@ -314,8 +322,8 @@ const ProductView = () => {
               {/* Personalizar producto */}
               <HoverCard>
                 <HoverCardTrigger asChild>
-                  <div className="relative rounded-2xl border p-3 bg-background cursor-default">
-                    <img src="/lovable-uploads/e176248e-ec33-4374-8df2-39c6d1d81194.png" alt="Personalizar producto" className="h-5 w-auto opacity-60" loading="lazy" />
+                  <div className="relative rounded-2xl border p-3 bg-background cursor-default aspect-square flex flex-col items-center justify-center text-center">
+                    <img src="/lovable-uploads/e176248e-ec33-4374-8df2-39c6d1d81194.png" alt="Personalizar producto" className="h-6 w-auto opacity-60" loading="lazy" />
                     <span className="mt-2 block">Personalizar producto</span>
                     <img src="/lovable-uploads/b649a871-c178-4c15-bd9b-de67f426d03e.png" alt="Ayuda" className="absolute top-2 right-2 h-4 w-4 opacity-60" loading="lazy" />
                   </div>
@@ -328,8 +336,8 @@ const ProductView = () => {
               {/* Precios sin sorpresas */}
               <HoverCard>
                 <HoverCardTrigger asChild>
-                  <div className="relative rounded-2xl border p-3 bg-background cursor-default">
-                    <img src="/lovable-uploads/6a45e477-73d7-45a9-9eda-470e2c37a6cb.png" alt="Precios sin sorpresas" className="h-5 w-auto opacity-60" loading="lazy" />
+                  <div className="relative rounded-2xl border p-3 bg-background cursor-default aspect-square flex flex-col items-center justify-center text-center">
+                    <img src="/lovable-uploads/6a45e477-73d7-45a9-9eda-470e2c37a6cb.png" alt="Precios sin sorpresas" className="h-6 w-auto opacity-60" loading="lazy" />
                     <span className="mt-2 block">Precios sin sorpresas</span>
                     <img src="/lovable-uploads/b649a871-c178-4c15-bd9b-de67f426d03e.png" alt="Ayuda" className="absolute top-2 right-2 h-4 w-4 opacity-60" loading="lazy" />
                   </div>
@@ -346,16 +354,17 @@ const ProductView = () => {
         <section className="mt-6 md:mt-8">
           <article className="prose prose-sm md:prose-base max-w-none">
             <p>
-              ¡Aprovecha cada rincón con la Estantería de Dos Niveles para Almacenamiento que lo transforma todo! Diseño práctico de dos niveles con estructura ventilada y colores vibrantes que revitalizan tu espacio. ¡Perfecto para baño o tocador!
+              ¡Aprovecha cada rincón con la Estantería de Dos Niveles para Almacenamiento que lo transforma todo! Este diseño práctico de dos niveles organiza cosméticos, productos de higiene y más, con una estructura ventilada y colores vibrantes que revitalizan tu espacio. ¡Perfecto para tu baño o tocador!
             </p>
             <h3>Características destacadas:</h3>
             <ul>
-              <li>Dos niveles versátiles: almacena más en menos espacio.</li>
-              <li>Estructura ventilada: mantiene tus artículos frescos y secos.</li>
-              <li>Colores vibrantes: disponibles en tonos que alegran tu ambiente.</li>
-              <li>Resistencia sólida: sostiene tus objetos con seguridad.</li>
-              <li>Material premium brillante: plástico resistente con acabados modernos.</li>
+              <li>🧴 Dos niveles versátiles: Almacena más en menos espacio.</li>
+              <li>💨 Estructura ventilada: Mantiene tus artículos frescos y secos.</li>
+              <li>🎨 Colores vibrantes: Disponible en tonos que alegran tu ambiente.</li>
+              <li>💪🏻 Resistencia sólida: Sostiene tus objetos con seguridad.</li>
+              <li>✨ Material premium brillante: ¡Plástico resistente con acabados modernos!</li>
             </ul>
+            <p>🛍 Ideal para: ✅Baños organizados, ✅tocadores prácticos y ✅hogares con estilo.</p>
           </article>
         </section>
 
