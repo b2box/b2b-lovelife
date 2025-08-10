@@ -7,7 +7,7 @@ const Hero = () => {
     <section className="container mx-auto mt-6">
       <div className="rounded-[28px] p-[4px] bg-gradient-trends-animated shadow-elevate">
         <div className="rounded-[24px] bg-card px-6 md:px-10 py-8 md:py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center my-[-10px]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center -my-8 md:-my-12">
             <div>
               <h1 className="sr-only">Productos Virales al por Mayor para Ecommerce</h1>
               <div className="relative w-full max-w-[720px]">
