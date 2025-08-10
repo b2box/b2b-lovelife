@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Package, Languages, Truck, Layers, UserSquare, Settings } from "lucide-react";
+import { Package, Languages, Truck, Layers, UserSquare, Settings, Tag, Shirt, Smartphone, Sparkles, HeartPulse, Watch, Gem, Gift, Calendar, PartyPopper, PawPrint, Home, Dumbbell, Briefcase, PencilRuler, Plug, Car, Wrench } from "lucide-react";
 
 export type AdminProduct = {
   id?: string;
@@ -126,6 +126,29 @@ const [tagsText, setTagsText] = useState<string>("");
       return allowed.some((a) => name === a || name.includes(a));
     });
   }, [profiles]);
+
+  const categoryIcon = (name: string) => {
+    const n = (name || '').toLowerCase();
+    const cls = "h-4 w-4 text-muted-foreground";
+    if (n.includes('moda')) return <Shirt className={cls} />;
+    if (n.includes('electrónica')) return <Smartphone className={cls} />;
+    if (n.includes('belleza') || n.includes('cuidado personal')) return <Sparkles className={cls} />;
+    if (n.includes('salud')) return <HeartPulse className={cls} />;
+    if (n.includes('wearable') || n.includes('reloj')) return <Watch className={cls} />;
+    if (n.includes('joyería')) return <Gem className={cls} />;
+    if (n.includes('juguetes')) return <Gift className={cls} />;
+    if (n.includes('temporada')) return <Calendar className={cls} />;
+    if (n.includes('evento') || n.includes('fiesta')) return <PartyPopper className={cls} />;
+    if (n.includes('mascotas')) return <PawPrint className={cls} />;
+    if (n.includes('hogar')) return <Home className={cls} />;
+    if (n.includes('deporte')) return <Dumbbell className={cls} />;
+    if (n.includes('maletas') || n.includes('bolsos')) return <Briefcase className={cls} />;
+    if (n.includes('escolar') || n.includes('oficina')) return <PencilRuler className={cls} />;
+    if (n.includes('electrodomésticos')) return <Plug className={cls} />;
+    if (n.includes('vehículos') || n.includes('motos') || n.includes('bicicletas')) return <Car className={cls} />;
+    if (n.includes('herramientas')) return <Wrench className={cls} />;
+    return <Tag className={cls} />;
+  };
 
   useEffect(() => {
     setForm({
@@ -354,17 +377,13 @@ if (error) throw error;
                     value={form.name}
                     onChange={(e) => {
                       const newName = e.target.value;
-                      setForm((prev) => {
-                        const autoPrev = slugify(prev.name || "");
-                        const shouldUpdateSlug = !prev.slug || prev.slug === autoPrev;
-                        return { ...prev, name: newName, slug: shouldUpdateSlug ? slugify(newName) : prev.slug };
-                      });
+                      setForm((prev) => ({ ...prev, name: newName, slug: slugify(newName) }));
                     }}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="slug">Handle (editable)</Label>
-                  <Input id="slug" value={form.slug ?? ""} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
+                  <Label htmlFor="slug">Handle (automático)</Label>
+                  <Input id="slug" value={form.slug ?? ""} readOnly />
                 </div>
                 <div>
                   <Label htmlFor="bx_code">BX Code</Label>
@@ -420,32 +439,46 @@ if (error) throw error;
                               }
                             }}
                           />
-                          <span>{c.name}</span>
+                          <span className="inline-flex items-center gap-2">{categoryIcon(c.name)}{c.name}</span>
                         </label>
                       ))}
                     </div>
                   </div>
                   <div>
                     <Label className="mb-2 block">Subcategorías</Label>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {categories
-                        .filter((sc) => sc.parent_id && selectedParentIds.includes(sc.parent_id))
-                        .map((sc) => (
-                          <label key={sc.id} className="flex items-center gap-2">
-                            <Checkbox
-                              checked={selectedSubcategoryIds.includes(sc.id)}
-                              onCheckedChange={(v) => {
-                                if (v) {
-                                  setSelectedSubcategoryIds((prev) => (prev.includes(sc.id) ? prev : [...prev, sc.id]));
-                                  if (sc.parent_id) setSelectedParentIds((prev) => (prev.includes(sc.parent_id!) ? prev : [...prev, sc.parent_id!]));
-                                } else {
-                                  setSelectedSubcategoryIds((prev) => prev.filter((id) => id !== sc.id));
-                                }
-                              }}
-                            />
-                            <span>{sc.name}</span>
-                          </label>
-                        ))}
+                    <div className="space-y-3">
+                      {selectedParentIds.map((pid) => {
+                        const parent = categories.find((c) => c.id === pid);
+                        if (!parent) return null;
+                        const subs = categories.filter((sc) => sc.parent_id === pid);
+                        return (
+                          <div key={pid} className="rounded-md border p-2">
+                            <div className="mb-1 text-sm font-medium inline-flex items-center gap-2">
+                              {categoryIcon(parent.name)} {parent.name}
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                              {subs.map((sc) => (
+                                <label key={sc.id} className="flex items-center gap-2">
+                                  <Checkbox
+                                    checked={selectedSubcategoryIds.includes(sc.id)}
+                                    onCheckedChange={(v) => {
+                                      if (v) {
+                                        setSelectedSubcategoryIds((prev) => (prev.includes(sc.id) ? prev : [...prev, sc.id]));
+                                      } else {
+                                        setSelectedSubcategoryIds((prev) => prev.filter((id) => id !== sc.id));
+                                      }
+                                    }}
+                                  />
+                                  <span>{sc.name}</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                      {selectedParentIds.length === 0 && (
+                        <p className="text-sm text-muted-foreground">Selecciona una categoría para ver sus subcategorías.</p>
+                      )}
                     </div>
                   </div>
                 </div>
