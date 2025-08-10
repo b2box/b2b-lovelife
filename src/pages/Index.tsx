@@ -3,6 +3,7 @@ import Hero from "@/components/landing/Hero";
 import CategoryTabs from "@/components/landing/CategoryTabs";
 import PromoBanner from "@/components/landing/PromoBanner";
 import Footer from "@/components/landing/Footer";
+import { Separator } from "@/components/ui/separator";
 
 const jsonLd = () => ({
   "@context": "https://schema.org",
@@ -22,9 +23,11 @@ const Index = () => {
       <Navbar />
       <main>
         <Hero />
+        <Separator className="my-8" />
         <section className="mt-6">
           <CategoryTabs />
         </section>
+        <Separator className="my-8" />
         <div className="mt-8">
           <PromoBanner />
         </div>
