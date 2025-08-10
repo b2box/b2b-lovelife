@@ -3,7 +3,7 @@ import ProductCard, { type Product } from "./ProductCard";
 
 import { Button } from "@/components/ui/button";
 import { categories } from "./data";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, ArrowDown } from "lucide-react";
 
 const AD_EYE = "/lovable-uploads/fa842b26-b9f1-4176-9073-6128c3c08fbc.png";
 const AD_VIRAL = "/lovable-uploads/025482cb-8da6-4438-85e8-ec4fe0abf877.png";
@@ -17,6 +17,7 @@ const InfiniteProducts = () => {
   const [stopped, setStopped] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const stoppedRef = useRef(false);
+  const prevScrollYRef = useRef(0);
 
   useEffect(() => {
     const el = sentinelRef.current;
@@ -68,19 +69,26 @@ const InfiniteProducts = () => {
       <div ref={sentinelRef} className="h-10" />
       <Button
         onClick={() => {
-          setStopped(true);
           const footer = document.getElementById("site-footer");
-          footer?.scrollIntoView({ behavior: "smooth" });
-          if (footer) {
-            footer.classList.add("ring-2","ring-primary/50","ring-offset-2","ring-offset-background","animate-pulse");
-            setTimeout(() => footer.classList.remove("animate-pulse"), 1200);
-            setTimeout(() => footer.classList.remove("ring-2","ring-primary/50","ring-offset-2","ring-offset-background"), 1600);
+          if (!stopped) {
+            prevScrollYRef.current = window.scrollY;
+            setStopped(true);
+            footer?.scrollIntoView({ behavior: "smooth" });
+            if (footer) {
+              footer.classList.add("ring-2","ring-primary/50","ring-offset-2","ring-offset-background","animate-pulse");
+              setTimeout(() => footer.classList.remove("animate-pulse"), 1200);
+              setTimeout(() => footer.classList.remove("ring-2","ring-primary/50","ring-offset-2","ring-offset-background"), 1600);
+            }
+          } else {
+            setStopped(false);
+            window.scrollTo({ top: prevScrollYRef.current || 0, behavior: "smooth" });
           }
         }}
-        className="fixed bottom-6 right-6 z-50 pill bg-background/90 px-4 py-2 shadow-elevate backdrop-blur"
+        aria-label={stopped ? "Ocultar footer y reanudar scroll" : "Mostrar footer"}
+        className="fixed bottom-6 right-6 z-50 grid size-12 place-items-center rounded-full bg-background/90 shadow-elevate backdrop-blur"
         variant="secondary"
       >
-        <ArrowUp className="mr-2" size={18} /> Mostrar footer
+        {stopped ? <ArrowDown size={20} /> : <ArrowUp size={20} />}
       </Button>
     </section>
   );
