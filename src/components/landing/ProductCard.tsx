@@ -14,7 +14,7 @@ type Props = { product: Product };
 const ProductCard = ({ product }: Props) => {
   return (
     <Card className="card-elevated hover:lift transition-transform rounded-2xl border-0">
-      <CardContent className="p-4 md:p-5">
+      <CardContent className="p-[5px]">
         <div className="relative">
           {product.badge && (
             <img
