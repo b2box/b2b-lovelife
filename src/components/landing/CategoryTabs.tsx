@@ -14,8 +14,8 @@ const CategoryTabs = () => {
   const first = Object.keys(categories)[0] as keyof typeof categories;
   return (
     <section className="container mx-auto">
-      <div className="rounded-[28px] bg-brand-yellow p-4 md:p-8">
-        <h2 className="mx-1 mb-5 text-center text-3xl font-semibold md:mb-6 md:text-4xl">Los productos más vendidos en las categorías más buscadas</h2>
+      <div className="rounded-[32px] bg-brand-yellow p-6 md:p-10 shadow-elevate">
+        <h2 className="mx-1 mb-5 text-center text-4xl font-extrabold md:mb-6 md:text-5xl xl:text-6xl">Los productos más vendidos en las categorías más buscadas</h2>
         <Tabs defaultValue={first} className="w-full">
           <div className="flex items-center justify-center gap-2">
             <Button variant="outline" size="icon" className="rounded-full" aria-label="Anterior">
@@ -23,7 +23,7 @@ const CategoryTabs = () => {
             </Button>
             <TabsList className="max-w-full flex-wrap bg-transparent p-0">
               {Object.keys(categories).map((key) => (
-                <TabsTrigger key={key} value={key} className="pill m-1 border bg-card px-5 py-2 text-sm font-semibold data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:border-foreground">
+                <TabsTrigger key={key} value={key} className="pill m-1 bg-card px-5 py-2 text-sm font-semibold shadow-elevate data-[state=active]:bg-foreground data-[state=active]:text-background">
                   {tabIcons[key] && (
                     <img src={tabIcons[key]} alt={`Icono ${key}`} className="mr-2 h-5 w-5 object-contain" loading="lazy" />
                   )}

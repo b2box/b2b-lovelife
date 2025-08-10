@@ -13,8 +13,8 @@ type Props = { product: Product };
 
 const ProductCard = ({ product }: Props) => {
   return (
-    <Card className="card-elevated hover:lift transition-transform rounded-2xl">
-      <CardContent className="p-4">
+    <Card className="card-elevated hover:lift transition-transform rounded-3xl">
+      <CardContent className="p-5 md:p-6">
         <div className="relative">
           {product.badge && (
             <img
@@ -28,7 +28,7 @@ const ProductCard = ({ product }: Props) => {
             src={product.image}
             alt={product.name}
             loading="lazy"
-            className="aspect-square w-full rounded-md object-cover"
+            className="aspect-square w-full rounded-xl object-cover"
           />
           {/* Viral badge */}
           {product.viral && (
@@ -36,7 +36,7 @@ const ProductCard = ({ product }: Props) => {
           )}
         </div>
         <div className="mt-3">
-          <div className="text-2xl font-bold">${product.price.toFixed(2)}</div>
+          <div className="text-3xl font-bold">${product.price.toFixed(2)}</div>
           <p className="truncate text-sm text-muted-foreground">{product.name}</p>
         </div>
       </CardContent>
