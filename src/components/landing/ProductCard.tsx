@@ -20,7 +20,7 @@ const ProductCard = ({ product }: Props) => {
             <img
               src="/lovable-uploads/9381e44b-152c-428f-bc02-75c74feb59d6.png"
               alt="B2BOX Verified badge"
-              className="absolute right-3 top-3 z-20 h-8 w-auto drop-shadow-md"
+              className="absolute right-3 top-3 z-20 h-7 w-auto drop-shadow-md"
               loading="lazy"
             />
           )}
@@ -34,7 +34,7 @@ const ProductCard = ({ product }: Props) => {
           <span className="absolute left-3 bottom-3 z-10 text-sm font-semibold text-foreground/20 select-none">B2BOX</span>
           {/* Viral badge */}
           {product.viral && (
-            <img src="/lovable-uploads/984b614e-1f6b-484a-8b88-5c741374625b.png" alt="Viral ahora" className="absolute left-3 bottom-3 z-20 h-7 w-auto md:h-8 select-none" loading="lazy" />
+            <img src="/lovable-uploads/984b614e-1f6b-484a-8b88-5c741374625b.png" alt="Viral ahora" className="absolute right-3 bottom-3 z-20 h-6 w-auto md:h-7 select-none" loading="lazy" />
           )}
         </div>
         <div className="mt-3">

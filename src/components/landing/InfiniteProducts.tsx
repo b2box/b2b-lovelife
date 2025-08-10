@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import ProductCard, { type Product } from "./ProductCard";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { categories } from "./data";
 
 const AD_EYE = "/lovable-uploads/5a3a8096-def0-4f8a-a36d-905bdd36f321.png";
@@ -12,6 +13,7 @@ const InfiniteProducts = () => {
   const base = categories[Object.keys(categories)[0]]; // usar "Principales productos"
   const [page, setPage] = useState(1);
   const [items, setItems] = useState<Product[]>(() => makePage(base, 0));
+  const [stopped, setStopped] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -37,9 +39,9 @@ const InfiniteProducts = () => {
       out.push({ kind: "product", data: items[i] });
       const idx = i + 1;
       if (idx % 12 === 0) {
-        out.push({ kind: "ad", variant: "eye", key: `ad-eye-${idx}` });
-      } else if (idx % 24 === 0) {
-        out.push({ kind: "ad", variant: "viral", key: `ad-viral-${idx}` });
+        const block = Math.floor(idx / 12);
+        const variant: "eye" | "viral" = block % 2 === 1 ? "eye" : "viral";
+        out.push({ kind: "ad", variant, key: `ad-${variant}-${idx}` });
       }
     }
     return out;
@@ -47,7 +49,7 @@ const InfiniteProducts = () => {
 
   return (
     <section className="container mx-auto" aria-label="Productos infinitos">
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5">
         {itemsWithAds.map((node, i) =>
           node.kind === "product" ? (
             <ProductCard key={node.data.id + i} product={node.data} />
