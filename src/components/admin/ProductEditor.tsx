@@ -594,22 +594,54 @@ if (error) throw error;
 
             <TabsContent value="agente" className="space-y-4">
               <div>
-                <Label>Agente</Label>
-                <Select value={form.agent_profile_id ?? undefined} onValueChange={(v) => setForm({ ...form, agent_profile_id: v })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona agente" />
-                  </SelectTrigger>
-                  <SelectContent className="z-50 bg-background">
-                    {agentOptions.length === 0 && (
-                      <SelectItem value="no-agents" disabled>
-                        No se encontraron agentes (Kerwin/Jessica/Gabriel)
-                      </SelectItem>
-                    )}
-                    {agentOptions.map((p) => (
-                      <SelectItem key={p.id} value={p.id}>{p.display_name || p.id}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label className="mb-2 block">Agente</Label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {(() => {
+                    const p = agentOptions.find(p => (p.display_name || '').toLowerCase().includes('gabriel'));
+                    const id = p?.id;
+                    const checked = form.agent_profile_id === id;
+                    return (
+                      <label className="flex items-center justify-between gap-3">
+                        <span>Gabriel</span>
+                        <Switch
+                          checked={!!checked}
+                          disabled={!id}
+                          onCheckedChange={(v) => setForm({ ...form, agent_profile_id: v ? (id || null) : null })}
+                        />
+                      </label>
+                    );
+                  })()}
+                  {(() => {
+                    const p = agentOptions.find(p => (p.display_name || '').toLowerCase().includes('kerwin'));
+                    const id = p?.id;
+                    const checked = form.agent_profile_id === id;
+                    return (
+                      <label className="flex items-center justify-between gap-3">
+                        <span>Kerwin</span>
+                        <Switch
+                          checked={!!checked}
+                          disabled={!id}
+                          onCheckedChange={(v) => setForm({ ...form, agent_profile_id: v ? (id || null) : null })}
+                        />
+                      </label>
+                    );
+                  })()}
+                  {(() => {
+                    const p = agentOptions.find(p => (p.display_name || '').toLowerCase().includes('jessica'));
+                    const id = p?.id;
+                    const checked = form.agent_profile_id === id;
+                    return (
+                      <label className="flex items-center justify-between gap-3">
+                        <span>Jessica</span>
+                        <Switch
+                          checked={!!checked}
+                          disabled={!id}
+                          onCheckedChange={(v) => setForm({ ...form, agent_profile_id: v ? (id || null) : null })}
+                        />
+                      </label>
+                    );
+                  })()}
+                </div>
               </div>
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={onClose}>Cerrar</Button>
@@ -743,6 +775,29 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
   const { toast } = useToast();
   const [v, setV] = useState<AdminVariant>(variant);
   const [saving, setSaving] = useState(false);
+  const [imgVersion, setImgVersion] = useState(0);
+
+  const onImageFiles = async (files: FileList | null) => {
+    if (!files) return;
+    for (const file of Array.from(files)) {
+      const path = `variants/${v.id}/${Date.now()}-${file.name}`;
+      const { error: upErr } = await supabase.storage.from('product-images').upload(path, file);
+      if (upErr) {
+        console.error(upErr);
+        toast({ title: "Error", description: "No se pudo subir la imagen.", variant: "destructive" });
+        continue;
+      }
+      const { data: pub } = supabase.storage.from('product-images').getPublicUrl(path);
+      const { error } = await (supabase as any)
+        .from("product_variant_images")
+        .insert({ product_variant_id: v.id, url: pub.publicUrl, alt: file.name });
+      if (error) {
+        console.error(error);
+        toast({ title: "Error", description: "No se pudo guardar la imagen.", variant: "destructive" });
+      }
+    }
+    setImgVersion((n) => n + 1);
+  };
 
   useEffect(() => setV(variant), [variant]);
 
@@ -928,6 +983,14 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
             <Label className="mr-3">Ropa</Label>
             <Switch checked={!!v.is_clothing} onCheckedChange={(val) => setV({ ...v, is_clothing: !!val })} />
           </div>
+          <div className="md:col-span-2">
+            <Label className="mr-3">Material</Label>
+            <Input
+              value={attrs.material ?? ""}
+              onChange={(e) => setV({ ...v, attributes: { ...attrs, material: e.target.value } })}
+              placeholder="Ej: plástico, metal, algodón"
+            />
+          </div>
         </div>
       </Card>
 
@@ -955,7 +1018,7 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
       {/* Sección 6: Precio por mercado (AR, COL) */}
       <Card className="p-3">
         <h4 className="font-medium mb-2">Precio por mercado</h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
           {(["AR", "COL"] as const).map((mk) => (
             <Card key={mk} className="p-3">
               <h5 className="text-sm font-medium mb-2">{mk}</h5>
@@ -1000,20 +1063,26 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
       {/* Sección 7: Media */}
       <Card className="p-3">
         <h4 className="font-medium mb-2">Media</h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-          <div>
-            <Label>URL de video</Label>
-            <Input
-              placeholder="https://…"
-              value={attrs.video_url ?? ""}
-              onChange={(e) => setV({ ...v, attributes: { ...attrs, video_url: e.target.value } })}
-            />
-            <div className="mt-2">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="md:col-span-3">
+            <VariantImages key={imgVersion} variantId={v.id} hideHeader />
+          </div>
+          <div className="md:col-span-1 space-y-4">
+            <div
+              className="rounded-md border border-dashed p-4 text-center"
+              onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+              onDrop={async (e) => { e.preventDefault(); e.stopPropagation(); await onImageFiles(e.dataTransfer.files); }}
+            >
+              <p className="text-sm mb-2">Upload images</p>
+              <input id={`img-uploader-${v.id}`} type="file" accept="image/*" multiple className="hidden" onChange={async (e) => { await onImageFiles(e.target.files); }} />
+              <Button size="sm" variant="outline" onClick={() => document.getElementById(`img-uploader-${v.id}`)?.click()}>Seleccionar</Button>
+            </div>
+            <div className="rounded-md border border-dashed p-4 text-center">
+              <p className="text-sm mb-2">Subir video</p>
               <Input type="file" accept="video/*" onChange={onVideoFile} />
             </div>
           </div>
         </div>
-        <VariantImages variantId={v.id} />
       </Card>
 
       <div className="flex justify-end gap-2">
@@ -1108,19 +1177,19 @@ const VariantTiers: React.FC<{ variantId: string }> = ({ variantId }) => {
         <h4 className="font-medium">Precios proveedor (CNY)</h4>
       </div>
       {loading && <p>Cargando precios…</p>}
-      {!loading && rows.length === 0 && <p>Sin precios configurados.</p>}
+      
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {rows.slice(0, 3).map((row, idx) => (
           <Card key={row.id} className="p-3">
             <div className="text-sm font-medium mb-2">Tier {idx + 1}</div>
             <div className="space-y-2">
               <div>
-                <Label>Cantidad</Label>
-                <Input type="number" value={row.min_qty} onChange={(e) => setRows((rs) => rs.map(r => r.id === row.id ? { ...r, min_qty: Number(e.target.value) } : r))} onBlur={() => updateRow(rows.find(r=>r.id===row.id)!)} />
+                <Label>{`Precio ${idx + 1} (CNY)`}</Label>
+                <Input type="number" value={row.unit_price} onChange={(e) => setRows((rs) => rs.map(r => r.id === row.id ? { ...r, unit_price: Number(e.target.value) } : r))} onBlur={() => updateRow(rows.find(r=>r.id===row.id)!)} />
               </div>
               <div>
-                <Label>Precio (CNY)</Label>
-                <Input type="number" value={row.unit_price} onChange={(e) => setRows((rs) => rs.map(r => r.id === row.id ? { ...r, unit_price: Number(e.target.value) } : r))} onBlur={() => updateRow(rows.find(r=>r.id===row.id)!)} />
+                <Label>{`Cantidad ${idx + 1}`}</Label>
+                <Input type="number" value={row.min_qty} onChange={(e) => setRows((rs) => rs.map(r => r.id === row.id ? { ...r, min_qty: Number(e.target.value) } : r))} onBlur={() => updateRow(rows.find(r=>r.id===row.id)!)} />
               </div>
             </div>
           </Card>
@@ -1130,7 +1199,7 @@ const VariantTiers: React.FC<{ variantId: string }> = ({ variantId }) => {
   );
 };
 
-const VariantImages: React.FC<{ variantId: string }> = ({ variantId }) => {
+const VariantImages: React.FC<{ variantId: string; hideHeader?: boolean }> = ({ variantId, hideHeader }) => {
   const { toast } = useToast();
   const [images, setImages] = useState<VariantImage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1205,10 +1274,12 @@ const VariantImages: React.FC<{ variantId: string }> = ({ variantId }) => {
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between">
-        <h4 className="font-medium">Imágenes</h4>
-        <Input type="file" accept="image/*" onChange={onFile} />
-      </div>
+      {!hideHeader && (
+        <div className="flex items-center justify-between">
+          <h4 className="font-medium">Imágenes</h4>
+          <Input type="file" accept="image/*" onChange={onFile} />
+        </div>
+      )}
       {loading && <p>Cargando imágenes…</p>}
       <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
         {images.map((img) => {
