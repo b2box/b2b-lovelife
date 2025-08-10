@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { categories } from "@/components/landing/data";
 import type { Product } from "@/components/landing/ProductCard";
-import { ArrowUpRight, CheckCircle2, Cog } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, Cog, Hash, Box, Package, Battery, Ruler, Scale } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 
@@ -492,6 +492,107 @@ const ProductView = () => {
             </article>
           </div>
         </section>
+
+        {/* Detalles técnicos */}
+        <section className="mt-8 w-full md:w-4/5">
+          <h2 className="text-xl font-semibold mb-3">Detalles técnicos</h2>
+          <div className="rounded-2xl border bg-card overflow-hidden">
+            <table className="w-full text-sm">
+              <thead className="bg-secondary/40 text-muted-foreground">
+                <tr>
+                  <th className="text-left px-4 py-3 font-medium">Producto</th>
+                  <th className="text-left px-4 py-3 font-medium">Detalles caja</th>
+                  <th className="text-left px-4 py-3 font-medium">Detalles producto</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-t">
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2 text-destructive"><Hash className="size-4" /><span className="text-foreground">Código PA</span></div>
+                    <div className="text-muted-foreground">PA00120</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2 text-destructive"><Ruler className="size-4" /><span className="text-foreground">Ancho de la caja</span></div>
+                    <div className="text-muted-foreground">15.5 cm</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2 text-destructive"><Ruler className="size-4" /><span className="text-foreground">Ancho del producto</span></div>
+                    <div className="text-muted-foreground">14 cm</div>
+                  </td>
+                </tr>
+                <tr className="border-t">
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2 text-destructive"><Box className="size-4" /><span className="text-foreground">Categoría</span></div>
+                    <div className="text-muted-foreground">Hogar</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2 text-destructive"><Ruler className="size-4" /><span className="text-foreground">Largo de la caja</span></div>
+                    <div className="text-muted-foreground">24.5 cm</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2 text-destructive"><Ruler className="size-4" /><span className="text-foreground">Largo del producto</span></div>
+                    <div className="text-muted-foreground">21 cm</div>
+                  </td>
+                </tr>
+                <tr className="border-t">
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2 text-destructive"><Box className="size-4" /><span className="text-foreground">Subcategoría</span></div>
+                    <div className="text-muted-foreground">Organizadores</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2 text-destructive"><Ruler className="size-4" /><span className="text-foreground">Alto de la caja</span></div>
+                    <div className="text-muted-foreground">5.5 cm</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2 text-destructive"><Ruler className="size-4" /><span className="text-foreground">Alto del producto</span></div>
+                    <div className="text-muted-foreground">20.5 cm</div>
+                  </td>
+                </tr>
+                <tr className="border-t">
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2 text-destructive"><Package className="size-4" /><span className="text-foreground">Material</span></div>
+                    <div className="text-muted-foreground">Plástico</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2 text-destructive"><Scale className="size-4" /><span className="text-foreground">Peso de la caja</span></div>
+                    <div className="text-muted-foreground">0.22 kg</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2 text-destructive"><Scale className="size-4" /><span className="text-foreground">Peso del producto</span></div>
+                    <div className="text-muted-foreground">0.17 kg</div>
+                  </td>
+                </tr>
+                <tr className="border-t">
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2 text-destructive"><Battery className="size-4" /><span className="text-foreground">¿Contiene batería?</span></div>
+                    <div className="text-muted-foreground">No</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2 text-destructive"><Package className="size-4" /><span className="text-foreground">Empaque</span></div>
+                    <div className="text-muted-foreground">Incluido</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2 text-destructive"><Package className="size-4" /><span className="text-foreground">—</span></div>
+                    <div className="text-muted-foreground">—</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* Imágenes */}
+        <section className="mt-8 w-full md:w-4/5">
+          <h2 className="text-xl font-semibold mb-3">Imágenes</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {Array.from({ length: 2 }).map((_, i) => (
+              <div key={i} className="rounded-2xl border overflow-hidden bg-muted">
+                <img src={product.image} alt={`${product.name} imagen ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
+              </div>
+            ))}
+          </div>
+        </section>
+
       </main>
       <Footer />
     </div>
