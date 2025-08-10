@@ -1,37 +1,34 @@
 
 import React from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useToast } from "@/components/ui/use-toast";
+
 import ProductEditor from "./ProductEditor";
 
 type Product = {
   id: string;
   name: string;
+  bx_code: string | null;
   active: boolean;
-  updated_at: string;
+  product_images?: { url: string; sort_order: number }[];
 };
 
 async function fetchProducts(): Promise<Product[]> {
   const { data, error } = await supabase
     .from("products")
-    .select("id,name,active,updated_at")
+    .select("id,name,bx_code,active,product_images(url,sort_order)")
     .order("updated_at", { ascending: false })
     .limit(50);
   if (error) throw error;
-  return data as Product[];
+  return data as unknown as Product[];
 }
 
-async function toggleActive(id: string, active: boolean) {
-  const { error } = await supabase.from("products").update({ active }).eq("id", id);
-  if (error) throw error;
-}
 
 const ProductsPanel: React.FC = () => {
-  const { toast } = useToast();
+  
   const qc = useQueryClient();
   const [editorOpen, setEditorOpen] = React.useState(false);
   const [selected, setSelected] = React.useState<Product | null>(null);
@@ -41,23 +38,6 @@ const ProductsPanel: React.FC = () => {
     queryFn: fetchProducts,
   });
 
-  const mutation = useMutation({
-    mutationFn: ({ id, active }: { id: string; active: boolean }) => toggleActive(id, active),
-    meta: {
-      onError: (err: unknown) => {
-        console.error("[ProductsPanel] toggleActive error", err);
-        toast({
-          title: "Error",
-          description: "No se pudo actualizar el estado del producto.",
-          variant: "destructive",
-        });
-      },
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["admin", "products"] });
-      toast({ title: "Actualizado", description: "Estado del producto actualizado." });
-    },
-  });
 
   return (
     <Card className="p-4 md:p-6">
@@ -72,32 +52,36 @@ const ProductsPanel: React.FC = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>ID</TableHead>
+                <TableHead>Thumbnail</TableHead>
+                <TableHead>BX CODE</TableHead>
                 <TableHead>Nombre</TableHead>
-                <TableHead>Activo</TableHead>
-                <TableHead>Actualizado</TableHead>
                 <TableHead>Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {data.map((p) => (
                 <TableRow key={p.id}>
-                  <TableCell className="font-mono text-xs">{p.id}</TableCell>
+                  <TableCell>
+                    {(() => {
+                      const img = (p.product_images ?? []).sort((a, b) => a.sort_order - b.sort_order)[0];
+                      return img ? (
+                        <img
+                          src={img.url}
+                          alt={`Miniatura de ${p.name}`}
+                          className="h-12 w-12 rounded-md object-cover"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="h-12 w-12 rounded-md bg-muted" aria-label="Sin imagen" />)
+                    })()}
+                  </TableCell>
+                  <TableCell className="font-mono text-xs">{p.bx_code ?? "-"}</TableCell>
                   <TableCell>{p.name}</TableCell>
-                  <TableCell>{p.active ? "Sí" : "No"}</TableCell>
-                  <TableCell>{new Date(p.updated_at).toLocaleString()}</TableCell>
                   <TableCell className="space-x-2">
                     <Button
                       size="sm"
-                      variant={p.active ? "outline" : "brand"}
-                      onClick={() => mutation.mutate({ id: p.id, active: !p.active })}
-                    >
-                      {p.active ? "Desactivar" : "Activar"}
-                    </Button>
-                    <Button
-                      size="sm"
                       variant="secondary"
-                      onClick={() => { setSelected(p); setEditorOpen(true); }}
+                      onClick={() => { setSelected(p as any); setEditorOpen(true); }}
                     >
                       Editar
                     </Button>
