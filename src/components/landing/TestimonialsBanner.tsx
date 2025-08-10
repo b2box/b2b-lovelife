@@ -9,7 +9,7 @@ const TestimonialsBanner = () => {
         decoding="async"
         width={1920}
         height={316}
-        className="w-full h-auto rounded-[24px] shadow-elevate"
+        className="w-full h-auto rounded-[24px] shadow-elevate-green"
       />
     </div>
   );

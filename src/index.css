@@ -86,6 +86,7 @@ All colors MUST be HSL.
       hsl(var(--trends-blue)) 100%
     );
     --shadow-elevate: 0 10px 30px -10px hsl(var(--brand) / 0.25);
+    --shadow-elevate-green: 0 10px 30px -10px hsl(var(--brand-green) / 0.28);
     --shadow-glow: 0 12px 40px -12px hsl(var(--brand-2) / 0.35);
   }
 
@@ -149,6 +150,7 @@ All colors MUST be HSL.
   .text-brand-green { color: hsl(var(--brand-green)); }
   .text-brand-2 { color: hsl(var(--brand-2)); }
   .shadow-elevate { box-shadow: var(--shadow-elevate); }
+  .shadow-elevate-green { box-shadow: var(--shadow-elevate-green); }
   .shadow-glow { box-shadow: var(--shadow-glow); }
   .card-elevated { @apply rounded-lg bg-card text-card-foreground; box-shadow: var(--shadow-elevate); }
   .pill { @apply rounded-full; }
