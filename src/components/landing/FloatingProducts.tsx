@@ -79,15 +79,15 @@ const FloatingProducts: React.FC = () => {
 
     return {
       transform: `translate(${tx}px, ${ty}px) scale(${scale})`,
-      zIndex: Math.round(scale * 10),
+      zIndex: isCenter ? 100 : Math.round(scale * 10),
       transition: "transform 360ms cubic-bezier(0.4,0,0.2,1)",
     } as React.CSSProperties;
   };
 
   return (
-    <div className="relative h-80 md:h-96" aria-label="Grid interactivo estilo Apple Watch">
+    <div className="relative h-80 md:h-96 overflow-visible" aria-label="Grid interactivo estilo Apple Watch">
       <div
-        className="absolute inset-0 flex flex-col items-center justify-center gap-3"
+        className="absolute inset-0 flex flex-col items-center justify-center gap-3 overflow-visible"
         onMouseLeave={() => setHoverManual(null)}
       >
         {Array.from({ length: Math.ceil(items.length / COLS) }, (_, r) => {
