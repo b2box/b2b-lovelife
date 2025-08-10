@@ -4,8 +4,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { categories } from "@/components/landing/data";
 import type { Product } from "@/components/landing/ProductCard";
-import { ArrowUpRight, Truck, Pencil, BadgeDollarSign, CheckCircle2 } from "lucide-react";
+import { ArrowUpRight, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 
 const findProductById = (id?: string): Product | undefined => {
   if (!id) return undefined;
@@ -296,9 +297,47 @@ const ProductView = () => {
             </div>
 
             <div className="mt-4 grid grid-cols-3 gap-2 text-xs text-muted-foreground">
-              <div className="rounded-lg border p-2 flex items-center gap-2"><Truck className="h-4 w-4" /> Método de envío</div>
-              <div className="rounded-lg border p-2 flex items-center gap-2"><Pencil className="h-4 w-4" /> Personalizar</div>
-              <div className="rounded-lg border p-2 flex items-center gap-2"><BadgeDollarSign className="h-4 w-4" /> Precios claros</div>
+              {/* Método de envío */}
+              <HoverCard>
+                <HoverCardTrigger asChild>
+                  <div className="relative rounded-2xl border p-3 bg-background cursor-default">
+                    <img src="/lovable-uploads/bcaad47c-1390-4a6e-a192-4c5279337cf3.png" alt="Método de envío" className="h-5 w-auto opacity-60" loading="lazy" />
+                    <span className="mt-2 block">Método de envío</span>
+                    <img src="/lovable-uploads/b649a871-c178-4c15-bd9b-de67f426d03e.png" alt="Ayuda" className="absolute top-2 right-2 h-4 w-4 opacity-60" loading="lazy" />
+                  </div>
+                </HoverCardTrigger>
+                <HoverCardContent side="top" align="end" className="w-64 p-3 text-xs">
+                  Envíos aéreos y marítimos disponibles. Tiempos y costos varían según destino y volumen.
+                </HoverCardContent>
+              </HoverCard>
+
+              {/* Personalizar producto */}
+              <HoverCard>
+                <HoverCardTrigger asChild>
+                  <div className="relative rounded-2xl border p-3 bg-background cursor-default">
+                    <img src="/lovable-uploads/e176248e-ec33-4374-8df2-39c6d1d81194.png" alt="Personalizar producto" className="h-5 w-auto opacity-60" loading="lazy" />
+                    <span className="mt-2 block">Personalizar producto</span>
+                    <img src="/lovable-uploads/b649a871-c178-4c15-bd9b-de67f426d03e.png" alt="Ayuda" className="absolute top-2 right-2 h-4 w-4 opacity-60" loading="lazy" />
+                  </div>
+                </HoverCardTrigger>
+                <HoverCardContent side="top" align="center" className="w-64 p-3 text-xs">
+                  Incluye branding, empaques y especificaciones según tu marca. Cotización rápida.
+                </HoverCardContent>
+              </HoverCard>
+
+              {/* Precios sin sorpresas */}
+              <HoverCard>
+                <HoverCardTrigger asChild>
+                  <div className="relative rounded-2xl border p-3 bg-background cursor-default">
+                    <img src="/lovable-uploads/6a45e477-73d7-45a9-9eda-470e2c37a6cb.png" alt="Precios sin sorpresas" className="h-5 w-auto opacity-60" loading="lazy" />
+                    <span className="mt-2 block">Precios sin sorpresas</span>
+                    <img src="/lovable-uploads/b649a871-c178-4c15-bd9b-de67f426d03e.png" alt="Ayuda" className="absolute top-2 right-2 h-4 w-4 opacity-60" loading="lazy" />
+                  </div>
+                </HoverCardTrigger>
+                <HoverCardContent side="top" align="start" className="w-64 p-3 text-xs">
+                  Transparencia total: desglose de costos, sin cargos ocultos al confirmar tu orden.
+                </HoverCardContent>
+              </HoverCard>
             </div>
           </aside>
         </div>
