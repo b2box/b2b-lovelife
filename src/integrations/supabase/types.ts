@@ -428,45 +428,119 @@ export type Database = {
           },
         ]
       }
+      product_variant_images: {
+        Row: {
+          alt: string | null
+          created_at: string
+          id: string
+          product_variant_id: string
+          sort_order: number
+          url: string
+        }
+        Insert: {
+          alt?: string | null
+          created_at?: string
+          id?: string
+          product_variant_id: string
+          sort_order?: number
+          url: string
+        }
+        Update: {
+          alt?: string | null
+          created_at?: string
+          id?: string
+          product_variant_id?: string
+          sort_order?: number
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_variant_images_product_variant_id_fkey"
+            columns: ["product_variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_variants: {
         Row: {
           active: boolean
           attributes: Json
+          box_height_cm: number | null
+          box_length_cm: number | null
+          box_weight_kg: number | null
+          box_width_cm: number | null
+          cbm_per_carton: number | null
           created_at: string
           currency: string
+          has_battery: boolean
+          height_cm: number | null
           id: string
+          is_clothing: boolean
+          length_cm: number | null
           name: string | null
+          option_name: string | null
+          pcs_per_carton: number | null
           price: number | null
           product_id: string
           sku: string | null
           stock: number
           updated_at: string
+          weight_kg: number | null
+          width_cm: number | null
         }
         Insert: {
           active?: boolean
           attributes?: Json
+          box_height_cm?: number | null
+          box_length_cm?: number | null
+          box_weight_kg?: number | null
+          box_width_cm?: number | null
+          cbm_per_carton?: number | null
           created_at?: string
           currency?: string
+          has_battery?: boolean
+          height_cm?: number | null
           id?: string
+          is_clothing?: boolean
+          length_cm?: number | null
           name?: string | null
+          option_name?: string | null
+          pcs_per_carton?: number | null
           price?: number | null
           product_id: string
           sku?: string | null
           stock?: number
           updated_at?: string
+          weight_kg?: number | null
+          width_cm?: number | null
         }
         Update: {
           active?: boolean
           attributes?: Json
+          box_height_cm?: number | null
+          box_length_cm?: number | null
+          box_weight_kg?: number | null
+          box_width_cm?: number | null
+          cbm_per_carton?: number | null
           created_at?: string
           currency?: string
+          has_battery?: boolean
+          height_cm?: number | null
           id?: string
+          is_clothing?: boolean
+          length_cm?: number | null
           name?: string | null
+          option_name?: string | null
+          pcs_per_carton?: number | null
           price?: number | null
           product_id?: string
           sku?: string | null
           stock?: number
           updated_at?: string
+          weight_kg?: number | null
+          width_cm?: number | null
         }
         Relationships: [
           {

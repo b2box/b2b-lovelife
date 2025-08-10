@@ -86,13 +86,20 @@ const ProductsPanel: React.FC = () => {
                   <TableCell>{p.name}</TableCell>
                   <TableCell>{p.active ? "Sí" : "No"}</TableCell>
                   <TableCell>{new Date(p.updated_at).toLocaleString()}</TableCell>
-                  <TableCell>
+                  <TableCell className="space-x-2">
                     <Button
                       size="sm"
                       variant={p.active ? "outline" : "brand"}
                       onClick={() => mutation.mutate({ id: p.id, active: !p.active })}
                     >
                       {p.active ? "Desactivar" : "Activar"}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => { setSelected(p); setEditorOpen(true); }}
+                    >
+                      Editar
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -101,6 +108,12 @@ const ProductsPanel: React.FC = () => {
           </Table>
         </div>
       )}
+      <ProductEditor
+        open={editorOpen}
+        onClose={() => setEditorOpen(false)}
+        onSaved={() => { setEditorOpen(false); qc.invalidateQueries({ queryKey: ["admin", "products"] }); }}
+        product={selected ? ({ id: selected.id, name: selected.name, active: selected.active } as any) : null}
+      />
     </Card>
   );
 };
