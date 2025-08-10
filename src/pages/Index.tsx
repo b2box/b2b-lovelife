@@ -39,9 +39,11 @@ const Index = () => {
             <CategoryTabs />
           </section>
         )}
-        <section className="mt-6">
-          <CategoryShowcase />
-        </section>
+        {isApp && (
+          <section className="mt-6">
+            <CategoryShowcase />
+          </section>
+        )}
         
         <div className="mt-8">
           <PromoBanner />
