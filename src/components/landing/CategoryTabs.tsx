@@ -37,7 +37,7 @@ const CategoryTabs = () => {
           </div>
           {Object.entries(categories).map(([key, value]) => (
             <TabsContent key={key} value={key}>
-              <ProductGrid products={value} />
+              <ProductGrid products={value.slice(0,5)} />
             </TabsContent>
           ))}
         </Tabs>

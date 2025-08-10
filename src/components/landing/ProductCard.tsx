@@ -16,9 +16,12 @@ const ProductCard = ({ product }: Props) => {
       <CardContent className="p-4">
         <div className="relative">
           {product.badge && (
-            <span className="absolute right-2 top-2 z-10 rounded-full border bg-background/90 px-2 py-1 text-xs font-medium text-foreground shadow-sm backdrop-blur">
-              {product.badge}
-            </span>
+            <img
+              src="/lovable-uploads/9381e44b-152c-428f-bc02-75c74feb59d6.png"
+              alt="B2BOX Verified badge"
+              className="absolute right-2 top-2 z-10 h-7 w-auto drop-shadow"
+              loading="lazy"
+            />
           )}
           <img
             src={product.image}
