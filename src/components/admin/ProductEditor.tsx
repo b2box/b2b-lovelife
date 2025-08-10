@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
@@ -644,6 +645,7 @@ const VariantsEditor: React.FC<{ productId: string }> = ({ productId }) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [variants, setVariants] = useState<AdminVariant[]>([]);
+  const [edit, setEdit] = useState<AdminVariant | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -676,7 +678,20 @@ const VariantsEditor: React.FC<{ productId: string }> = ({ productId }) => {
       toast({ title: "Error", description: "No se pudo crear la variante.", variant: "destructive" });
       return;
     }
-    if (data) setVariants((v) => [...v, data as any]);
+    if (data) {
+      setVariants((v) => [...v, data as any]);
+      setEdit(data as any);
+    }
+  };
+
+  const toggleActive = async (id: string, val: boolean) => {
+    const { error } = await supabase.from('product_variants').update({ active: val }).eq('id', id);
+    if (error) {
+      console.error(error);
+      toast({ title: 'Error', description: 'No se pudo actualizar el estado.', variant: 'destructive' });
+      return;
+    }
+    setVariants((prev) => prev.map((x) => (x.id === id ? { ...x, active: val } : x)));
   };
 
   return (
@@ -686,12 +701,40 @@ const VariantsEditor: React.FC<{ productId: string }> = ({ productId }) => {
         <Button size="sm" onClick={createVariant}>Agregar variante</Button>
       </div>
       {loading && <p>Cargando…</p>}
-      {!loading && variants.length === 0 && <p>No hay variantes.</p>}
-      <div className="space-y-4">
-        {variants.map((v) => (
-          <VariantCard key={v.id} variant={v} onChanged={load} />
-        ))}
-      </div>
+      {!loading && (
+        <Card className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Título</TableHead>
+                <TableHead>PA Code</TableHead>
+                <TableHead className="w-[120px]">Activo</TableHead>
+                <TableHead className="w-[120px]">Acciones</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {variants.map((row) => (
+                <TableRow key={row.id}>
+                  <TableCell>{row.name ?? "-"}</TableCell>
+                  <TableCell>{row.sku ?? "-"}</TableCell>
+                  <TableCell>
+                    <Switch checked={!!row.active} onCheckedChange={(val) => toggleActive(row.id, !!val)} />
+                  </TableCell>
+                  <TableCell>
+                    <Button size="sm" variant="outline" onClick={() => setEdit(row)}>Editar</Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
+      )}
+
+      <Dialog open={!!edit} onOpenChange={(o) => !o && setEdit(null)}>
+        <DialogContent className="w-[95vw] max-w-5xl max-h-[85vh] overflow-y-auto">
+          {edit && <VariantCard variant={edit} onChanged={() => { load(); setEdit(null); }} />}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
@@ -750,25 +793,35 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
   });
   const markets = ensureMarkets(attrs.markets);
 
+  const onVideoFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const path = `variants/${v.id}/videos/${Date.now()}-${file.name}`;
+    const { error: upErr } = await supabase.storage.from('product-images').upload(path, file);
+    if (upErr) {
+      console.error(upErr);
+      toast({ title: "Error", description: "No se pudo subir el video.", variant: "destructive" });
+      return;
+    }
+    const { data: pub } = supabase.storage.from('product-images').getPublicUrl(path);
+    setV({ ...v, attributes: { ...attrs, video_url: pub.publicUrl } });
+  };
   return (
     <Card className="p-4 space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div>
           <Label>Título</Label>
           <Input value={v.name ?? ""} onChange={(e) => setV({ ...v, name: e.target.value })} />
         </div>
         <div>
-          <Label>SKU</Label>
+          <Label>PA Code</Label>
           <Input value={v.sku ?? ""} onChange={(e) => setV({ ...v, sku: e.target.value })} />
         </div>
-        <div>
-          <Label>Variante</Label>
-          <Input value={v.option_name ?? ""} onChange={(e) => setV({ ...v, option_name: e.target.value })} />
-        </div>
         <div className="flex items-end">
-          <Button variant={v.active ? "default" : "secondary"} onClick={() => setV({ ...v, active: !v.active })}>
-            {v.active ? "Activo" : "Inactivo"}
-          </Button>
+          <label className="flex items-center justify-between w-full">
+            <span>Activo</span>
+            <Switch checked={!!v.active} onCheckedChange={(val) => setV({ ...v, active: !!val })} />
+          </label>
         </div>
       </div>
 
@@ -823,7 +876,7 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
 
       {/* Sección 2: Packaging */}
       <Card className="p-3">
-        <h4 className="font-medium mb-2">Packaging</h4>
+        <h4 className="font-medium mb-2">Packaging individual</h4>
         <div className="flex items-center justify-between mb-3">
           <Label>Empaque incluido</Label>
           <Switch
@@ -866,7 +919,7 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
       {/* Sección 3: Extras */}
       <Card className="p-3">
         <h4 className="font-medium mb-2">Extras</h4>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="flex items-center justify-between">
             <Label className="mr-3">Batería</Label>
             <Switch checked={!!v.has_battery} onCheckedChange={(val) => setV({ ...v, has_battery: !!val })} />
@@ -875,16 +928,12 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
             <Label className="mr-3">Ropa</Label>
             <Switch checked={!!v.is_clothing} onCheckedChange={(val) => setV({ ...v, is_clothing: !!val })} />
           </div>
-          <div>
-            <Label>Stock</Label>
-            <Input type="number" value={v.stock} onChange={(e) => setV({ ...v, stock: Number(e.target.value) })} />
-          </div>
         </div>
       </Card>
 
       {/* Sección 4: Packaging atributos */}
       <Card className="p-3">
-        <h4 className="font-medium mb-2">Atributos de Packaging</h4>
+        <h4 className="font-medium mb-2">Master Packaging</h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div>
             <Label>PCS/CTN</Label>
@@ -959,6 +1008,9 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
               value={attrs.video_url ?? ""}
               onChange={(e) => setV({ ...v, attributes: { ...attrs, video_url: e.target.value } })}
             />
+            <div className="mt-2">
+              <Input type="file" accept="video/*" onChange={onVideoFile} />
+            </div>
           </div>
         </div>
         <VariantImages variantId={v.id} />
@@ -1057,27 +1109,19 @@ const VariantTiers: React.FC<{ variantId: string }> = ({ variantId }) => {
       </div>
       {loading && <p>Cargando precios…</p>}
       {!loading && rows.length === 0 && <p>Sin precios configurados.</p>}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-2">
-        {rows.map((row) => (
-          <Card key={row.id} className="p-3 md:col-span-12">
-            <div className="grid grid-cols-2 md:grid-cols-6 gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        {rows.slice(0, 3).map((row, idx) => (
+          <Card key={row.id} className="p-3">
+            <div className="text-sm font-medium mb-2">Tier {idx + 1}</div>
+            <div className="space-y-2">
               <div>
-                <Label>Tier</Label>
-                <Input value={row.tier} onChange={(e) => setRows((rs) => rs.map(r => r.id === row.id ? { ...r, tier: e.target.value } : r))} onBlur={() => updateRow(rows.find(r=>r.id===row.id)!)} />
-              </div>
-              <div>
-                <Label>Mín. qty</Label>
+                <Label>Cantidad</Label>
                 <Input type="number" value={row.min_qty} onChange={(e) => setRows((rs) => rs.map(r => r.id === row.id ? { ...r, min_qty: Number(e.target.value) } : r))} onBlur={() => updateRow(rows.find(r=>r.id===row.id)!)} />
               </div>
               <div>
-                <Label>Moneda</Label>
-                <Input value={row.currency} onChange={(e) => setRows((rs) => rs.map(r => r.id === row.id ? { ...r, currency: e.target.value } : r))} onBlur={() => updateRow(rows.find(r=>r.id===row.id)!)} />
-              </div>
-              <div>
-                <Label>Precio</Label>
+                <Label>Precio (CNY)</Label>
                 <Input type="number" value={row.unit_price} onChange={(e) => setRows((rs) => rs.map(r => r.id === row.id ? { ...r, unit_price: Number(e.target.value) } : r))} onBlur={() => updateRow(rows.find(r=>r.id===row.id)!)} />
               </div>
-              <div className="flex items-end" />
             </div>
           </Card>
         ))}
@@ -1143,6 +1187,22 @@ const VariantImages: React.FC<{ variantId: string }> = ({ variantId }) => {
     setImages((imgs) => imgs.filter((i) => i.id !== id));
   };
 
+  const setThumbnail = async (id: string) => {
+    try {
+      const sorted = [ ...images ].sort((a, b) => (a.id === id ? -1 : b.id === id ? 1 : (a.sort_order ?? 999) - (b.sort_order ?? 999)));
+      await Promise.all(sorted.map((img, idx) => (supabase as any)
+        .from('product_variant_images')
+        .update({ sort_order: idx })
+        .eq('id', img.id)
+      ));
+      await load();
+      toast({ title: 'Actualizado', description: 'Thumbnail establecido.' });
+    } catch (e) {
+      console.error(e);
+      toast({ title: 'Error', description: 'No se pudo marcar thumbnail.', variant: 'destructive' });
+    }
+  };
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
@@ -1151,15 +1211,25 @@ const VariantImages: React.FC<{ variantId: string }> = ({ variantId }) => {
       </div>
       {loading && <p>Cargando imágenes…</p>}
       <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
-        {images.map((img) => (
-          <Card key={img.id} className="p-2 space-y-2">
-            <img src={img.url} alt={img.alt ?? 'imagen variante'} className="w-full h-24 object-cover rounded" />
-            <div className="flex justify-between items-center">
-              <span className="text-xs truncate">{img.alt}</span>
-              <Button size="sm" variant="destructive" onClick={() => remove(img.id)}>Eliminar</Button>
-            </div>
-          </Card>
-        ))}
+        {images.map((img) => {
+          const isThumb = img.sort_order === 0;
+          return (
+            <Card key={img.id} className="p-2 space-y-2">
+              <div className="relative">
+                <img src={img.url} alt={img.alt ?? 'imagen variante'} className="w-full h-24 object-cover rounded" />
+                {isThumb && (
+                  <span className="absolute top-1 right-1 text-xs px-2 py-0.5 rounded bg-primary text-primary-foreground">Thumbnail</span>
+                )}
+              </div>
+              <div className="flex justify-between items-center gap-2">
+                <Button size="sm" variant="outline" onClick={() => setThumbnail(img.id)} disabled={isThumb} className="w-full">
+                  {isThumb ? 'Principal' : 'Hacer thumbnail'}
+                </Button>
+                <Button size="sm" variant="destructive" onClick={() => remove(img.id)} className="w-full">Eliminar</Button>
+              </div>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );
