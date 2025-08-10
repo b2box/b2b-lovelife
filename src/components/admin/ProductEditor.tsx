@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Package, Languages, Truck, Layers, UserSquare, Settings } from "lucide-react";
 
 export type AdminProduct = {
   id?: string;
@@ -303,12 +304,12 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
         </DialogHeader>
           <Tabs defaultValue="producto" className="w-full">
             <TabsList>
-              <TabsTrigger value="producto">Producto</TabsTrigger>
-              <TabsTrigger value="multilingual">Contenido</TabsTrigger>
-              <TabsTrigger value="supplier">Proveedor</TabsTrigger>
-              {form.id && <TabsTrigger value="variantes">Variantes</TabsTrigger>}
-              <TabsTrigger value="agente">Agente</TabsTrigger>
-              <TabsTrigger value="status">Status</TabsTrigger>
+              <TabsTrigger value="producto" className="gap-2"><Package size={16} /> Producto</TabsTrigger>
+              <TabsTrigger value="multilingual" className="gap-2"><Languages size={16} /> Contenido</TabsTrigger>
+              <TabsTrigger value="supplier" className="gap-2"><Truck size={16} /> Proveedor</TabsTrigger>
+              <TabsTrigger value="variantes" className="gap-2"><Layers size={16} /> Variantes</TabsTrigger>
+              <TabsTrigger value="agente" className="gap-2"><UserSquare size={16} /> Agente</TabsTrigger>
+              <TabsTrigger value="status" className="gap-2"><Settings size={16} /> Status</TabsTrigger>
             </TabsList>
 
             <TabsContent value="producto" className="space-y-4">
@@ -336,24 +337,32 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
                   <Label htmlFor="bx_code">BX Code</Label>
                   <Input id="bx_code" value={form.bx_code ?? ""} onChange={(e) => setForm({ ...form, bx_code: e.target.value })} />
                 </div>
-                <div className="flex items-center gap-4">
-                  <label className="flex items-center gap-2">
-                    <Checkbox
-                      id="verified_product"
-                      checked={!!form.verified_product}
-                      onCheckedChange={(v) => setForm({ ...form, verified_product: !!v })}
-                    />
-                    <span>Verified product</span>
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <Checkbox
-                      id="verified_video"
-                      checked={!!form.verified_video}
-                      onCheckedChange={(v) => setForm({ ...form, verified_video: !!v })}
-                    />
-                    <span>Verified video</span>
-                  </label>
-                </div>
+                  <div className="flex items-center gap-4">
+                    <label className="flex items-center gap-2">
+                      <Checkbox
+                        id="verified_product"
+                        checked={!!form.verified_product}
+                        onCheckedChange={(v) => setForm({ ...form, verified_product: !!v })}
+                      />
+                      <span>Verified product</span>
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <Checkbox
+                        id="verified_video"
+                        checked={!!form.verified_video}
+                        onCheckedChange={(v) => setForm({ ...form, verified_video: !!v })}
+                      />
+                      <span>Verified video</span>
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <Checkbox
+                        id="discountable"
+                        checked={!!form.discountable}
+                        onCheckedChange={(v) => setForm({ ...form, discountable: !!v })}
+                      />
+                      <span>Discountable</span>
+                    </label>
+                  </div>
               </div>
 
               <Card className="p-3">
@@ -370,8 +379,8 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
                   ))}
                 </div>
                 <div className="mt-3">
-                  <Label>Tags (separados por coma)</Label>
-                  <Input value={tagsText} onChange={(e) => setTagsText(e.target.value)} placeholder="hogar, cocina, trending" />
+                  <Label htmlFor="collection">Colección</Label>
+                  <Input id="collection" value={form.collection ?? ""} onChange={(e) => setForm({ ...form, collection: e.target.value })} placeholder="Ej: Verano 2025" />
                 </div>
               </Card>
 
@@ -458,11 +467,16 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
               </div>
             </TabsContent>
 
-            {form.id && (
-              <TabsContent value="variantes">
+            <TabsContent value="variantes">
+              {form.id ? (
                 <VariantsEditor productId={form.id!} />
-              </TabsContent>
-            )}
+              ) : (
+                <Card className="p-4">
+                  <p className="text-sm mb-3">Primero guarda el producto para poder crear variantes.</p>
+                  <Button onClick={saveProduct} disabled={saving}>{saving ? "Guardando…" : "Guardar producto"}</Button>
+                </Card>
+              )}
+            </TabsContent>
 
             <TabsContent value="agente" className="space-y-4">
               <div>
