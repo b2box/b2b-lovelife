@@ -475,7 +475,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
                   </SelectTrigger>
                   <SelectContent className="z-50 bg-background">
                     {agentOptions.length === 0 && (
-                      <SelectItem value="" disabled>
+                      <SelectItem value="no-agents" disabled>
                         No se encontraron agentes (Kerwin/Jessica)
                       </SelectItem>
                     )}
