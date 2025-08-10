@@ -102,20 +102,21 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Row 2 */}
-      <div>
-        <div className="container mx-auto flex flex-wrap items-center gap-4 py-3 text-sm">
-          <a href="#trends" className="flex items-center"><img src="/lovable-uploads/573f686c-7492-4309-a3ef-8a941e81ec6e.png" alt="B2BOX TRENDS" className="h-6 w-auto" loading="lazy" /></a>
-          <a href="#academy" className="flex items-center"><img src="/lovable-uploads/a43adb22-d4de-4fa7-bc78-f8ac44f2dc81.png" alt="B2BOX ACADEMY" className="h-6 w-auto" loading="lazy" /></a>
-          <a href="#brands" className="flex items-center"><img src="/lovable-uploads/f311b60a-adbd-4b8b-8fce-7615166a2895.png" alt="B2BOX BRANDS" className="h-6 w-auto" loading="lazy" /></a>
-          <span className="mx-2 hidden h-4 w-px bg-border md:inline-block" />
-          <a href="#nosotros" className="font-medium text-base">{TEXTS[country].us}</a>
-          <a href="#moda-fem" className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-medium text-base"><img src="/lovable-uploads/ca6fd2f2-92d9-43f6-955b-e4f140912e9e.png" alt="Icono Moda femenina" className="h-5 w-5 object-contain" loading="lazy" /> Moda femenina</a>
-          <a href="#moda-mas" className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-medium text-base"><img src="/lovable-uploads/32edb77f-ead7-4e0e-9638-b2049b7f5e31.png" alt="Icono Moda masculina" className="h-5 w-5 object-contain" loading="lazy" /> Moda masculina</a>
-          <a href="#salud" className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-medium text-base"><img src="/lovable-uploads/af8639df-1761-4ec1-b905-8d948d403ae4.png" alt="Icono Salud y bienestar" className="h-5 w-5 object-contain" loading="lazy" /> Salud y bienestar</a>
-          <a href="#wearable" className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-medium text-base"><img src="/lovable-uploads/1487d271-1ed1-4085-afb4-b90508b2221e.png" alt="Icono Tecnología wearable" className="h-5 w-5 object-contain" loading="lazy" /> Tecnología wearable</a>
+      {isApp && (
+        <div>
+          <div className="container mx-auto flex flex-wrap items-center gap-4 py-3 text-sm">
+            <a href="#trends" className="flex items-center"><img src="/lovable-uploads/573f686c-7492-4309-a3ef-8a941e81ec6e.png" alt="B2BOX TRENDS" className="h-6 w-auto" loading="lazy" /></a>
+            <a href="#academy" className="flex items-center"><img src="/lovable-uploads/a43adb22-d4de-4fa7-bc78-f8ac44f2dc81.png" alt="B2BOX ACADEMY" className="h-6 w-auto" loading="lazy" /></a>
+            <a href="#brands" className="flex items-center"><img src="/lovable-uploads/f311b60a-adbd-4b8b-8fce-7615166a2895.png" alt="B2BOX BRANDS" className="h-6 w-auto" loading="lazy" /></a>
+            <span className="mx-2 hidden h-4 w-px bg-border md:inline-block" />
+            <a href="#nosotros" className="font-medium text-base">{TEXTS[country].us}</a>
+            <a href="#moda-fem" className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-medium text-base"><img src="/lovable-uploads/ca6fd2f2-92d9-43f6-955b-e4f140912e9e.png" alt="Icono Moda femenina" className="h-5 w-5 object-contain" loading="lazy" /> Moda femenina</a>
+            <a href="#moda-mas" className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-medium text-base"><img src="/lovable-uploads/32edb77f-ead7-4e0e-9638-b2049b7f5e31.png" alt="Icono Moda masculina" className="h-5 w-5 object-contain" loading="lazy" /> Moda masculina</a>
+            <a href="#salud" className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-medium text-base"><img src="/lovable-uploads/af8639df-1761-4ec1-b905-8d948d403ae4.png" alt="Icono Salud y bienestar" className="h-5 w-5 object-contain" loading="lazy" /> Salud y bienestar</a>
+            <a href="#wearable" className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-medium text-base"><img src="/lovable-uploads/1487d271-1ed1-4085-afb4-b90508b2221e.png" alt="Icono Tecnología wearable" className="h-5 w-5 object-contain" loading="lazy" /> Tecnología wearable</a>
+          </div>
         </div>
-      </div>
+      )}
     </header>
   );
 };
