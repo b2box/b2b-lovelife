@@ -278,6 +278,177 @@ const ProductView = () => {
                     </button>
                   </div>
                 </article>
+
+                {/* Descripción bajo selector */}
+                <section aria-label="Descripción breve" className="-mt-1">
+                  <article className="prose prose-sm md:prose-base max-w-none">
+                    <p>
+                      ¡Aprovecha cada rincón con la Estantería de Dos Niveles para Almacenamiento que lo transforma todo! Este diseño práctico de dos niveles organiza cosméticos, productos de higiene y más, con una estructura ventilada y colores vibrantes que revitalizan tu espacio. ¡Perfecto para tu baño o tocador!
+                    </p>
+                    <h3>Características destacadas:</h3>
+                    <ul>
+                      <li>🧴 Dos niveles versátiles: Almacena más en menos espacio.</li>
+                      <li>💨 Estructura ventilada: Mantiene tus artículos frescos y secos.</li>
+                      <li>🎨 Colores vibrantes: Disponible en tonos que alegran tu ambiente.</li>
+                      <li>💪🏻 Resistencia sólida: Sostiene tus objetos con seguridad.</li>
+                      <li>✨ Material premium brillante: ¡Plástico resistente con acabados modernos!</li>
+                    </ul>
+                    <p>🛍 Ideal para: ✅Baños organizados, ✅tocadores prácticos y ✅hogares con estilo.</p>
+                  </article>
+                </section>
+
+                {/* Variantes dentro de la columna izquierda */}
+                <section className="mt-6">
+                  <h2 className="text-xl font-semibold mb-3">Variantes</h2>
+                  <div className="overflow-x-auto rounded-2xl border bg-card">
+                    <table className="min-w-[1080px] w-full text-sm">
+                      <thead>
+                        <tr className="bg-secondary/60">
+                          <th className="text-left px-4 py-3 font-medium rounded-tl-2xl">Producto</th>
+                          <th className="text-left px-4 py-3 font-medium">Unidades</th>
+                          <th className="text-left px-4 py-3 font-medium">Precio Unitario</th>
+                          <th className="text-center px-4 py-3 font-medium bg-blue-200/60" colSpan={4}>Complementos</th>
+                          <th className="text-right px-4 py-3 font-medium rounded-tr-2xl">Total</th>
+                        </tr>
+                        <tr className="text-muted-foreground bg-secondary/40">
+                          <th></th>
+                          <th></th>
+                          <th></th>
+                          <th className="px-4 py-2 text-center">Etiquetado</th>
+                          <th className="px-4 py-2 text-center">Código de Barras</th>
+                          <th className="px-4 py-2 text-center">Fotografías</th>
+                          <th className="px-4 py-2 text-center">Empaque</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {rows.map((r, i) => (
+                          <tr key={r.id} className={`border-t ${i === 0 ? "ring-1 ring-green-400/60 rounded-xl" : ""}`}>
+                            <td className="px-4 py-4">
+                              <div className="flex items-center gap-3">
+                                <img src={product.image} alt={r.name} className="size-12 rounded-md object-cover" loading="lazy" />
+                                <div>
+                                  <div className="font-medium leading-tight">{r.name}</div>
+                                  <div className="text-xs text-muted-foreground">{r.color}</div>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="inline-flex items-center rounded-full border">
+                                <button className="px-3 py-1" onClick={() => changeQty(r.id, -1)} aria-label="Disminuir">-</button>
+                                <span className="px-3 py-1 min-w-8 text-center">{r.qty}</span>
+                                <button className="px-3 py-1" onClick={() => changeQty(r.id, 1)} aria-label="Aumentar">+</button>
+                              </div>
+                            </td>
+                            <td className="px-4 py-4">${r.unitPrice.toFixed(2)}</td>
+
+                            {/* Etiquetado */}
+                            <td className="px-4 py-4 text-center">
+                              <button
+                                className={`px-3 py-1 rounded-full text-xs border ${r.comps.labeling ? "bg-green-400/70 text-black border-transparent" : "bg-transparent"}`}
+                                onClick={() => toggleComp(r.id, "labeling")}
+                              >
+                                ${perUnitLabeling.toFixed(2)} P.U
+                              </button>
+                              <div className="text-[10px] text-muted-foreground mt-1">{r.stock.toLocaleString()} artículos</div>
+                            </td>
+
+                            {/* Código de barras */}
+                            <td className="px-4 py-4 text-center">
+                              <button
+                                className={`px-3 py-1 rounded-full text-xs border ${r.comps.barcode ? "bg-green-400/70 text-black border-transparent" : "bg-transparent"}`}
+                                onClick={() => toggleComp(r.id, "barcode")}
+                              >
+                                ${fixedBarcode.toFixed(0)}
+                              </button>
+                            </td>
+
+                            {/* Fotos */}
+                            <td className="px-4 py-4 text-center">
+                              <button
+                                className={`px-3 py-1 rounded-full text-xs border ${r.comps.photos ? "bg-green-400/70 text-black border-transparent" : "bg-transparent"}`}
+                                onClick={() => toggleComp(r.id, "photos")}
+                              >
+                                ${fixedPhotos.toLocaleString()}
+                              </button>
+                            </td>
+
+                            {/* Empaque */}
+                            <td className="px-4 py-4 text-center">
+                              <button
+                                className={`px-3 py-1 rounded-full text-xs border ${r.comps.packaging ? "bg-green-400/70 text-black border-transparent" : "bg-transparent"}`}
+                                onClick={() => toggleComp(r.id, "packaging")}
+                              >
+                                ${perUnitPackaging.toFixed(2)} P.U
+                              </button>
+                            </td>
+
+                            <td className="px-4 py-4 text-right font-semibold">${rowTotal(r).toFixed(2)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+
+                {/* Cuadrícula de beneficios */}
+                <section className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    { t: "Opciones de personalización", d: "Si deseas personalizar tus productos, nuestro equipo en China se encargará." },
+                    { t: "Entrega confiable", d: "Logística optimizada para que recibas tus productos lo antes posible." },
+                    { t: "Pago diferido", d: "Hoy solo pagas el 30%. El resto al confirmar todo desde China." },
+                    { t: "Control de calidad", d: "Control en fábrica con estándares internacionales." },
+                  ].map((b, idx) => (
+                    <div key={idx} className="rounded-2xl border p-4">
+                      <div className="font-medium">{b.t}</div>
+                      <p className="text-sm text-muted-foreground mt-1">{b.d}</p>
+                    </div>
+                  ))}
+                </section>
+
+                {/* Detalles técnicos */}
+                <section className="mt-6">
+                  <h3 className="text-lg font-semibold mb-3">Detalles técnicos</h3>
+                  <div className="rounded-2xl border overflow-hidden">
+                    <table className="w-full text-sm">
+                      <thead className="bg-secondary/50">
+                        <tr>
+                          <th className="text-left px-4 py-3">Producto</th>
+                          <th className="text-left px-4 py-3">Detalles caja</th>
+                          <th className="text-left px-4 py-3">Detalles producto</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="border-t">
+                          <td className="px-4 py-3">Código PA<br /><span className="text-muted-foreground">PA00120</span></td>
+                          <td className="px-4 py-3">Ancho de la caja<br /><span className="text-muted-foreground">15.5 cm</span></td>
+                          <td className="px-4 py-3">Ancho del producto<br /><span className="text-muted-foreground">14 cm</span></td>
+                        </tr>
+                        <tr className="border-t">
+                          <td className="px-4 py-3">Categoría<br /><span className="text-muted-foreground">Hogar</span></td>
+                          <td className="px-4 py-3">Largo de la caja<br /><span className="text-muted-foreground">24.5 cm</span></td>
+                          <td className="px-4 py-3">Largo del producto<br /><span className="text-muted-foreground">21 cm</span></td>
+                        </tr>
+                        <tr className="border-t">
+                          <td className="px-4 py-3">Subcategoría<br /><span className="text-muted-foreground">Organizadores</span></td>
+                          <td className="px-4 py-3">Alto de la caja<br /><span className="text-muted-foreground">5.5 cm</span></td>
+                          <td className="px-4 py-3">Alto del producto<br /><span className="text-muted-foreground">20.5 cm</span></td>
+                        </tr>
+                        <tr className="border-t">
+                          <td className="px-4 py-3">Material<br /><span className="text-muted-foreground">Plástico</span></td>
+                          <td className="px-4 py-3">Peso de la caja<br /><span className="text-muted-foreground">0.22 kg</span></td>
+                          <td className="px-4 py-3">Peso del producto<br /><span className="text-muted-foreground">0.17 kg</span></td>
+                        </tr>
+                        <tr className="border-t">
+                          <td className="px-4 py-3">¿Contiene batería?<br /><span className="text-muted-foreground">No</span></td>
+                          <td className="px-4 py-3">Empaque<br /><span className="text-muted-foreground">Incluido</span></td>
+                          <td className="px-4 py-3"></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+
               </div>
             </div>
           </section>
@@ -350,110 +521,6 @@ const ProductView = () => {
           </aside>
         </div>
 
-        {/* Descripción y características */}
-        <section className="mt-6 md:mt-8">
-          <article className="prose prose-sm md:prose-base max-w-none">
-            <p>
-              ¡Aprovecha cada rincón con la Estantería de Dos Niveles para Almacenamiento que lo transforma todo! Este diseño práctico de dos niveles organiza cosméticos, productos de higiene y más, con una estructura ventilada y colores vibrantes que revitalizan tu espacio. ¡Perfecto para tu baño o tocador!
-            </p>
-            <h3>Características destacadas:</h3>
-            <ul>
-              <li>🧴 Dos niveles versátiles: Almacena más en menos espacio.</li>
-              <li>💨 Estructura ventilada: Mantiene tus artículos frescos y secos.</li>
-              <li>🎨 Colores vibrantes: Disponible en tonos que alegran tu ambiente.</li>
-              <li>💪🏻 Resistencia sólida: Sostiene tus objetos con seguridad.</li>
-              <li>✨ Material premium brillante: ¡Plástico resistente con acabados modernos!</li>
-            </ul>
-            <p>🛍 Ideal para: ✅Baños organizados, ✅tocadores prácticos y ✅hogares con estilo.</p>
-          </article>
-        </section>
-
-        {/* Variantes */}
-        <section className="mt-8">
-          <h2 className="text-xl font-semibold mb-3">Variantes</h2>
-          <div className="overflow-x-auto rounded-2xl border bg-card">
-            <table className="min-w-[960px] w-full text-sm">
-              <thead className="bg-secondary/40 text-muted-foreground">
-                <tr>
-                  <th className="text-left px-4 py-3 font-medium">Producto</th>
-                  <th className="text-left px-4 py-3 font-medium">Unidades</th>
-                  <th className="text-left px-4 py-3 font-medium">Precio Unitario</th>
-                  <th className="px-4 py-3 font-medium">Etiquetado por Marketplaces</th>
-                  <th className="px-4 py-3 font-medium">Registro de Código de Barras</th>
-                  <th className="px-4 py-3 font-medium">Fotografías Comerciales</th>
-                  <th className="px-4 py-3 font-medium">Empaque</th>
-                  <th className="text-right px-4 py-3 font-medium">Precio Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((r) => (
-                  <tr key={r.id} className="border-t">
-                    <td className="px-4 py-4">
-                      <div className="flex items-center gap-3">
-                        <img src={product.image} alt={r.name} className="size-12 rounded-md object-cover" loading="lazy" />
-                        <div>
-                          <div className="font-medium leading-tight">{r.name}</div>
-                          <div className="text-xs text-muted-foreground">{r.color}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className="inline-flex items-center rounded-full border">
-                        <button className="px-3 py-1" onClick={() => changeQty(r.id, -1)} aria-label="Disminuir">-</button>
-                        <span className="px-3 py-1 min-w-8 text-center">{r.qty}</span>
-                        <button className="px-3 py-1" onClick={() => changeQty(r.id, 1)} aria-label="Aumentar">+</button>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4">${r.unitPrice.toFixed(2)}</td>
-
-                    {/* Etiquetado */}
-                    <td className="px-4 py-4 text-center">
-                      <button
-                        className={`px-3 py-1 rounded-full text-xs border ${r.comps.labeling ? "bg-green-500/15 text-green-700" : "bg-transparent"}`}
-                        onClick={() => toggleComp(r.id, "labeling")}
-                      >
-                        ${perUnitLabeling.toFixed(2)} /U
-                      </button>
-                      <div className="text-[10px] text-muted-foreground mt-1">{r.stock.toLocaleString()} unidades</div>
-                    </td>
-
-                    {/* Código de barras */}
-                    <td className="px-4 py-4 text-center">
-                      <button
-                        className={`px-3 py-1 rounded-full text-xs border ${r.comps.barcode ? "bg-green-500/15 text-green-700" : "bg-transparent"}`}
-                        onClick={() => toggleComp(r.id, "barcode")}
-                      >
-                        ${fixedBarcode.toFixed(0)}
-                      </button>
-                    </td>
-
-                    {/* Fotos */}
-                    <td className="px-4 py-4 text-center">
-                      <button
-                        className={`px-3 py-1 rounded-full text-xs border ${r.comps.photos ? "bg-green-500/15 text-green-700" : "bg-transparent"}`}
-                        onClick={() => toggleComp(r.id, "photos")}
-                      >
-                        ${fixedPhotos.toLocaleString()}
-                      </button>
-                    </td>
-
-                    {/* Empaque */}
-                    <td className="px-4 py-4 text-center">
-                      <button
-                        className={`px-3 py-1 rounded-full text-xs border ${r.comps.packaging ? "bg-green-500/15 text-green-700" : "bg-transparent"}`}
-                        onClick={() => toggleComp(r.id, "packaging")}
-                      >
-                        ${perUnitPackaging.toFixed(2)} /U
-                      </button>
-                    </td>
-
-                    <td className="px-4 py-4 text-right font-medium">${rowTotal(r).toFixed(2)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
       </main>
       <Footer />
     </div>
