@@ -304,7 +304,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
           <Tabs defaultValue="producto" className="w-full">
             <TabsList>
               <TabsTrigger value="producto">Producto</TabsTrigger>
-              {form.id && <TabsTrigger value="multilingual">Contenido</TabsTrigger>}
+              <TabsTrigger value="multilingual">Contenido</TabsTrigger>
               <TabsTrigger value="supplier">Proveedor</TabsTrigger>
               {form.id && <TabsTrigger value="variantes">Variantes</TabsTrigger>}
               <TabsTrigger value="agente">Agente</TabsTrigger>
@@ -381,8 +381,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
               </div>
             </TabsContent>
 
-            {form.id && (
-              <TabsContent value="multilingual" className="space-y-4">
+            <TabsContent value="multilingual" className="space-y-4">
                 <div className="grid grid-cols-1 gap-6">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
@@ -441,7 +440,6 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
                   <Button onClick={saveTranslations}>Guardar traducciones</Button>
                 </div>
               </TabsContent>
-            )}
 
             <TabsContent value="supplier" className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
