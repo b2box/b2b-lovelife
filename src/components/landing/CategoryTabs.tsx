@@ -15,7 +15,7 @@ const CategoryTabs = () => {
   return (
     <section className="container mx-auto">
       <div className="rounded-[32px] bg-brand-yellow px-6 py-8 md:px-10 md:py-10 shadow-elevate">
-        <div className="mx-auto max-w-3xl md:max-w-[900px] xl:max-w-[1100px] rounded-[60px] bg-card px-6 py-5 md:px-10 md:py-6 xl:py-7">
+        <div className="mx-auto max-w-3xl md:max-w-[900px] xl:max-w-[1240px] rounded-[60px] bg-card px-6 py-5 md:px-10 md:py-6 xl:py-7">
           <h2 className="text-center text-[28px] font-semibold md:text-[36px] xl:text-[48px] xl:leading-[60px]">Los productos más vendidos en las categorías más buscadas</h2>
         </div>
         <Tabs defaultValue={first} className="w-full mt-6 md:mt-8">
@@ -25,7 +25,7 @@ const CategoryTabs = () => {
             </Button>
             <TabsList className="max-w-full flex flex-wrap items-center justify-center gap-3 md:gap-3 bg-transparent p-0">
               {Object.keys(categories).map((key) => (
-                <TabsTrigger key={key} value={key} className="pill m-1 h-12 px-6 md:px-7 text-base font-semibold bg-card data-[state=active]:bg-foreground data-[state=active]:text-background">
+                <TabsTrigger key={key} value={key} className="pill m-1 h-12 px-6 md:px-7 text-base font-semibold bg-card border border-foreground/20 data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:border-transparent">
                   {tabIcons[key] && (
                     <img src={tabIcons[key]} alt={`Icono ${key}`} className="mr-2 h-4 w-4 md:h-5 md:w-5 object-contain" loading="lazy" />
                   )}
