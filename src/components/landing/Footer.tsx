@@ -52,11 +52,17 @@ const Footer = () => {
         <div>
           <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-muted-foreground"><img src="/lovable-uploads/a463cd78-cb2e-4fe6-b892-0d5bf0faaba4.png" alt="Icono Comprar" className="h-4 w-4" loading="lazy" /><span>Comprar</span></h3>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li><a href="#como" className="story-link hover:text-foreground">¿Cómo comprar?</a></li>
+            <li className="space-y-1">
+              <a href="#como" className="story-link hover:text-foreground">¿Cómo comprar?</a>
+              <span aria-hidden="true" className="block h-1 w-36 rounded bg-brand-green"></span>
+            </li>
             <li><a href="#productos" className="story-link hover:text-foreground">Nuestros productos</a></li>
             <li><a href="#envios" className="story-link hover:text-foreground">Precios y envíos</a></li>
             <li><a href="#pagos" className="story-link hover:text-foreground">Métodos de pago</a></li>
-            <li><a href="#faq" className="story-link hover:text-foreground">Preguntas frecuentes</a></li>
+            <li className="space-y-1">
+              <a href="#faq" className="story-link hover:text-foreground">Preguntas frecuentes</a>
+              <span aria-hidden="true" className="block h-1 w-40 rounded bg-[hsl(var(--ad-viral))]"></span>
+            </li>
           </ul>
         </div>
 
