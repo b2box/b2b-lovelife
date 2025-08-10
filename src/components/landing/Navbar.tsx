@@ -6,17 +6,17 @@ const Navbar = () => {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       {/* Row 1 */}
-      <div className="container mx-auto flex h-16 items-center justify-between gap-4">
+      <div className="container mx-auto flex h-20 items-center justify-between gap-4">
         {/* Left cluster */}
         <div className="flex items-center gap-4 md:gap-6">
           <Link to="/" className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-md bg-gradient-primary" aria-hidden />
-            <span className="text-xl font-bold">B2BOX</span>
+            <span className="text-2xl font-bold">B2BOX</span>
           </Link>
 
           {/* Categorías chip */}
-          <Button variant="brand" className="pill hidden sm:inline-flex px-4 py-2">
-            <Menu size={18} /> Categorías
+          <Button variant="brand" className="pill hidden sm:inline-flex h-10 px-5">
+            <Menu size={20} /> Categorías
           </Button>
         </div>
 
