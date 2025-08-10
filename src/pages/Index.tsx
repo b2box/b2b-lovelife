@@ -37,6 +37,9 @@ const Index = () => {
               <HowItWorks />
             </section>
             <section className="mt-6">
+              <PromoBanner />
+            </section>
+            <section className="mt-6">
               <InfiniteProducts publicMode={true} />
             </section>
             <section className="mt-6 container mx-auto">
@@ -69,12 +72,14 @@ const Index = () => {
 
         {isApp && (
           <section className="mt-12">
+            <PromoBanner />
+          </section>
+        )}
+        {isApp && (
+          <section className="mt-12">
             <InfiniteProducts publicMode={false} />
           </section>
         )}
-      <section className="mt-12">
-        <PromoBanner />
-      </section>
       </main>
       <Footer />
 
