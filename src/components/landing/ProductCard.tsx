@@ -19,7 +19,7 @@ const ProductCard = ({ product }: Props) => {
             <img
               src="/lovable-uploads/9381e44b-152c-428f-bc02-75c74feb59d6.png"
               alt="B2BOX Verified badge"
-              className="absolute right-2 top-2 z-10 h-7 w-auto drop-shadow"
+              className="absolute right-3 top-3 z-10 h-8 w-auto drop-shadow-md"
               loading="lazy"
             />
           )}
