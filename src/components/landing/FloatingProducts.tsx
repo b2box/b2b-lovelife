@@ -25,7 +25,7 @@ const items: WatchItem[] = Array.from({ length: ROWS * COLS }, (_, i) => ({
 }));
 
 const itemBase =
-  "group relative rounded-full overflow-hidden will-change-transform";
+  "group relative rounded-full will-change-transform";
 
 // Hex-grid helpers for Apple Watch effect
 const getCellPos = (r: number, c: number) => {
@@ -108,13 +108,15 @@ const FloatingProducts: React.FC = () => {
                   onMouseEnter={() => setHoverManual({ r, c: idx })}
                   style={styleFor(r, idx)}
                 >
-                  <img
-                    src={it.image}
-                    alt={`${it.name} estilo Apple Watch`}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover select-none"
-                  />
+                  <div className="rounded-full overflow-hidden w-full h-full bg-card">
+                    <img
+                      src={it.image}
+                      alt={`${it.name} estilo Apple Watch`}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover select-none"
+                    />
+                  </div>
                   {active.r === r && active.c === idx && (
                     <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-brand-green text-foreground text-[10px] md:text-xs font-semibold px-2 py-1 rounded-full shadow-elevate-green border border-border animate-fade-in">
                       {`$${it.price.toFixed(2)}`}
