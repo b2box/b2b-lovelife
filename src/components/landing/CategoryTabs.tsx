@@ -40,7 +40,7 @@ const CategoryTabs = () => {
                   <TabsTrigger
                     key={key}
                     value={key}
-                    className="pill h-12 px-6 text-base font-semibold bg-card border border-foreground/20 data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:border-transparent shrink-0 w-[220px] md:w-[230px] xl:w-[240px] justify-center"
+                    className="pill rounded-full h-12 px-6 text-base font-semibold bg-card border border-foreground/20 data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:border-transparent shrink-0 w-[220px] md:w-[230px] xl:w-[240px] justify-center"
                   >
                     {tabIcons[key] && (
                       <img src={tabIcons[key]} alt={`Icono ${key}`} className="mr-2 h-4 w-4 md:h-5 md:w-5 object-contain" loading="lazy" />
@@ -56,7 +56,7 @@ const CategoryTabs = () => {
                       <TabsTrigger
                         key={key}
                         value={key}
-                        className="pill h-12 px-6 text-base font-semibold bg-card border border-foreground/20 data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:border-transparent shrink-0 w-[220px] md:w-[230px] xl:w-[240px] justify-center"
+                        className="pill rounded-full h-12 px-6 text-base font-semibold bg-card border border-foreground/20 data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:border-transparent shrink-0 w-[220px] md:w-[230px] xl:w-[240px] justify-center"
                       >
                         {tabIcons[key] && (
                           <img src={tabIcons[key]} alt={`Icono ${key}`} className="mr-2 h-4 w-4 md:h-5 md:w-5 object-contain" loading="lazy" />
