@@ -1,17 +1,19 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Menu, Search, ChevronDown } from "lucide-react";
+import { Menu, Search, ChevronDown, User } from "lucide-react";
 
 const TEXTS = {
-  AR: { cart: "Carrito", orders: "Pedidos", profile: "Perfil", us: "Nosotros", search: "Buscar productos, categorías, marcas…" },
-  CO: { cart: "Carrito", orders: "Pedidos", profile: "Perfil", us: "Nosotros", search: "Buscar productos, categorías, marcas…" },
+  AR: { cart: "Carrito", orders: "Pedidos", profile: "Perfil", us: "Nosotros", search: "Buscar productos, categorías, marcas…", login: "Iniciar sesión", register: "Registrarse" },
+  CO: { cart: "Carrito", orders: "Pedidos", profile: "Perfil", us: "Nosotros", search: "Buscar productos, categorías, marcas…", login: "Iniciar sesión", register: "Registrarse" },
 } as const;
 
 type Country = keyof typeof TEXTS;
 
 const Navbar = () => {
+  const location = useLocation();
+  const isApp = location.pathname.startsWith("/app");
   const [country, setCountry] = React.useState<Country>(() => (localStorage.getItem("country") as Country) || "AR");
   React.useEffect(() => { localStorage.setItem("country", country); }, [country]);
   return (
@@ -63,20 +65,36 @@ const Navbar = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          <div className="hidden lg:flex items-center gap-6 text-base font-medium">
-            <div className="flex flex-col items-center">
-              <img src="/lovable-uploads/e2255b3e-fa3e-47a1-89ec-bb042bcdd4e0.png" alt="Icono Carrito" className="h-7 w-7 object-contain" loading="lazy" />
-              <span>{TEXTS[country].cart}</span>
+{isApp ? (
+            <div className="hidden lg:flex items-center gap-6 text-base font-medium">
+              <div className="flex flex-col items-center">
+                <img src="/lovable-uploads/e2255b3e-fa3e-47a1-89ec-bb042bcdd4e0.png" alt="Icono Carrito" className="h-7 w-7 object-contain" loading="lazy" />
+                <span>{TEXTS[country].cart}</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <img src="/lovable-uploads/1647953f-698c-4c75-a3ac-c9ae11334c69.png" alt="Icono Pedidos" className="h-7 w-7 object-contain" loading="lazy" />
+                <span>{TEXTS[country].orders}</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <img src="/lovable-uploads/c21caebf-b694-4e86-b07c-b08a51d325ab.png" alt="Icono Perfil" className="h-7 w-7 object-contain" loading="lazy" />
+                <span>{TEXTS[country].profile}</span>
+              </div>
             </div>
-            <div className="flex flex-col items-center">
-              <img src="/lovable-uploads/1647953f-698c-4c75-a3ac-c9ae11334c69.png" alt="Icono Pedidos" className="h-7 w-7 object-contain" loading="lazy" />
-              <span>{TEXTS[country].orders}</span>
+          ) : (
+            <div className="hidden lg:flex items-center gap-4">
+              <Button asChild variant="outline" className="pill h-12 px-5">
+                <Link to="/auth" aria-label={TEXTS[country].login}>
+                  <span className="flex items-center gap-2">
+                    <User size={18} />
+                    {TEXTS[country].login}
+                  </span>
+                </Link>
+              </Button>
+              <Button asChild variant="brand" className="pill h-12 px-6 font-semibold">
+                <Link to="/auth" aria-label={TEXTS[country].register}>{TEXTS[country].register}</Link>
+              </Button>
             </div>
-            <div className="flex flex-col items-center">
-              <img src="/lovable-uploads/c21caebf-b694-4e86-b07c-b08a51d325ab.png" alt="Icono Perfil" className="h-7 w-7 object-contain" loading="lazy" />
-              <span>{TEXTS[country].profile}</span>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
