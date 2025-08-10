@@ -291,8 +291,10 @@ setSaving(true);
           })
           .select("id")
           .maybeSingle();
-        if (error) throw error;
-        setForm((f) => ({ ...f, id: data?.id }));
+if (error) throw error;
+        const newId = (data?.id as string) || '';
+        setForm((f) => ({ ...f, id: newId }));
+        if (newId) await syncRelations(newId);
       }
       toast({ title: "Guardado", description: "Producto guardado correctamente." });
       onSaved?.();

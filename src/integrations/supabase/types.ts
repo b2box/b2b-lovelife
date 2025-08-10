@@ -136,6 +136,7 @@ export type Database = {
           created_at: string
           id: string
           name: string
+          parent_id: string | null
           slug: string | null
           updated_at: string
         }
@@ -143,6 +144,7 @@ export type Database = {
           created_at?: string
           id?: string
           name: string
+          parent_id?: string | null
           slug?: string | null
           updated_at?: string
         }
@@ -150,10 +152,19 @@ export type Database = {
           created_at?: string
           id?: string
           name?: string
+          parent_id?: string | null
           slug?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "categories_parent_fk"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       customer_price_tiers: {
         Row: {
@@ -643,6 +654,8 @@ export type Database = {
           supplier_model: string | null
           type: string | null
           updated_at: string
+          verified_product: boolean
+          verified_video: boolean
         }
         Insert: {
           active?: boolean
@@ -663,6 +676,8 @@ export type Database = {
           supplier_model?: string | null
           type?: string | null
           updated_at?: string
+          verified_product?: boolean
+          verified_video?: boolean
         }
         Update: {
           active?: boolean
@@ -683,6 +698,8 @@ export type Database = {
           supplier_model?: string | null
           type?: string | null
           updated_at?: string
+          verified_product?: boolean
+          verified_video?: boolean
         }
         Relationships: [
           {
