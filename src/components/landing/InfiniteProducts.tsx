@@ -82,7 +82,7 @@ function AdCard({ variant }: { variant: "eye" | "viral" }) {
   const src = variant === "eye" ? AD_EYE : AD_VIRAL;
   const alt = variant === "eye" ? "¿No encuentras el producto que buscas?" : "¡Descubrí los productos más virales de Argentina!";
   return (
-    <div className="col-span-2 md:col-span-2 bg-foreground rounded-[28px] overflow-hidden flex items-stretch justify-center h-full">
+    <div className="col-span-2 md:col-span-2 bg-foreground rounded-[28px] overflow-hidden flex items-stretch justify-center h-full px-3 md:px-6">
       <img src={src} alt={alt} loading="lazy" className="block m-0 p-0 w-full h-full object-contain" />
     </div>
   );
