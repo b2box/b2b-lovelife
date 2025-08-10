@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 // Simple floating product bubbles with hover price atoms around the circle
@@ -13,16 +13,17 @@ const sources = [
   "/lovable-uploads/544136ae-c430-471c-accb-449e3e6cafac.png",
 ];
 
-const items: WatchItem[] = Array.from({ length: 24 }, (_, i) => ({
+const COLS = 7;
+const ROWS = 4;
+
+const items: WatchItem[] = Array.from({ length: ROWS * COLS }, (_, i) => ({
   id: `w-${i}`,
   name: "Producto destacado",
   image: sources[i % sources.length],
 }));
 
-const COLS = 7;
-
 const itemBase =
-  "group relative rounded-full border border-border bg-card/80 shadow-elevate overflow-hidden will-change-transform";
+  "group relative rounded-full overflow-hidden will-change-transform";
 
 // Hex-grid helpers for Apple Watch effect
 const getCellPos = (r: number, c: number) => {
@@ -38,17 +39,33 @@ const distance = (a: { x: number; y: number }, b: { x: number; y: number }) => {
 };
 
 const FloatingProducts: React.FC = () => {
-  const [hover, setHover] = useState<{ r: number; c: number } | null>(null);
+  const [hoverManual, setHoverManual] = useState<{ r: number; c: number } | null>(null);
+  const [autoIndex, setAutoIndex] = useState(0);
+
+  // Recorrido automático (serpentina) cuando no hay hover
+  const path: { r: number; c: number }[] = Array.from({ length: ROWS }, (_, r) =>
+    Array.from({ length: COLS }, (_, c) => ({ r, c }))
+      .sort((a, b) => (r % 2 ? b.c - a.c : a.c - b.c))
+  ).flat();
+
+  useEffect(() => {
+    if (hoverManual) return;
+    const id = setInterval(() => setAutoIndex((i) => (i + 1) % path.length), 900);
+    return () => clearInterval(id);
+  }, [hoverManual, path.length]);
+
+  const active = hoverManual ?? path[autoIndex];
 
   const styleFor = (r: number, c: number) => {
-    if (!hover) {
+    const current = active;
+    if (!current) {
       return { transform: "scale(1)", zIndex: 1 } as React.CSSProperties;
     }
     const p = getCellPos(r, c);
-    const ph = getCellPos(hover.r, hover.c);
+    const ph = getCellPos(current.r, current.c);
     const d = distance(p, ph);
 
-    const isCenter = hover.r === r && hover.c === c;
+    const isCenter = current.r === r && current.c === c;
     const scale = isCenter ? 1.65 : 1 + 0.55 * Math.exp(-Math.pow(d, 2) / 1.2);
 
     const dx = p.x - ph.x;
@@ -69,7 +86,7 @@ const FloatingProducts: React.FC = () => {
     <div className="relative h-80 md:h-96" aria-label="Grid interactivo estilo Apple Watch">
       <div
         className="absolute inset-0 flex flex-col items-center justify-center gap-3"
-        onMouseLeave={() => setHover(null)}
+        onMouseLeave={() => setHoverManual(null)}
       >
         {Array.from({ length: Math.ceil(items.length / COLS) }, (_, r) => {
           const rowItems = items.slice(r * COLS, (r + 1) * COLS);
@@ -86,7 +103,7 @@ const FloatingProducts: React.FC = () => {
                     itemBase,
                     "size-12 md:size-16 lg:size-20 transition-transform duration-300"
                   )}
-                  onMouseEnter={() => setHover({ r, c: idx })}
+                  onMouseEnter={() => setHoverManual({ r, c: idx })}
                   style={styleFor(r, idx)}
                 >
                   <img
@@ -94,7 +111,7 @@ const FloatingProducts: React.FC = () => {
                     alt={`${it.name} estilo Apple Watch`}
                     loading="lazy"
                     decoding="async"
-                    className="w-full h-full object-contain select-none"
+                    className="w-full h-full object-cover select-none"
                   />
                 </div>
               ))}
