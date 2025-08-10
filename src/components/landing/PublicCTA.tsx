@@ -7,7 +7,7 @@ const PublicCTA = () => {
     <section aria-label="CTA de registro" className="container mx-auto">
       <article className="rounded-[28px] bg-foreground text-background p-6 md:p-10 animate-fade-in">
         <div className="grid items-center gap-6 md:grid-cols-[1.4fr_1fr_auto]">
-          <h2 className="text-3xl md:text-5xl font-extrabold leading-tight">
+          <h2 className="text-2xl md:text-4xl font-extrabold leading-tight">
             Los que saben ya compran directo. ¿Tú sigues pagando de más?
           </h2>
           <p className="text-base md:text-lg opacity-90">
