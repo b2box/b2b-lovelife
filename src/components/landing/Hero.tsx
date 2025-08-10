@@ -1,5 +1,6 @@
 import { Menu, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import FloatingProducts from "@/components/landing/FloatingProducts";
 
 const Hero = () => {
   return (
@@ -38,12 +39,7 @@ const Hero = () => {
               </div>
             </div>
             <div className="hidden lg:block">
-              {/* Decorative side visuals - simple placeholder bubbles to avoid new assets */}
-              <div className="relative h-64">
-                <div className="absolute right-10 top-6 size-28 rounded-full bg-muted/60 blur-sm" />
-                <div className="absolute right-24 top-24 size-12 rounded-full bg-muted/70" />
-                <div className="absolute right-3 bottom-6 size-20 rounded-full bg-muted/60" />
-              </div>
+              <FloatingProducts />
             </div>
           </div>
         </div>
