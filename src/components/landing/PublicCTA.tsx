@@ -15,7 +15,8 @@ const PublicCTA = () => {
           </p>
           <Button
             onClick={() => navigate("/auth")}
-            className="rounded-full h-14 px-8 md:px-10 text-base md:text-lg bg-accent text-accent-foreground hover:bg-accent/90 hover-scale"
+            variant="brand"
+            className="rounded-full h-14 px-8 md:px-10 text-base md:text-lg font-semibold hover-scale"
           >
             Quiero vender más
           </Button>
