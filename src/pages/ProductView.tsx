@@ -352,7 +352,7 @@ const ProductView = () => {
 
         {/* Descripción y características */}
         <section className="mt-6 md:mt-8">
-          <article className="prose prose-sm md:prose-base max-w-none">
+          <article className="prose prose-sm md:prose-base max-w-none w-full md:w-4/5">
             <p>
               ¡Aprovecha cada rincón con la Estantería de Dos Niveles para Almacenamiento que lo transforma todo! Este diseño práctico de dos niveles organiza cosméticos, productos de higiene y más, con una estructura ventilada y colores vibrantes que revitalizan tu espacio. ¡Perfecto para tu baño o tocador!
             </p>
@@ -452,6 +452,14 @@ const ProductView = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+          <div className="mt-6">
+            <img
+              src="/lovable-uploads/df027d96-7b3f-4a3c-b1cd-8b9d6298f68f.png"
+              alt="Opciones de personalización, entrega confiable, pago diferido y control de calidad - ventajas del producto"
+              className="w-full rounded-2xl border object-contain"
+              loading="lazy"
+            />
           </div>
         </section>
       </main>
