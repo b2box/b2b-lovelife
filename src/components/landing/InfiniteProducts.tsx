@@ -85,10 +85,10 @@ function AdCard({ variant }: { variant: "eye" | "viral" }) {
   const isEye = variant === "eye";
   const containerClasses = isEye
     ? "col-span-2 md:col-span-2 rounded-[28px] bg-foreground overflow-hidden flex items-stretch justify-center h-full px-3 md:px-6"
-    : "col-span-2 md:col-span-2 rounded-[28px] bg-primary flex items-center justify-center h-full relative overflow-visible z-0";
+    : "col-span-2 md:col-span-2 rounded-[28px] bg-ad-viral flex items-center justify-center h-full relative overflow-visible z-0";
   const imgClasses = isEye
     ? "block m-0 p-0 w-full h-full object-contain"
-    : "block m-0 p-0 w-full h-auto object-contain scale-110 md:scale-125 z-10";
+    : "block m-0 p-0 w-full h-auto object-contain scale-105 md:scale-115 z-10";
 
   return (
     <div className={containerClasses}>
