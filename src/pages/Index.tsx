@@ -8,6 +8,7 @@ import InfiniteProducts from "@/components/landing/InfiniteProducts";
 import { useLocation } from "react-router-dom";
 import HowItWorks from "@/components/landing/HowItWorks";
 import PublicCTA from "@/components/landing/PublicCTA";
+import NewArrivals from "@/components/landing/NewArrivals";
 
 const jsonLd = () => ({
   "@context": "https://schema.org",
@@ -49,14 +50,20 @@ const Index = () => {
           <PromoBanner />
         </div>
 
+        {!isApp && (
+          <>
+            <section className="mt-8">
+              <PublicCTA />
+            </section>
+            <section className="mt-6">
+              <NewArrivals />
+            </section>
+          </>
+        )}
+
         <section className="mt-12">
           <InfiniteProducts publicMode={!isApp} />
         </section>
-        {!isApp && (
-          <section className="mt-8">
-            <PublicCTA />
-          </section>
-        )}
       </main>
       <Footer />
 
