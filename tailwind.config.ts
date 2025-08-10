@@ -65,6 +65,7 @@ export default {
 			},
 			fontFamily: {
 				display: ["Playfair Display", "serif"],
+				sans: ["Open Sans", "ui-sans-serif", "system-ui", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "Noto Sans", "sans-serif"],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

@@ -4,7 +4,7 @@ import { Menu, Search, ShoppingBag, ShoppingCart, ClipboardList, UserRound, Chev
 
 const Navbar = () => {
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 font-display">
+    <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       {/* Row 1 */}
       <div className="container mx-auto flex h-20 items-center justify-between gap-4">
         {/* Left cluster */}
