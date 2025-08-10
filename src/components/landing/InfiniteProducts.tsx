@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { categories } from "./data";
 import { ArrowUp } from "lucide-react";
 
-const AD_EYE = "/lovable-uploads/5a3a8096-def0-4f8a-a36d-905bdd36f321.png";
+const AD_EYE = "/lovable-uploads/fa842b26-b9f1-4176-9073-6128c3c08fbc.png";
 const AD_VIRAL = "/lovable-uploads/afc4e94f-2af3-46e7-9495-9d0699b28aaa.png";
 
 const PAGE_SIZE = 20;
@@ -82,8 +82,8 @@ function AdCard({ variant }: { variant: "eye" | "viral" }) {
   const src = variant === "eye" ? AD_EYE : AD_VIRAL;
   const alt = variant === "eye" ? "¿No encuentras el producto que buscas?" : "¡Descubrí los productos más virales de Argentina!";
   return (
-    <div className="col-span-2 md:col-span-2 bg-foreground rounded-[28px] flex items-stretch justify-center h-full">
-      <img src={src} alt={alt} loading="lazy" className="block m-0 p-0 max-w-full max-h-full w-auto h-auto object-contain mx-auto" />
+    <div className="col-span-2 md:col-span-2 bg-foreground rounded-[28px] overflow-hidden flex items-stretch justify-center h-full">
+      <img src={src} alt={alt} loading="lazy" className="block m-0 p-0 w-full h-full object-contain" />
     </div>
   );
 }
