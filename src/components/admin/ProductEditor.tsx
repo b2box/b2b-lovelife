@@ -867,17 +867,13 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
       <Card className="p-3">
         <h4 className="font-medium mb-2">Extras</h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div>
-            <Label>Batería</Label>
-            <Button variant={v.has_battery ? "default" : "secondary"} onClick={() => setV({ ...v, has_battery: !v.has_battery })}>
-              {v.has_battery ? "Sí" : "No"}
-            </Button>
+          <div className="flex items-center justify-between">
+            <Label className="mr-3">Batería</Label>
+            <Switch checked={!!v.has_battery} onCheckedChange={(val) => setV({ ...v, has_battery: !!val })} />
           </div>
-          <div>
-            <Label>Ropa</Label>
-            <Button variant={v.is_clothing ? "default" : "secondary"} onClick={() => setV({ ...v, is_clothing: !v.is_clothing })}>
-              {v.is_clothing ? "Sí" : "No"}
-            </Button>
+          <div className="flex items-center justify-between">
+            <Label className="mr-3">Ropa</Label>
+            <Switch checked={!!v.is_clothing} onCheckedChange={(val) => setV({ ...v, is_clothing: !!val })} />
           </div>
           <div>
             <Label>Stock</Label>
@@ -987,13 +983,30 @@ const VariantTiers: React.FC<{ variantId: string }> = ({ variantId }) => {
       .select("*")
       .eq("product_variant_id", variantId)
       .order("min_qty", { ascending: true });
-    setLoading(false);
     if (error) {
+      setLoading(false);
       console.error(error);
       toast({ title: "Error", description: "No se pudieron cargar precios.", variant: "destructive" });
       return;
     }
-    setRows((data || []) as any);
+    let rowsData = (data || []) as any[];
+    if (rowsData.length < 3) {
+      const needed = 3 - rowsData.length;
+      const payload = Array.from({ length: needed }, () => ({ product_variant_id: variantId, tier: 'tier', min_qty: 1, currency: 'CNY', unit_price: 0 }));
+      const { error: insErr } = await (supabase as any)
+        .from("variant_price_tiers")
+        .insert(payload);
+      if (!insErr) {
+        const { data: data2 } = await (supabase as any)
+          .from("variant_price_tiers")
+          .select("*")
+          .eq("product_variant_id", variantId)
+          .order("min_qty", { ascending: true });
+        rowsData = (data2 || []) as any[];
+      }
+    }
+    setRows(rowsData as any);
+    setLoading(false);
   };
 
   useEffect(() => { load(); }, [variantId]);
@@ -1039,9 +1052,8 @@ const VariantTiers: React.FC<{ variantId: string }> = ({ variantId }) => {
 
   return (
     <div className="space-y-2">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center">
         <h4 className="font-medium">Precios proveedor (CNY)</h4>
-        <Button size="sm" variant="outline" onClick={addRow}>Agregar tier</Button>
       </div>
       {loading && <p>Cargando precios…</p>}
       {!loading && rows.length === 0 && <p>Sin precios configurados.</p>}
@@ -1065,9 +1077,7 @@ const VariantTiers: React.FC<{ variantId: string }> = ({ variantId }) => {
                 <Label>Precio</Label>
                 <Input type="number" value={row.unit_price} onChange={(e) => setRows((rs) => rs.map(r => r.id === row.id ? { ...r, unit_price: Number(e.target.value) } : r))} onBlur={() => updateRow(rows.find(r=>r.id===row.id)!)} />
               </div>
-              <div className="flex items-end">
-                <Button variant="destructive" onClick={() => removeRow(row.id)}>Eliminar</Button>
-              </div>
+              <div className="flex items-end" />
             </div>
           </Card>
         ))}

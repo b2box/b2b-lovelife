@@ -11,7 +11,21 @@ import ProductEditor from "./ProductEditor";
 type Product = {
   id: string;
   name: string;
+  slug: string | null;
+  brand: string | null;
+  description: string | null;
+  status: string | null;
+  subtitle: string | null;
   bx_code: string | null;
+  verified_product: boolean;
+  verified_video: boolean;
+  material: string | null;
+  discountable: boolean;
+  agent_profile_id: string | null;
+  supplier_link: string | null;
+  supplier_model: string | null;
+  type: string | null;
+  collection: string | null;
   active: boolean;
   product_images?: { url: string; sort_order: number }[];
 };
@@ -19,7 +33,7 @@ type Product = {
 async function fetchProducts(): Promise<Product[]> {
   const { data, error } = await supabase
     .from("products")
-    .select("id,name,bx_code,active,product_images(url,sort_order)")
+    .select("id,name,slug,brand,description,status,subtitle,bx_code,verified_product,verified_video,material,discountable,agent_profile_id,supplier_link,supplier_model,type,collection,active,product_images(url,sort_order)")
     .order("updated_at", { ascending: false })
     .limit(50);
   if (error) throw error;
@@ -96,7 +110,7 @@ const ProductsPanel: React.FC = () => {
         open={editorOpen}
         onClose={() => setEditorOpen(false)}
         onSaved={() => { setEditorOpen(false); qc.invalidateQueries({ queryKey: ["admin", "products"] }); }}
-        product={selected ? ({ id: selected.id, name: selected.name, active: selected.active } as any) : null}
+        product={selected as any}
       />
     </Card>
   );
