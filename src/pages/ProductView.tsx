@@ -166,7 +166,7 @@ const ProductView = () => {
           <span className="text-foreground">{product.name}</span>
         </nav>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-[4fr_1fr]">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[4fr_1fr]">
           {/* Columna izquierda (80%): Galería 40% + Detalles 60% */}
           <section>
             <div className="grid grid-cols-1 md:grid-cols-[2fr_3fr] gap-4">

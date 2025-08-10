@@ -91,6 +91,9 @@ const Navbar = () => {
                 <img src="/lovable-uploads/c21caebf-b694-4e86-b07c-b08a51d325ab.png" alt="Icono Perfil" className="h-7 w-7 object-contain" loading="lazy" />
                 <span>{TEXTS[country].profile}</span>
               </div>
+              <Button asChild variant="outline" className="pill h-10 px-4">
+                <Link to="/app/admin" aria-label="Administración">Admin</Link>
+              </Button>
             </div>
           ) : (
             <div className="hidden lg:flex items-center gap-4">
