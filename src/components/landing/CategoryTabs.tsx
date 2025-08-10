@@ -21,7 +21,7 @@ const CategoryTabs = () => {
     <section className="container mx-auto">
       <div className="rounded-[32px] bg-brand-yellow px-6 py-8 md:px-10 md:py-10 shadow-elevate">
         <div className="mx-auto max-w-3xl md:max-w-[900px] xl:max-w-[1240px] rounded-[60px] bg-card px-6 py-5 md:px-10 md:py-6 xl:py-7">
-          <h2 className="text-center whitespace-nowrap text-[28px] font-semibold md:text-[36px] xl:text-[48px] xl:leading-[60px]">Los productos más vendidos en las categorías más buscadas</h2>
+          <h2 className="text-center whitespace-nowrap text-[22px] font-semibold md:text-[30px] xl:text-[38px] xl:leading-[48px]">Los productos más vendidos en las categorías más buscadas</h2>
         </div>
         <Tabs defaultValue={first} className="w-full mt-6 md:mt-8">
           <div className="mx-auto max-w-[1240px] flex items-center gap-3">
