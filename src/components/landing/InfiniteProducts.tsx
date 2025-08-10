@@ -108,7 +108,8 @@ const InfiniteProducts = ({ publicMode = false }: { publicMode?: boolean }) => {
                 <div className="absolute left-1/2 -translate-x-1/2 bottom-10 z-10">
                   <Button
                     onClick={() => navigate("/auth")}
-                    className="rounded-full h-14 px-8 text-lg font-semibold bg-accent text-accent-foreground hover:bg-accent/90 shadow-elevate flex items-center gap-2"
+                    variant="brand"
+                    className="rounded-full h-14 px-8 text-lg font-semibold shadow-elevate flex items-center gap-2"
                     aria-label="Desbloquear catálogo completo"
                   >
                     <Unlock className="h-5 w-5" />
