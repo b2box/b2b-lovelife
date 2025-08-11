@@ -814,6 +814,11 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
         </div>
       </div>
 
+      <div className="space-y-4">
+        <h4 className="font-medium">Imágenes de la variante</h4>
+        <VariantImagesComponent variantId={v.id} />
+      </div>
+
       <div className="flex justify-end gap-2">
         <Button onClick={save} disabled={saving}>{saving ? "Guardando…" : "Guardar"}</Button>
       </div>

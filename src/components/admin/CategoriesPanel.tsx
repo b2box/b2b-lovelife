@@ -114,13 +114,66 @@ const CategoriesPanel: React.FC = () => {
     }
   };
 
-  const parentCategories = categories.filter(c => !c.parent_id);
-
   const getCategoryHierarchy = (category: Category): string => {
     if (!category.parent_id) return category.name;
     const parent = categories.find(c => c.id === category.parent_id);
     return parent ? `${parent.name} → ${category.name}` : category.name;
   };
+
+  const parentCategories = categories.filter(c => !c.parent_id);
+  const getSubcategories = (parentId: string) => categories.filter(c => c.parent_id === parentId);
+
+  const renderCategoryRow = (category: Category, isParent: boolean = false) => (
+    <TableRow key={category.id} className={isParent ? "bg-muted/20" : ""}>
+      <TableCell className="font-medium">
+        <div className={`flex items-center gap-2 ${!isParent ? 'pl-6' : ''}`}>
+          {!isParent && <span className="text-muted-foreground">└─</span>}
+          {category.name}
+        </div>
+      </TableCell>
+      <TableCell className="text-muted-foreground">{category.slug}</TableCell>
+      <TableCell>{getCategoryHierarchy(category)}</TableCell>
+      <TableCell>
+        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+          category.parent_id ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+        }`}>
+          {category.parent_id ? 'Subcategoría' : 'Categoría Padre'}
+        </span>
+      </TableCell>
+      <TableCell>
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => openDialog(category)}
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button size="sm" variant="destructive">
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Eliminar Categoría</AlertDialogTitle>
+                <AlertDialogDescription>
+                  ¿Estás seguro de que quieres eliminar "{category.name}"? Esta acción no se puede deshacer.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction onClick={() => deleteCategory(category)}>
+                  Eliminar
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      </TableCell>
+    </TableRow>
+  );
 
   if (loading) {
     return (
@@ -154,52 +207,15 @@ const CategoriesPanel: React.FC = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {categories.map((category) => (
-                <TableRow key={category.id}>
-                  <TableCell className="font-medium">{category.name}</TableCell>
-                  <TableCell className="text-muted-foreground">{category.slug}</TableCell>
-                  <TableCell>{getCategoryHierarchy(category)}</TableCell>
-                  <TableCell>
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                      category.parent_id ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
-                    }`}>
-                      {category.parent_id ? 'Subcategoría' : 'Categoría Padre'}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => openDialog(category)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button size="sm" variant="destructive">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Eliminar Categoría</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              ¿Estás seguro de que quieres eliminar "{category.name}"? Esta acción no se puede deshacer.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => deleteCategory(category)}>
-                              Eliminar
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {parentCategories.map((parent) => {
+                const subcategories = getSubcategories(parent.id);
+                return (
+                  <React.Fragment key={parent.id}>
+                    {renderCategoryRow(parent, true)}
+                    {subcategories.map((sub) => renderCategoryRow(sub, false))}
+                  </React.Fragment>
+                );
+              })}
             </TableBody>
           </Table>
         </CardContent>
