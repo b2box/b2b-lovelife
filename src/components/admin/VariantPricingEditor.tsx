@@ -44,6 +44,11 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
       { percent: 200, price: 0 },
       { percent: 200, price: 0 },
       { percent: 200, price: 0 }
+    ],
+    CN: [
+      { percent: 100, price: 0 },
+      { percent: 100, price: 0 },
+      { percent: 100, price: 0 }
     ]
   });
 
@@ -93,6 +98,16 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
                   newMarkets.COL[tierIndex].percent = Number(percent.toFixed(2));
                 }
               }
+            } else if (tier.currency === "CNY" && tier.product_variant_id === variantId) {
+              // This is CN market data (CNY market pricing, different from base CNY)
+              if (pricingSettings && newBaseTiers[tierIndex] > 0) {
+                newMarkets.CN[tierIndex].price = Number(tier.unit_price);
+                const baseCny = newBaseTiers[tierIndex];
+                if (baseCny > 0) {
+                  const percent = (((tier.unit_price / (baseCny * pricingSettings.cnRate)) - 1) * 100);
+                  newMarkets.CN[tierIndex].percent = Number(percent.toFixed(2));
+                }
+              }
             }
           }
         });
@@ -124,13 +139,13 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
     }
   };
 
-  const updateMarketPercent = (market: "AR" | "COL", tierIndex: number, percent: number) => {
+  const updateMarketPercent = (market: "AR" | "COL" | "CN", tierIndex: number, percent: number) => {
     const newMarkets = { ...markets };
     newMarkets[market][tierIndex].percent = percent;
     
     // Recompute price based on new percent
     if (pricingSettings && baseTiers[tierIndex] > 0) {
-      const rate = market === "AR" ? pricingSettings.arRate : pricingSettings.coRate;
+      const rate = market === "AR" ? pricingSettings.arRate : market === "COL" ? pricingSettings.coRate : pricingSettings.cnRate;
       const price = baseTiers[tierIndex] * (1 + percent / 100) * rate;
       newMarkets[market][tierIndex].price = Number(price.toFixed(2));
     }
@@ -138,13 +153,13 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
     setMarkets(newMarkets);
   };
 
-  const updateMarketPrice = (market: "AR" | "COL", tierIndex: number, price: number) => {
+  const updateMarketPrice = (market: "AR" | "COL" | "CN", tierIndex: number, price: number) => {
     const newMarkets = { ...markets };
     newMarkets[market][tierIndex].price = price;
     
     // Recompute percent based on new price
     if (pricingSettings && baseTiers[tierIndex] > 0) {
-      const rate = market === "AR" ? pricingSettings.arRate : pricingSettings.coRate;
+      const rate = market === "AR" ? pricingSettings.arRate : market === "COL" ? pricingSettings.coRate : pricingSettings.cnRate;
       const baseCny = baseTiers[tierIndex];
       const percent = (((price / (baseCny * rate)) - 1) * 100);
       newMarkets[market][tierIndex].percent = Number(percent.toFixed(2));
@@ -199,6 +214,18 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
             min_qty: index === 0 ? 1 : index === 1 ? 50 : 100,
             unit_price: marketTier.price,
             currency: "COP",
+          });
+        }
+      });
+
+      markets.CN.forEach((marketTier, index) => {
+        if (marketTier.price > 0) {
+          tiersToInsert.push({
+            product_variant_id: variantId,
+            tier: tierNames[index],
+            min_qty: index === 0 ? 1 : index === 1 ? 50 : 100,
+            unit_price: marketTier.price,
+            currency: "CNY", // Note: This is market CNY, different from base CNY
           });
         }
       });
@@ -318,6 +345,39 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
                 <NumericInput
                   value={markets.COL[index].price}
                   onValueChange={(value) => updateMarketPrice("COL", index, value)}
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* China Market */}
+      <Card className="p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="inline-flex h-4 w-6 items-center justify-center rounded bg-red-600 text-white text-xs font-bold">CN</span>
+          <h4 className="font-medium">China (CNY)</h4>
+        </div>
+        <div className="space-y-3">
+          {tierLabels.map((label, index) => (
+            <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+              <div>
+                <Label className="text-xs">{label}</Label>
+              </div>
+              <div>
+                <Label className="text-xs">% Markup</Label>
+                <NumericInput
+                  value={markets.CN[index].percent}
+                  onValueChange={(value) => updateMarketPercent("CN", index, value)}
+                  placeholder="100"
+                />
+              </div>
+              <div>
+                <Label className="text-xs">Precio CNY</Label>
+                <NumericInput
+                  value={markets.CN[index].price}
+                  onValueChange={(value) => updateMarketPrice("CN", index, value)}
                   placeholder="0.00"
                 />
               </div>

@@ -1,4 +1,4 @@
-export type MarketKey = 'AR' | 'COL';
+export type MarketKey = 'AR' | 'COL' | 'CN';
 export type TierIndex = 0 | 1 | 2;
 
 export interface MarketTier {
@@ -9,20 +9,25 @@ export interface MarketTier {
 export type Markets = {
   AR: MarketTier[];
   COL: MarketTier[];
+  CN: MarketTier[];
 };
 
 export interface PricingSettingsData {
   arRate: number; // CNY -> USD for AR
   coRate: number; // CNY -> COP for COL
+  cnRate: number; // CNY -> CNY for CN (usually 1, but configurable)
   arPercents: [number, number, number];
   coPercents: [number, number, number];
+  cnPercents: [number, number, number];
 }
 
 export const defaultPricingSettings: PricingSettingsData = {
   arRate: 1,
   coRate: 1,
+  cnRate: 1,
   arPercents: [300, 300, 300],
   coPercents: [200, 200, 200],
+  cnPercents: [100, 100, 100],
 };
 
 export function computeMarketPrice(baseCny: number, percent: number, rate: number): number {
@@ -46,6 +51,11 @@ export function ensureMarkets(current: any, baseTiers: number[], settings: Prici
       const price = computeMarketPrice(baseTiers[i] || 0, percent, settings.coRate);
       return { percent, price };
     }),
+    CN: [0, 1, 2].map((i) => {
+      const percent = current?.CN?.[i]?.percent ?? settings.cnPercents[i];
+      const price = computeMarketPrice(baseTiers[i] || 0, percent, settings.cnRate);
+      return { percent, price };
+    }),
   };
 }
 
@@ -60,6 +70,11 @@ export function recomputeMarkets(current: any, baseTiers: number[], settings: Pr
     COL: [0, 1, 2].map((i) => {
       const percent = cur?.COL?.[i]?.percent ?? settings.coPercents[i];
       const price = computeMarketPrice(baseTiers[i] || 0, percent, settings.coRate);
+      return { percent, price };
+    }),
+    CN: [0, 1, 2].map((i) => {
+      const percent = cur?.CN?.[i]?.percent ?? settings.cnPercents[i];
+      const price = computeMarketPrice(baseTiers[i] || 0, percent, settings.cnRate);
       return { percent, price };
     }),
   };

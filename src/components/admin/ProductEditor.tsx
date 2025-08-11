@@ -21,6 +21,7 @@ import { usePricingSettings } from "@/hooks/usePricingSettings";
 import { ensureMarkets as calcEnsureMarkets, recomputeMarkets, computeMarketPrice, computePercentFromPrice } from "@/lib/pricing";
 import { DraggableVariantsEditor, AdminVariant } from "./DraggableVariantsEditor";
 import { VariantPricingEditor } from "./VariantPricingEditor";
+import { CollectionSelector } from "./CollectionSelector";
 import { useUserRole } from "@/hooks/useUserRole";
 
 export type AdminProduct = {
@@ -81,7 +82,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
   const [saving, setSaving] = useState(false);
   const [edit, setEdit] = useState<AdminVariant | null>(null);
   const [productImages, setProductImages] = useState<ImageItem[]>([]);
-  const [tagsText, setTagsText] = useState("");
+  const [selectedCollectionIds, setSelectedCollectionIds] = useState<string[]>([]);
   const [selectedParentIds, setSelectedParentIds] = useState<string[]>([]);
   const [selectedSubcategoryIds, setSelectedSubcategoryIds] = useState<string[]>([]);
   const [profiles, setProfiles] = useState<{id: string; display_name: string | null}[]>([]);
@@ -172,8 +173,16 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
         });
         setSelectedParentIds([...parents]);
         setSelectedSubcategoryIds([...subs]);
-        const { data: tgs } = await (supabase as any).from('product_tags').select('tags(name), tag_id').eq('product_id', product.id);
-        if (tgs && tgs.length) setTagsText((tgs as any[]).map((x: any) => x.tags?.name).filter(Boolean).join(', '));
+        
+        // Load tags/collections for this product
+        const { data: productTags } = await supabase
+          .from("product_tags")
+          .select("tag_id")
+          .eq("product_id", product.id);
+        
+        if (productTags) {
+          setSelectedCollectionIds(productTags.map(pt => pt.tag_id));
+        }
 
         const { data: trans } = await supabase
           .from('product_translations')
@@ -192,7 +201,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
       } else {
         setSelectedParentIds([]);
         setSelectedSubcategoryIds([]);
-        setTagsText("");
+        setSelectedCollectionIds([]);
         setTranslations({ cn: { title: "", description: "" }, ar: { title: "", description: "" }, co: { title: "", description: "" } });
       }
     })();
@@ -211,20 +220,25 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
       if (toInsert.length) await supabase.from('product_categories').insert(toInsert as any);
       if (toDelete.length) await supabase.from('product_categories').delete().eq('product_id', productId).in('category_id', toDelete as any);
 
-      // Tags
-      const names = Array.from(new Set((tagsText || '').split(',').map((s) => s.trim()).filter(Boolean)));
-      let tagIds: string[] = [];
-      if (names.length) {
-        const { data: up } = await (supabase as any).from('tags').upsert(names.map((n) => ({ name: n })), { onConflict: 'name' }).select('id,name');
-        tagIds = (up || []).map((r: any) => r.id);
+      // Handle tags/collections
+      // Delete existing product_tags
+      await supabase.from("product_tags").delete().eq("product_id", productId);
+      
+      // Insert new product_tags
+      if (selectedCollectionIds.length > 0) {
+        const productTagsToInsert = selectedCollectionIds.map(tagId => ({
+          product_id: productId,
+          tag_id: tagId,
+        }));
+        
+        const { error: tagsError } = await supabase
+          .from("product_tags")
+          .insert(productTagsToInsert);
+        
+        if (tagsError) {
+          console.error("Error saving product tags:", tagsError);
+        }
       }
-      const { data: existingPT } = await supabase.from('product_tags').select('tag_id').eq('product_id', productId);
-      const existingTagIds = new Set((existingPT || []).map((r: any) => r.tag_id));
-      const desiredTagIds = new Set(tagIds);
-      const ptInsert = [...desiredTagIds].filter((id) => !existingTagIds.has(id)).map((id) => ({ product_id: productId, tag_id: id }));
-      const ptDelete = [...existingTagIds].filter((id) => !desiredTagIds.has(id));
-      if (ptInsert.length) await supabase.from('product_tags').insert(ptInsert);
-      if (ptDelete.length) await supabase.from('product_tags').delete().eq('product_id', productId).in('tag_id', ptDelete);
     } catch (e) {
       console.error('[ProductEditor] syncRelations', e);
     }
@@ -433,12 +447,11 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
               </div>
 
               <div>
-                <Label htmlFor="collections">Colecciones (separadas por coma)</Label>
-                <Input
-                  id="collections"
-                  value={tagsText}
-                  onChange={(e) => setTagsText(e.target.value)}
-                  placeholder="colección1, colección2, colección3"
+                <Label htmlFor="collections">Colecciones</Label>
+                <CollectionSelector
+                  selectedCollections={selectedCollectionIds}
+                  onCollectionsChange={setSelectedCollectionIds}
+                  placeholder="Seleccionar colecciones..."
                 />
               </div>
 

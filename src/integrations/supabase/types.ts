@@ -345,6 +345,10 @@ export type Database = {
           ar_tier1_pct: number
           ar_tier2_pct: number
           ar_tier3_pct: number
+          cn_cny_to_cny: number
+          cn_tier1_pct: number
+          cn_tier2_pct: number
+          cn_tier3_pct: number
           co_cny_to_cop: number
           co_tier1_pct: number
           co_tier2_pct: number
@@ -358,6 +362,10 @@ export type Database = {
           ar_tier1_pct?: number
           ar_tier2_pct?: number
           ar_tier3_pct?: number
+          cn_cny_to_cny?: number
+          cn_tier1_pct?: number
+          cn_tier2_pct?: number
+          cn_tier3_pct?: number
           co_cny_to_cop?: number
           co_tier1_pct?: number
           co_tier2_pct?: number
@@ -371,6 +379,10 @@ export type Database = {
           ar_tier1_pct?: number
           ar_tier2_pct?: number
           ar_tier3_pct?: number
+          cn_cny_to_cny?: number
+          cn_tier1_pct?: number
+          cn_tier2_pct?: number
+          cn_tier3_pct?: number
           co_cny_to_cop?: number
           co_tier1_pct?: number
           co_tier2_pct?: number
