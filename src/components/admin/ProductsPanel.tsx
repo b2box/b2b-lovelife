@@ -122,7 +122,7 @@ const fetchProducts = async (page: number, search: string, statusFilter: string,
 
 const fetchFilterOptions = async () => {
   const [categoriesRes, collectionsRes] = await Promise.all([
-    supabase.from("categories").select("id, name").order("name"),
+    supabase.from("categories").select("id, name, parent_id").is("parent_id", null).order("name"),
     supabase.from("products").select("collection").not("collection", "is", null).order("collection")
   ]);
 
@@ -137,6 +137,7 @@ const ProductsPanel: React.FC = () => {
   const [editingProduct, setEditingProduct] = useState<AdminProduct | null>(null);
   const [showEditor, setShowEditor] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<Product | null>(null);
+  const [duplicateConfirm, setDuplicateConfirm] = useState<Product | null>(null);
   
   // Filters and search
   const [currentPage, setCurrentPage] = useState(1);
@@ -404,7 +405,7 @@ const ProductsPanel: React.FC = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => duplicateProduct(product)}
+                          onClick={() => setDuplicateConfirm(product)}
                         >
                           <Copy className="h-4 w-4" />
                         </Button>
@@ -491,6 +492,29 @@ const ProductsPanel: React.FC = () => {
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={() => deleteConfirm && deleteProduct(deleteConfirm)}>
               Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Duplicate Confirmation */}
+      <AlertDialog open={!!duplicateConfirm} onOpenChange={(open) => !open && setDuplicateConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Confirmar duplicación?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Se creará una copia del producto "{duplicateConfirm?.name}" con todas sus variantes e imágenes.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={() => {
+              if (duplicateConfirm) {
+                duplicateProduct(duplicateConfirm);
+                setDuplicateConfirm(null);
+              }
+            }}>
+              Duplicar
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
