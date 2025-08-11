@@ -3,7 +3,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProductGrid from "./ProductGrid";
-import { categories } from "./data";
+import { useCategoriesWithProductCount } from "@/hooks/useCategories";
+import { useProducts } from "@/hooks/useProducts";
 
 const tabIcons: Record<string, string> = {
   "Moda femenina": "/lovable-uploads/ca6fd2f2-92d9-43f6-955b-e4f140912e9e.png",
@@ -12,11 +13,46 @@ const tabIcons: Record<string, string> = {
 };
 
 const CategoryTabs = () => {
-  const first = Object.keys(categories)[0] as keyof typeof categories;
-  const allKeys = Object.keys(categories);
-  const staticKeys = ["Principales productos", "Más vendidos"].filter((k) => allKeys.includes(k));
-  const restKeys = allKeys.filter((k) => !staticKeys.includes(k));
+  const { categories, loading: categoriesLoading } = useCategoriesWithProductCount();
+  const { products, loading: productsLoading } = useProducts();
   const scrollRef = React.useRef<HTMLDivElement>(null);
+
+  if (categoriesLoading || productsLoading) {
+    return (
+      <section className="container mx-auto">
+        <div className="rounded-[32px] bg-brand-yellow px-6 py-8 md:px-10 md:py-10 shadow-elevate">
+          <div className="animate-pulse">
+            <div className="mx-auto max-w-3xl md:max-w-[900px] xl:max-w-[1240px] rounded-[60px] bg-card px-6 py-3 md:px-10 md:py-4 xl:py-5">
+              <div className="h-8 bg-muted rounded"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (categories.length === 0) {
+    return null;
+  }
+
+  const first = categories[0]?.name;
+  
+  // Get products for each category
+  const getProductsForCategory = (categoryId: string, limit = 5) => {
+    return products
+      .filter(product => 
+        product.categories?.some(c => c.id === categoryId)
+      )
+      .slice(0, limit)
+      .map(product => ({
+        id: product.id,
+        name: product.name,
+        price: product.variant_price_tiers?.[0]?.unit_price || 0,
+        image: product.images?.[0]?.url || "/placeholder.svg",
+        badge: product.verified_product ? "B2BOX verified" : undefined,
+        viral: false
+      }));
+  };
   return (
     <section className="container mx-auto">
       <div className="rounded-[32px] bg-brand-yellow px-6 py-8 md:px-10 md:py-10 shadow-elevate">
@@ -35,33 +71,19 @@ const CategoryTabs = () => {
               <ChevronLeft size={22} />
             </Button>
             <div className="flex items-center gap-2 flex-1 overflow-hidden">
-              <TabsList className="bg-transparent p-0 flex gap-2">
-                {staticKeys.map((key) => (
-                  <TabsTrigger
-                    key={key}
-                    value={key}
-                    className="pill rounded-full h-10 px-5 text-sm md:text-base font-semibold leading-none bg-card border border-foreground/20 data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:border-transparent shrink-0 w-[180px] md:w-[200px] xl:w-[220px] justify-center"
-                  >
-                    {tabIcons[key] && (
-                      <img src={tabIcons[key]} alt={`Icono ${key}`} className="mr-2 h-4 w-4 md:h-5 md:w-5 object-contain" loading="lazy" />
-                    )}
-                    {key}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
               <div className="relative flex-1 overflow-hidden">
                 <div ref={scrollRef} className="flex items-center gap-2 overflow-x-auto scroll-smooth py-1">
                   <TabsList className="bg-transparent p-0 flex gap-2">
-                    {restKeys.map((key) => (
+                    {categories.map((category) => (
                       <TabsTrigger
-                        key={key}
-                        value={key}
+                        key={category.id}
+                        value={category.name}
                         className="pill rounded-full h-10 px-5 text-sm md:text-base font-semibold leading-none bg-card border border-foreground/20 data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:border-transparent shrink-0 w-[180px] md:w-[200px] xl:w-[220px] justify-center"
                       >
-                        {tabIcons[key] && (
-                          <img src={tabIcons[key]} alt={`Icono ${key}`} className="mr-2 h-4 w-4 md:h-5 md:w-5 object-contain" loading="lazy" />
+                        {tabIcons[category.name] && (
+                          <img src={tabIcons[category.name]} alt={`Icono ${category.name}`} className="mr-2 h-4 w-4 md:h-5 md:w-5 object-contain" loading="lazy" />
                         )}
-                        {key}
+                        {category.name}
                       </TabsTrigger>
                     ))}
                   </TabsList>
@@ -80,9 +102,9 @@ const CategoryTabs = () => {
               <ChevronRight size={22} />
             </Button>
           </div>
-          {Object.entries(categories).map(([key, value]) => (
-            <TabsContent key={key} value={key}>
-              <ProductGrid products={value.slice(0,5)} fiveCols />
+          {categories.map((category) => (
+            <TabsContent key={category.id} value={category.name}>
+              <ProductGrid products={getProductsForCategory(category.id)} fiveCols />
             </TabsContent>
           ))}
         </Tabs>

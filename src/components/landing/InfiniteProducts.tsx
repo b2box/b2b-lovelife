@@ -2,9 +2,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import ProductCard, { type Product } from "./ProductCard";
 
 import { Button } from "@/components/ui/button";
-import { categories } from "./data";
 import { ArrowUp, ArrowDown, Unlock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useCategoriesWithProductCount } from "@/hooks/useCategories";
+import { useProducts } from "@/hooks/useProducts";
 
 const AD_EYE = "/lovable-uploads/fa842b26-b9f1-4176-9073-6128c3c08fbc.png";
 const AD_VIRAL = "/lovable-uploads/025482cb-8da6-4438-85e8-ec4fe0abf877.png";
@@ -13,19 +14,40 @@ const PAGE_SIZE = 20;
 
 const InfiniteProducts = ({ publicMode = false }: { publicMode?: boolean }) => {
   const navigate = useNavigate();
-  const categoryKeys = Object.keys(categories);
-  const [category, setCategory] = useState<string>(categoryKeys[0]);
-  const base = useMemo(() => categories[category] ?? [], [category]);
+  const { categories } = useCategoriesWithProductCount();
+  const { products } = useProducts();
+  
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [page, setPage] = useState(1);
-  const [items, setItems] = useState<Product[]>(() =>
-    publicMode
-      ? [...makePage(categories[categoryKeys[0]], 0), ...makePage(categories[categoryKeys[0]], 1)]
-      : makePage(categories[categoryKeys[0]], 0)
-  );
+  const [items, setItems] = useState<Product[]>([]);
   const [stopped, setStopped] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const stoppedRef = useRef(false);
   const prevScrollYRef = useRef(0);
+
+  // Set initial category when categories load
+  useEffect(() => {
+    if (categories.length > 0 && !selectedCategoryId) {
+      setSelectedCategoryId(categories[0].id);
+    }
+  }, [categories, selectedCategoryId]);
+
+  // Get products for selected category
+  const categoryProducts = useMemo(() => {
+    if (!selectedCategoryId) return [];
+    return products
+      .filter(product => 
+        product.categories?.some(c => c.id === selectedCategoryId)
+      )
+      .map(product => ({
+        id: product.id,
+        name: product.name,
+        price: product.variant_price_tiers?.[0]?.unit_price || 0,
+        image: product.images?.[0]?.url || "/placeholder.svg",
+        badge: product.verified_product ? "B2BOX verified" : undefined,
+        viral: false
+      }));
+  }, [products, selectedCategoryId]);
 
   useEffect(() => {
     if (publicMode) return; // sin scroll infinito en modo público
@@ -47,14 +69,15 @@ const InfiniteProducts = ({ publicMode = false }: { publicMode?: boolean }) => {
 
   // Reset when category or mode changes
   useEffect(() => {
+    if (categoryProducts.length === 0) return;
     setPage(1);
-    setItems(publicMode ? [...makePage(base, 0), ...makePage(base, 1)] : makePage(base, 0));
-  }, [category, base, publicMode]);
+    setItems(publicMode ? [...makePage(categoryProducts, 0), ...makePage(categoryProducts, 1)] : makePage(categoryProducts, 0));
+  }, [selectedCategoryId, categoryProducts, publicMode]);
 
   useEffect(() => {
-    if (page <= 1) return;
-    setItems((prev) => [...prev, ...makePage(base, page - 1)]);
-  }, [page]);
+    if (page <= 1 || categoryProducts.length === 0) return;
+    setItems((prev) => [...prev, ...makePage(categoryProducts, page - 1)]);
+  }, [page, categoryProducts]);
 
   const itemsWithAds = useMemo(() => {
     const out: Array<{ kind: "product"; data: Product } | { kind: "ad"; variant: "eye" | "viral"; key: string }> = [];
@@ -77,14 +100,14 @@ const InfiniteProducts = ({ publicMode = false }: { publicMode?: boolean }) => {
         return (
           <>
             <nav className="mb-4 flex items-center gap-2 overflow-x-auto py-1" aria-label="Filtros de categorías">
-              {categoryKeys.map((key) => (
+              {categories.map((category) => (
                 <Button
-                  key={key}
-                  onClick={() => setCategory(key)}
-                  variant={key === category ? "default" : "outline"}
+                  key={category.id}
+                  onClick={() => setSelectedCategoryId(category.id)}
+                  variant={category.id === selectedCategoryId ? "default" : "outline"}
                   className="rounded-full h-9 px-4 whitespace-nowrap"
                 >
-                  {key}
+                  {category.name}
                 </Button>
               ))}
             </nav>

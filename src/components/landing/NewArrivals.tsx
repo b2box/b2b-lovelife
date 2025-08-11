@@ -1,12 +1,21 @@
 
 import ProductCard from "./ProductCard";
-import { categories } from "./data";
 import { useNavigate } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
+import { useProducts } from "@/hooks/useProducts";
+
 const NewArrivals = () => {
   const navigate = useNavigate();
-  const firstKey = Object.keys(categories)[0];
-  const products = categories[firstKey]?.slice(0, 3) ?? [];
+  const { products: dbProducts } = useProducts();
+  
+  const products = dbProducts.slice(0, 3).map(product => ({
+    id: product.id,
+    name: product.name,
+    price: product.variant_price_tiers?.[0]?.unit_price || 0,
+    image: product.images?.[0]?.url || "/placeholder.svg",
+    badge: product.verified_product ? "B2BOX verified" : undefined,
+    viral: false
+  }));
 
   return (
     <section aria-label="Lo más nuevo en B2BOX" className="container mx-auto">

@@ -2,26 +2,32 @@ import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { categories } from "@/components/landing/data";
 import type { Product } from "@/components/landing/ProductCard";
 import { ArrowUpRight, CheckCircle2, Cog, Hash, Box, Package, Battery, Ruler, Scale } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
-
-const findProductById = (id?: string): Product | undefined => {
-  if (!id) return undefined;
-  for (const key of Object.keys(categories)) {
-    const found = categories[key].find((p) => p.id === id);
-    if (found) return found;
-  }
-  return undefined;
-};
+import { useProducts } from "@/hooks/useProducts";
 
 const ProductView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const product = useMemo(() => findProductById(id), [id]);
+  const { products } = useProducts();
   const { toast } = useToast();
+
+  const product = useMemo(() => {
+    if (!id) return undefined;
+    const dbProduct = products.find(p => p.id === id);
+    if (!dbProduct) return undefined;
+    
+    return {
+      id: dbProduct.id,
+      name: dbProduct.name,
+      price: dbProduct.variant_price_tiers?.[0]?.unit_price || 0,
+      image: dbProduct.images?.[0]?.url || "/placeholder.svg",
+      badge: dbProduct.verified_product ? "B2BOX verified" : undefined,
+      viral: false
+    } as Product;
+  }, [id, products]);
 
   type VariantRow = {
     id: string;
