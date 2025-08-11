@@ -609,6 +609,7 @@ export type Database = {
           price: number | null
           product_id: string
           sku: string | null
+          sort_order: number
           stock: number
           updated_at: string
           weight_kg: number | null
@@ -635,6 +636,7 @@ export type Database = {
           price?: number | null
           product_id: string
           sku?: string | null
+          sort_order?: number
           stock?: number
           updated_at?: string
           weight_kg?: number | null
@@ -661,6 +663,7 @@ export type Database = {
           price?: number | null
           product_id?: string
           sku?: string | null
+          sort_order?: number
           stock?: number
           updated_at?: string
           weight_kg?: number | null
@@ -698,6 +701,7 @@ export type Database = {
           updated_at: string
           verified_product: boolean
           verified_video: boolean
+          video_url: string | null
         }
         Insert: {
           active?: boolean
@@ -720,6 +724,7 @@ export type Database = {
           updated_at?: string
           verified_product?: boolean
           verified_video?: boolean
+          video_url?: string | null
         }
         Update: {
           active?: boolean
@@ -742,6 +747,7 @@ export type Database = {
           updated_at?: string
           verified_product?: boolean
           verified_video?: boolean
+          video_url?: string | null
         }
         Relationships: [
           {

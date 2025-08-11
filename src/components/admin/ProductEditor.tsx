@@ -603,7 +603,10 @@ if (error) throw error;
 
             <TabsContent value="variantes">
               {form.id ? (
-                <VariantsEditor productId={form.id!} />
+                <DraggableVariantsEditor 
+                  productId={form.id!} 
+                  onVariantEdit={(variant) => setEdit(variant)}
+                />
               ) : (
                 <Card className="p-4">
                   <p className="text-sm mb-3">Primero guarda el producto para poder crear variantes.</p>
@@ -703,30 +706,6 @@ if (error) throw error;
 };
 
 export default ProductEditor;
-
-/* -------------------------- Variants Editor --------------------------- */
-
-const VariantsEditor: React.FC<{ productId: string }> = ({ productId }) => {
-  const { toast } = useToast();
-  const [loading, setLoading] = useState(true);
-  const [variants, setVariants] = useState<AdminVariant[]>([]);
-  const [edit, setEdit] = useState<AdminVariant | null>(null);
-
-  const load = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("product_variants")
-      .select("*")
-      .eq("product_id", productId)
-      .order("created_at", { ascending: true });
-    setLoading(false);
-    if (error) {
-      console.error(error);
-      toast({ title: "Error", description: "No se pudieron cargar variantes.", variant: "destructive" });
-      return;
-    }
-    setVariants((data || []) as any);
-  };
 
   useEffect(() => {
     load();
@@ -853,73 +832,10 @@ const VariantsEditor: React.FC<{ productId: string }> = ({ productId }) => {
 
       <Dialog open={!!edit} onOpenChange={(o) => !o && setEdit(null)}>
         <DialogContent className="w-[95vw] max-w-5xl max-h-[85vh] overflow-y-auto">
-          {edit && <VariantCard variant={edit} onChanged={() => { load(); setEdit(null); }} />}
+          {edit && <VariantCard variant={edit} onChanged={() => { setEdit(null); }} />}
         </DialogContent>
       </Dialog>
-    </div>
-  );
-};
-
-const VariantRow: React.FC<{
-  variant: AdminVariant;
-  onEdit: (variant: AdminVariant) => void;
-  onToggleActive: (id: string, active: boolean) => void;
-  onDuplicate: (variant: AdminVariant) => void;
-}> = ({ variant, onEdit, onToggleActive, onDuplicate }) => {
-  const [thumbnail, setThumbnail] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadThumbnail = async () => {
-      const { data } = await supabase
-        .from("product_variant_images")
-        .select("url")
-        .eq("product_variant_id", variant.id)
-        .order("sort_order", { ascending: true })
-        .limit(1)
-        .maybeSingle();
-      setThumbnail(data?.url || null);
-    };
-    loadThumbnail();
-  }, [variant.id]);
-
-  return (
-    <TableRow>
-      <TableCell>
-        {thumbnail ? (
-          <img 
-            src={thumbnail} 
-            alt="Thumbnail" 
-            className="w-12 h-12 object-cover rounded border"
-          />
-        ) : (
-          <div className="w-12 h-12 bg-muted rounded border flex items-center justify-center">
-            <Package className="h-6 w-6 text-muted-foreground" />
-          </div>
-        )}
-      </TableCell>
-      <TableCell>{variant.name ?? "-"}</TableCell>
-      <TableCell>{variant.sku ?? "-"}</TableCell>
-      <TableCell>
-        <Switch 
-          checked={!!variant.active} 
-          onCheckedChange={(val) => onToggleActive(variant.id, !!val)} 
-        />
-      </TableCell>
-      <TableCell>
-        <div className="flex gap-2">
-          <Button size="sm" variant="outline" onClick={() => onEdit(variant)}>
-            Editar
-          </Button>
-          <Button 
-            size="sm" 
-            variant="outline" 
-            onClick={() => onDuplicate(variant)}
-          >
-            <Copy className="h-4 w-4" />
-          </Button>
-        </div>
-      </TableCell>
-    </TableRow>
+    </>
   );
 };
 

@@ -27,13 +27,23 @@ type Product = {
   type: string | null;
   collection: string | null;
   active: boolean;
-  product_images?: { url: string; sort_order: number }[];
+  product_variants?: {
+    id: string;
+    product_variant_images: { url: string; sort_order: number }[];
+  }[];
 };
 
 async function fetchProducts(): Promise<Product[]> {
   const { data, error } = await supabase
     .from("products")
-    .select("id,name,slug,brand,description,status,subtitle,bx_code,verified_product,verified_video,material,discountable,agent_profile_id,supplier_link,supplier_model,type,collection,active,product_images(url,sort_order)")
+    .select(`
+      id,name,slug,brand,description,status,subtitle,bx_code,verified_product,verified_video,
+      material,discountable,agent_profile_id,supplier_link,supplier_model,type,collection,active,
+      product_variants!inner(
+        id,
+        product_variant_images(url, sort_order)
+      )
+    `)
     .order("updated_at", { ascending: false })
     .limit(50);
   if (error) throw error;
@@ -77,7 +87,11 @@ const ProductsPanel: React.FC = () => {
                 <TableRow key={p.id}>
                   <TableCell>
                     {(() => {
-                      const img = (p.product_images ?? []).sort((a, b) => a.sort_order - b.sort_order)[0];
+                      // Get first variant's first image
+                      const firstVariant = (p.product_variants ?? [])[0];
+                      const img = firstVariant 
+                        ? (firstVariant.product_variant_images ?? []).sort((a, b) => a.sort_order - b.sort_order)[0]
+                        : null;
                       return img ? (
                         <img
                           src={img.url}
@@ -86,7 +100,10 @@ const ProductsPanel: React.FC = () => {
                           loading="lazy"
                         />
                       ) : (
-                        <div className="h-12 w-12 rounded-md bg-muted" aria-label="Sin imagen" />)
+                        <div className="h-12 w-12 rounded-md bg-muted flex items-center justify-center" aria-label="Sin imagen">
+                          <span className="text-xs text-muted-foreground">Sin imagen</span>
+                        </div>
+                      );
                     })()}
                   </TableCell>
                   <TableCell className="font-mono text-xs">{p.bx_code ?? "-"}</TableCell>
