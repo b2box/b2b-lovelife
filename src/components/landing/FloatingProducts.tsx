@@ -96,7 +96,8 @@ const FloatingProducts: React.FC = () => {
           return (
             <div
               key={`row-${r}`}
-              className={cn("flex gap-3", isOdd ? "translate-x-4 md:translate-x-6" : "")}
+              className={cn("relative overflow-visible flex gap-3", isOdd ? "translate-x-4 md:translate-x-6" : "")}
+              style={{ zIndex: active.r === r ? 200 : 0 }}
             >
               {rowItems.map((it, idx) => (
                 <div
