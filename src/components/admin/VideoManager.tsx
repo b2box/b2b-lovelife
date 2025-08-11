@@ -20,11 +20,10 @@ export const VideoManager: React.FC<VideoManagerProps> = ({
 }) => {
   const [uploading, setUploading] = useState(false);
   const [urlInput, setUrlInput] = useState("");
+  const [dragOver, setDragOver] = useState(false);
   const { toast } = useToast();
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  const handleVideoUpload = async (file: File) => {
 
     // Validate file type
     if (!file.type.startsWith("video/")) {
@@ -75,6 +74,31 @@ export const VideoManager: React.FC<VideoManagerProps> = ({
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    await handleVideoUpload(file);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0 && files[0].type.startsWith("video/")) {
+      await handleVideoUpload(files[0]);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
   };
 
   const handleUrlSubmit = () => {
@@ -139,7 +163,12 @@ export const VideoManager: React.FC<VideoManagerProps> = ({
       ) : (
         <div className="space-y-3">
           {/* File Upload */}
-          <Card className="card-glass border-dashed">
+          <Card 
+            className={`card-glass border-dashed transition-colors ${dragOver ? 'border-primary bg-primary/5' : ''}`}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+          >
             <CardContent className="p-4">
               <div className="text-center">
                 <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
@@ -147,7 +176,7 @@ export const VideoManager: React.FC<VideoManagerProps> = ({
                   htmlFor="video-upload"
                   className="cursor-pointer text-sm font-medium hover:text-primary"
                 >
-                  Subir archivo de video
+                  Arrastra un video aquí o haz clic para subir
                 </Label>
                 <Input
                   id="video-upload"

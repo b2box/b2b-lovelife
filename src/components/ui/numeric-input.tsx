@@ -9,8 +9,9 @@ export interface NumericInputProps extends Omit<React.InputHTMLAttributes<HTMLIn
 }
 
 export const NumericInput = React.forwardRef<HTMLInputElement, NumericInputProps>(
-  ({ value, onValueChange, locale = "es-AR", decimals, className, ...rest }, ref) => {
+  ({ value, onValueChange, locale = "en-US", decimals, className, ...rest }, ref) => {
     const [text, setText] = useState<string>("");
+    const [isEditing, setIsEditing] = useState(false);
 
     const formatter = useMemo(() => {
       try {
@@ -21,7 +22,7 @@ export const NumericInput = React.forwardRef<HTMLInputElement, NumericInputProps
             : undefined
         );
       } catch {
-        return new Intl.NumberFormat("es-AR");
+        return new Intl.NumberFormat("en-US");
       }
     }, [locale, decimals]);
 
@@ -31,27 +32,21 @@ export const NumericInput = React.forwardRef<HTMLInputElement, NumericInputProps
     };
 
     useEffect(() => {
-      const n = Number(value ?? 0);
-      setText(format(n));
+      if (!isEditing) {
+        const n = Number(value ?? 0);
+        setText(format(n));
+      }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [value, formatter]);
+    }, [value, formatter, isEditing]);
 
     const parse = (s: string): number => {
       if (!s) return 0;
-      // Remove all non-numeric characters except dots, commas
+      // Remove all non-numeric characters except dots and commas
       const only = s.replace(/[^\d.,-]/g, "");
-      const lastComma = only.lastIndexOf(",");
-      const lastDot = only.lastIndexOf(".");
       
-      let normalized = only;
-      // If comma comes after dot, treat comma as decimal separator
-      if (lastComma > lastDot) {
-        // Remove all dots (thousands) and replace comma with dot (decimal)
-        normalized = only.replace(/\./g, "").replace(",", ".");
-      } else {
-        // Remove all commas (thousands separators)
-        normalized = only.replace(/,/g, "");
-      }
+      // For US format: comma = thousands separator, dot = decimal separator
+      // Remove commas (thousands) and keep dots (decimals)
+      const normalized = only.replace(/,/g, "");
       
       const n = Number(normalized);
       return Number.isNaN(n) ? 0 : n;
@@ -74,6 +69,7 @@ export const NumericInput = React.forwardRef<HTMLInputElement, NumericInputProps
           onValueChange?.(n);
         }}
         onBlur={(e) => {
+          setIsEditing(false);
           const n = parse(e.target.value);
           // Always format on blur to ensure consistent display
           const formatted = format(n);
@@ -83,6 +79,7 @@ export const NumericInput = React.forwardRef<HTMLInputElement, NumericInputProps
           rest.onBlur?.(e);
         }}
         onFocus={(e) => {
+          setIsEditing(true);
           rest.onFocus?.(e);
         }}
         {...rest}

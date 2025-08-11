@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, X, Star, ArrowUp, ArrowDown, ImageIcon } from "lucide-react";
+import { Upload, X, Star, ImageIcon, GripVertical } from "lucide-react";
 
 export interface ImageItem {
   id: string;
@@ -30,10 +30,11 @@ export const ImageManager: React.FC<ImageManagerProps> = ({
   maxImages = 10,
 }) => {
   const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const { toast } = useToast();
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files || []);
+  const handleFileUpload = async (files: File[]) => {
     if (files.length === 0) return;
 
     if (images.length + files.length > maxImages) {
@@ -97,6 +98,28 @@ export const ImageManager: React.FC<ImageManagerProps> = ({
     }
   };
 
+  const handleInputFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    await handleFileUpload(files);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    const files = Array.from(e.dataTransfer.files);
+    await handleFileUpload(files);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+  };
+
   const handleRemoveImage = (imageId: string) => {
     const newImages = images.filter(img => img.id !== imageId);
     onImagesUpdate(newImages);
@@ -114,15 +137,28 @@ export const ImageManager: React.FC<ImageManagerProps> = ({
     });
   };
 
-  const handleMoveImage = (imageId: string, direction: 'up' | 'down') => {
-    const currentIndex = images.findIndex(img => img.id === imageId);
-    if (currentIndex === -1) return;
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
 
-    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-    if (newIndex < 0 || newIndex >= images.length) return;
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+  };
+
+  const handleImageDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleImageDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === dropIndex) return;
 
     const newImages = [...images];
-    [newImages[currentIndex], newImages[newIndex]] = [newImages[newIndex], newImages[currentIndex]];
+    const draggedImage = newImages[draggedIndex];
+    newImages.splice(draggedIndex, 1);
+    newImages.splice(dropIndex, 0, draggedImage);
     
     // Update sort_order
     newImages.forEach((img, index) => {
@@ -130,6 +166,7 @@ export const ImageManager: React.FC<ImageManagerProps> = ({
     });
 
     onImagesUpdate(newImages);
+    setDraggedIndex(null);
   };
 
   const handleUpdateAlt = (imageId: string, alt: string) => {
@@ -171,28 +208,53 @@ export const ImageManager: React.FC<ImageManagerProps> = ({
         type="file"
         accept="image/*"
         multiple
-        onChange={handleFileUpload}
+        onChange={handleInputFileUpload}
         disabled={uploading}
         className="hidden"
       />
 
       {images.length === 0 && !uploading && (
-        <Card className="card-glass border-dashed">
+        <Card 
+          className={`card-glass border-dashed transition-colors ${dragOver ? 'border-primary bg-primary/5' : ''}`}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+        >
           <CardContent className="p-8 text-center">
             <ImageIcon className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">
-              No hay imágenes. Sube algunas para empezar.
+              Arrastra imágenes aquí o sube algunas para empezar.
             </p>
           </CardContent>
         </Card>
       )}
 
       {images.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div 
+          className="grid grid-cols-2 md:grid-cols-3 gap-4"
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+        >
           {images.map((image, index) => (
-            <Card key={image.id} className="card-glass overflow-hidden">
+            <Card 
+              key={image.id} 
+              className={`card-glass overflow-hidden cursor-move transition-transform ${
+                draggedIndex === index ? 'scale-105 opacity-50' : ''
+              }`}
+              draggable
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragEnd={handleDragEnd}
+              onDragOver={handleImageDragOver}
+              onDrop={(e) => handleImageDrop(e, index)}
+            >
               <CardContent className="p-0">
                 <div className="relative aspect-square">
+                  {/* Drag handle */}
+                  <div className="absolute top-2 right-2 z-10 bg-black/50 text-white p-1 rounded cursor-move">
+                    <GripVertical className="h-4 w-4" />
+                  </div>
+
                   <img
                     src={image.url}
                     alt={image.alt || `Imagen ${index + 1}`}
@@ -217,24 +279,6 @@ export const ImageManager: React.FC<ImageManagerProps> = ({
                       disabled={index === 0}
                     >
                       <Star className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => handleMoveImage(image.id, 'up')}
-                      disabled={index === 0}
-                    >
-                      <ArrowUp className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => handleMoveImage(image.id, 'down')}
-                      disabled={index === images.length - 1}
-                    >
-                      <ArrowDown className="h-4 w-4" />
                     </Button>
                     <Button
                       type="button"
