@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,14 +6,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 const Auth = () => {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRef = useRef<HCaptcha>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Clave del sitio de hCaptcha (pública, segura para el código)
+  const HCAPTCHA_SITE_KEY = "10000000-ffff-ffff-ffff-000000000001"; // Reemplaza con tu clave real
 
   useEffect(() => {
     document.title = mode === "login" ? "Iniciar sesión – B2BOX" : "Registrarse – B2BOX";
@@ -39,10 +45,23 @@ const Auth = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Verificar captcha para operaciones de registro
+    if (mode === "signup" && !captchaToken) {
+      toast({ title: "Error", description: "Por favor completa la verificación captcha." });
+      return;
+    }
+
     setLoading(true);
     try {
       if (mode === "login") {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({ 
+          email, 
+          password,
+          options: {
+            captchaToken: captchaToken || undefined
+          }
+        });
         if (error) throw error;
         toast({ title: "¡Bienvenido!", description: "Inicio de sesión exitoso." });
       } else {
@@ -50,16 +69,35 @@ const Auth = () => {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: redirectUrl },
+          options: { 
+            emailRedirectTo: redirectUrl,
+            captchaToken: captchaToken || undefined
+          },
         });
         if (error) throw error;
         toast({ title: "Revisa tu correo", description: "Te enviamos un enlace para confirmar tu cuenta." });
       }
+      
+      // Reset captcha after successful submission
+      setCaptchaToken(null);
+      captchaRef.current?.resetCaptcha();
+      
     } catch (err: any) {
       toast({ title: "Error", description: err.message ?? "Ocurrió un error" });
+      // Reset captcha on error
+      setCaptchaToken(null);
+      captchaRef.current?.resetCaptcha();
     } finally {
       setLoading(false);
     }
+  };
+
+  const onCaptchaVerify = (token: string) => {
+    setCaptchaToken(token);
+  };
+
+  const onCaptchaExpire = () => {
+    setCaptchaToken(null);
   };
 
   return (
@@ -81,6 +119,18 @@ const Auth = () => {
                 <Label htmlFor="password">Contraseña</Label>
                 <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
               </div>
+              
+              {/* hCaptcha - Solo mostrar en registro o si hay errores */}
+              <div className="flex justify-center">
+                <HCaptcha
+                  ref={captchaRef}
+                  sitekey={HCAPTCHA_SITE_KEY}
+                  onVerify={onCaptchaVerify}
+                  onExpire={onCaptchaExpire}
+                  theme="light"
+                />
+              </div>
+              
               <Button type="submit" className="w-full" variant="brand" disabled={loading}>
                 {loading ? "Procesando…" : mode === "login" ? "Iniciar sesión" : "Registrarse"}
               </Button>
