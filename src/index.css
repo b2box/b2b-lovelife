@@ -179,4 +179,16 @@ All colors MUST be HSL.
   .animate-float { animation: float 6s ease-in-out infinite; }
   .animate-shimmer { background: linear-gradient(90deg, hsl(var(--card)) 0%, hsl(var(--card)) 20%, hsl(var(--brand)/0.15) 40%, hsl(var(--card)) 60%, hsl(var(--card)) 100%); background-size: 200% 100%; animation: shimmer 2s linear infinite; }
   .hover\:lift:hover { transform: translateY(-2px); transition: all 0.3s cubic-bezier(0.4,0,0.2,1); box-shadow: var(--shadow-elevate); }
+  
+  /* Utility classes */
+  .shadow-elevate { box-shadow: var(--shadow-elevate); }
+  .shadow-glow { box-shadow: var(--shadow-glow); }
+  .shadow-elevate-green { box-shadow: var(--shadow-elevate-green); }
+  .bg-gradient-primary { background: var(--gradient-primary); }
+  .bg-gradient-trends { background: var(--gradient-trends); }
+  .card-glass { 
+    background: hsl(var(--card) / 0.8);
+    border: 1px solid hsl(var(--border) / 0.3);
+    backdrop-filter: blur(8px);
+  }
 }
