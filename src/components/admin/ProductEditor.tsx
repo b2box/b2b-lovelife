@@ -522,8 +522,10 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
                 />
               ) : (
                 <Card className="p-4">
-                  <p className="text-sm mb-3">Primero guarda el producto para poder crear variantes.</p>
-                  <Button onClick={saveProduct} disabled={saving}>{saving ? "Guardando…" : "Guardar producto"}</Button>
+                  <p className="text-sm text-muted-foreground mb-3">Guarda el producto primero para poder gestionar variantes.</p>
+                  <Button onClick={saveProduct} disabled={saving || !form.name.trim()}>
+                    {saving ? "Guardando…" : "Guardar producto"}
+                  </Button>
                 </Card>
               )}
             </TabsContent>
