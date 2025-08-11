@@ -345,7 +345,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
   return (
     <>
       <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-        <DialogContent className="w-[95vw] max-w-5xl max-h-[85vh] overflow-y-auto card-glass">
+        <DialogContent className="w-[95vw] max-w-5xl max-h-[85vh] overflow-y-auto bg-background/95 backdrop-blur-sm border border-border/40">
           <DialogHeader>
             <DialogTitle>{isEdit ? "Editar producto" : "Nuevo producto"}</DialogTitle>
           </DialogHeader>
@@ -465,7 +465,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex h-4 w-6 items-center justify-center rounded bg-muted text-xs">AR</span>
+                    <img src="/images/flags/ar.svg" alt="Argentina" className="w-6 h-4 rounded-sm border" />
                     <h4 className="font-medium">Argentina (AR)</h4>
                   </div>
                   <Input
@@ -482,7 +482,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
 
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex h-4 w-6 items-center justify-center rounded bg-muted text-xs">CO</span>
+                    <img src="/images/flags/co.svg" alt="Colombia" className="w-6 h-4 rounded-sm border" />
                     <h4 className="font-medium">Colombia (CO)</h4>
                   </div>
                   <Input
@@ -499,7 +499,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
 
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex h-4 w-6 items-center justify-center rounded bg-muted text-xs">CN</span>
+                    <div className="w-6 h-4 bg-red-600 rounded-sm border flex items-center justify-center text-xs text-white font-bold">中</div>
                     <h4 className="font-medium">Chino (CN)</h4>
                   </div>
                   <Input

@@ -123,7 +123,7 @@ const fetchProducts = async (page: number, search: string, statusFilter: string,
 const fetchFilterOptions = async () => {
   const [categoriesRes, collectionsRes] = await Promise.all([
     supabase.from("categories").select("id, name, parent_id").is("parent_id", null).order("name"),
-    supabase.from("products").select("collection").not("collection", "is", null).order("collection")
+    supabase.from("products").select("collection").not("collection", "is", null).not("collection", "eq", "").order("collection")
   ]);
 
   const categories = categoriesRes.data || [];

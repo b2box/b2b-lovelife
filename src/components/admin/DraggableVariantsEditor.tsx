@@ -239,7 +239,7 @@ export const DraggableVariantsEditor: React.FC<DraggableVariantsEditorProps> = (
       tiersToInsert.push({
         product_variant_id: variantId,
         tier: tierName,
-        min_qty: index === 0 ? 1 : index === 1 ? 50 : 100,
+        min_qty: index === 0 ? 50 : index === 1 ? 250 : 500,
         unit_price: 0,
         currency: "CNY",
       });
@@ -251,7 +251,7 @@ export const DraggableVariantsEditor: React.FC<DraggableVariantsEditorProps> = (
       tiersToInsert.push({
         product_variant_id: variantId,
         tier: tierName,
-        min_qty: index === 0 ? 1 : index === 1 ? 50 : 100,
+        min_qty: index === 0 ? 50 : index === 1 ? 250 : 500,
         unit_price: 0,
         currency: "USD",
       });
@@ -262,7 +262,7 @@ export const DraggableVariantsEditor: React.FC<DraggableVariantsEditorProps> = (
       tiersToInsert.push({
         product_variant_id: variantId,
         tier: tierName,
-        min_qty: index === 0 ? 1 : index === 1 ? 50 : 100,
+        min_qty: index === 0 ? 50 : index === 1 ? 250 : 500,
         unit_price: 0,
         currency: "COP",
       });
@@ -273,7 +273,7 @@ export const DraggableVariantsEditor: React.FC<DraggableVariantsEditorProps> = (
       tiersToInsert.push({
         product_variant_id: variantId,
         tier: tierName,
-        min_qty: index === 0 ? 1 : index === 1 ? 50 : 100,
+        min_qty: index === 0 ? 50 : index === 1 ? 250 : 500,
         unit_price: 0,
         currency: "USD",
       });
