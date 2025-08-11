@@ -30,6 +30,8 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   
+  console.log("VariantPricingEditor - Pricing settings:", pricingSettings);
+  
   // Base pricing in CNY (supplier pricing)
   const [baseTiers, setBaseTiers] = useState([0, 0, 0]); // [inicial, mayorista, distribuidor] in CNY
   
@@ -56,8 +58,9 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
   const tierNames: ("inicial" | "mayorista" | "distribuidor")[] = ["inicial", "mayorista", "distribuidor"];
 
   useEffect(() => {
+    console.log("VariantPricingEditor useEffect - Variant ID:", variantId, "Pricing settings:", pricingSettings);
     loadPricingData();
-  }, [variantId]);
+  }, [variantId, pricingSettings]);
 
   const loadPricingData = async () => {
     setLoading(true);
@@ -86,10 +89,14 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
 
         // Initialize markets with default settings if we have pricing settings
         if (pricingSettings) {
+          console.log("Using pricing settings to initialize markets:", pricingSettings);
           const initializedMarkets = ensureMarkets(markets, newBaseTiers, pricingSettings);
+          console.log("Initialized markets:", initializedMarkets);
           newMarkets.AR = initializedMarkets.AR;
           newMarkets.COL = initializedMarkets.COL;
           newMarkets.CN = initializedMarkets.CN;
+        } else {
+          console.log("No pricing settings available for market initialization");
         }
 
         // Second pass: Load market-specific pricing and calculate percentages
@@ -159,9 +166,14 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
         console.log("Final markets state:", newMarkets);
       } else {
         // No existing pricing data, use defaults from pricing settings
+        console.log("No existing pricing data, initializing with defaults");
         if (pricingSettings) {
+          console.log("Initializing with pricing settings:", pricingSettings);
           const initializedMarkets = ensureMarkets({}, [0, 0, 0], pricingSettings);
+          console.log("Initialized default markets:", initializedMarkets);
           setMarkets(initializedMarkets);
+        } else {
+          console.log("No pricing settings available for default initialization");
         }
       }
     } catch (error) {
@@ -177,19 +189,24 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
   };
 
   const updateBaseTier = (tierIndex: number, value: number) => {
+    console.log("updateBaseTier called:", { tierIndex, value, pricingSettings });
     const newBaseTiers = [...baseTiers];
     newBaseTiers[tierIndex] = value;
     setBaseTiers(newBaseTiers);
 
     // Recompute market prices when base tiers change
     if (pricingSettings) {
+      console.log("Recomputing markets with:", { newBaseTiers, pricingSettings });
       const newMarkets = recomputeMarkets(markets, newBaseTiers, pricingSettings);
-      setMarkets(newMarkets);
       console.log("Updated markets after base tier change:", newMarkets);
+      setMarkets(newMarkets);
+    } else {
+      console.log("Cannot recompute markets - no pricing settings available");
     }
   };
 
   const updateMarketPercent = (market: "AR" | "COL" | "CN", tierIndex: number, percent: number) => {
+    console.log("updateMarketPercent called:", { market, tierIndex, percent, baseTiers, pricingSettings });
     const newMarkets = { ...markets };
     newMarkets[market][tierIndex].percent = percent;
     
@@ -197,7 +214,10 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
     if (pricingSettings && baseTiers[tierIndex] > 0) {
       const rate = market === "AR" ? pricingSettings.arRate : market === "COL" ? pricingSettings.coRate : pricingSettings.cnRate;
       const price = baseTiers[tierIndex] * (1 + percent / 100) * rate;
+      console.log("Calculated price:", { baseTier: baseTiers[tierIndex], percent, rate, price });
       newMarkets[market][tierIndex].price = Number(price.toFixed(2));
+    } else {
+      console.log("Cannot calculate price:", { hasPricingSettings: !!pricingSettings, baseTier: baseTiers[tierIndex] });
     }
     
     setMarkets(newMarkets);
