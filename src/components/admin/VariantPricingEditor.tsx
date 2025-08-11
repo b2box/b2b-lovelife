@@ -87,7 +87,9 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
         // Initialize markets with default settings if we have pricing settings
         if (pricingSettings) {
           const initializedMarkets = ensureMarkets(markets, newBaseTiers, pricingSettings);
-          setMarkets(initializedMarkets);
+          newMarkets.AR = initializedMarkets.AR;
+          newMarkets.COL = initializedMarkets.COL;
+          newMarkets.CN = initializedMarkets.CN;
         }
 
         // Second pass: Load market-specific pricing and calculate percentages
@@ -117,6 +119,7 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
         });
 
         setBaseTiers(newBaseTiers);
+        setMarkets(newMarkets);
         console.log("Final markets state:", newMarkets);
       } else {
         // No existing pricing data, use defaults from pricing settings
