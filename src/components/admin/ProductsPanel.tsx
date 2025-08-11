@@ -71,27 +71,104 @@ const ProductsPanel: React.FC = () => {
 
   const duplicateProduct = async (product: Product) => {
     try {
-      const { data, error } = await supabase
+      // 1. Obtener el producto completo con todas sus variantes e imágenes
+      const { data: fullProduct, error: fetchError } = await supabase
+        .from("products")
+        .select(`
+          *,
+          product_variants(
+            *,
+            product_variant_images(*)
+          )
+        `)
+        .eq("id", product.id)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      // 2. Duplicar el producto padre
+      const { data: newProduct, error: productError } = await supabase
         .from("products")
         .insert({
-          name: `${product.name} (Copia)`,
-          brand: product.brand,
-          description: product.description,
+          name: `${fullProduct.name} (Copia)`,
+          brand: fullProduct.brand,
+          description: fullProduct.description,
           status: 'draft',
-          subtitle: product.subtitle,
-          material: product.material,
-          discountable: product.discountable,
-          supplier_link: product.supplier_link,
-          supplier_model: product.supplier_model,
-          type: product.type,
-          collection: product.collection,
+          subtitle: fullProduct.subtitle,
+          material: fullProduct.material,
+          discountable: fullProduct.discountable,
+          supplier_link: fullProduct.supplier_link,
+          supplier_model: fullProduct.supplier_model,
+          type: fullProduct.type,
+          collection: fullProduct.collection,
           active: false,
+          bx_code: fullProduct.bx_code,
+          verified_product: false,
+          verified_video: false,
+          agent_profile_id: fullProduct.agent_profile_id,
+          video_url: fullProduct.video_url,
         })
         .select("id")
-        .maybeSingle();
+        .single();
       
-      if (error) throw error;
-      toast({ title: "Duplicado", description: "Producto duplicado correctamente." });
+      if (productError) throw productError;
+
+      // 3. Duplicar las variantes si existen
+      if (fullProduct.product_variants && fullProduct.product_variants.length > 0) {
+        for (const variant of fullProduct.product_variants) {
+          const { data: newVariant, error: variantError } = await supabase
+            .from("product_variants")
+            .insert({
+              product_id: newProduct.id,
+              name: variant.name,
+              sku: variant.sku,
+              price: variant.price,
+              currency: variant.currency,
+              stock: 0, // Reset stock for duplicated variants
+              active: variant.active,
+              attributes: variant.attributes,
+              sort_order: variant.sort_order,
+              option_name: variant.option_name,
+              is_clothing: variant.is_clothing,
+              length_cm: variant.length_cm,
+              width_cm: variant.width_cm,
+              height_cm: variant.height_cm,
+              weight_kg: variant.weight_kg,
+              box_length_cm: variant.box_length_cm,
+              box_width_cm: variant.box_width_cm,
+              box_height_cm: variant.box_height_cm,
+              box_weight_kg: variant.box_weight_kg,
+              pcs_per_carton: variant.pcs_per_carton,
+              cbm_per_carton: variant.cbm_per_carton,
+              has_battery: variant.has_battery,
+              has_individual_packaging: (variant as any).has_individual_packaging || false,
+              individual_packaging_price_cny: (variant as any).individual_packaging_price_cny || null,
+              individual_packaging_required: (variant as any).individual_packaging_required || false,
+            })
+            .select("id")
+            .single();
+
+          if (variantError) throw variantError;
+
+          // 4. Duplicar las imágenes de la variante si existen
+          if (variant.product_variant_images && variant.product_variant_images.length > 0) {
+            const variantImages = variant.product_variant_images.map(img => ({
+              product_variant_id: newVariant.id,
+              url: img.url,
+              alt: img.alt,
+              sort_order: img.sort_order,
+            }));
+
+            const { error: imagesError } = await supabase
+              .from("product_variant_images")
+              .insert(variantImages);
+
+            if (imagesError) throw imagesError;
+          }
+        }
+      }
+
+      toast({ title: "Duplicado", description: "Producto y variantes duplicados correctamente." });
       qc.invalidateQueries({ queryKey: ["admin", "products"] });
     } catch (e) {
       console.error(e);
