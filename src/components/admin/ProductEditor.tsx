@@ -219,13 +219,20 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
   useEffect(() => {
     if (!open) return;
     
-    const hasChanges = JSON.stringify(form) !== JSON.stringify(initialForm) ||
-                      JSON.stringify(selectedCollectionIds) !== JSON.stringify([]) ||
-                      JSON.stringify(selectedParentIds) !== JSON.stringify([]) ||
-                      JSON.stringify(selectedSubcategoryIds) !== JSON.stringify([]);
+    // Create initial state for collections and categories if editing
+    const initialCollectionIds = product?.id ? selectedCollectionIds : [];
+    const initialParentIds = product?.id ? selectedParentIds : [];
+    const initialSubcategoryIds = product?.id ? selectedSubcategoryIds : [];
     
-    setHasUnsavedChanges(hasChanges);
-  }, [form, initialForm, selectedCollectionIds, selectedParentIds, selectedSubcategoryIds, open]);
+    const hasFormChanges = JSON.stringify(form) !== JSON.stringify(initialForm);
+    const hasCollectionChanges = product?.id && JSON.stringify(selectedCollectionIds) !== JSON.stringify(initialCollectionIds);
+    const hasCategoryChanges = product?.id && (
+      JSON.stringify(selectedParentIds) !== JSON.stringify(initialParentIds) ||
+      JSON.stringify(selectedSubcategoryIds) !== JSON.stringify(initialSubcategoryIds)
+    );
+    
+    setHasUnsavedChanges(hasFormChanges || hasCollectionChanges || hasCategoryChanges);
+  }, [form, initialForm, selectedCollectionIds, selectedParentIds, selectedSubcategoryIds, open, product?.id]);
 
   // Auto-generate slug when name changes
   const handleNameChange = (name: string) => {
@@ -352,7 +359,8 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
       toast({ title: "Guardado", description: "Producto guardado correctamente." });
       
       // Update initial form state to reflect saved state
-      setInitialForm({ ...form });
+      const updatedForm = { ...form };
+      setInitialForm(updatedForm);
       setHasUnsavedChanges(false);
       
       onSaved?.();
@@ -603,7 +611,10 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
             <TabsContent value="media" className="space-y-6">
               {/* Video Section */}
               <div className="space-y-4">
-                <h3 className="text-lg font-medium">Video del producto</h3>
+                <h3 className="text-lg font-medium flex items-center gap-2">
+                  <Video className="h-5 w-5" />
+                  Video del producto
+                </h3>
                 <VideoManager
                   productId={form.id || 'temp'}
                   currentVideoUrl={form.video_url}
@@ -613,25 +624,38 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
 
               {/* Regular Images Section */}
               <div className="space-y-4">
-                <h3 className="text-lg font-medium">Imágenes del producto</h3>
-                <ImageManager
-                  productId={form.id || 'temp'}
-                  images={productImages}
-                  onImagesUpdate={setProductImages}
-                />
+                <h3 className="text-lg font-medium flex items-center gap-2">
+                  <Package className="h-5 w-5" />
+                  Imágenes del producto
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Imágenes principales del producto que serán visibles para los clientes
+                </p>
+                <Card className="p-4">
+                  <ImageManager
+                    productId={form.id || 'temp'}
+                    images={productImages}
+                    onImagesUpdate={setProductImages}
+                  />
+                </Card>
               </div>
 
               {/* Verified Images Section */}
               <div className="space-y-4">
-                <h3 className="text-lg font-medium">Imágenes verificadas</h3>
+                <h3 className="text-lg font-medium flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-green-600" />
+                  Imágenes verificadas
+                </h3>
                 <p className="text-sm text-muted-foreground">
-                  Estas imágenes han sido verificadas y aprobadas para mostrar en el producto
+                  Imágenes que han sido verificadas y aprobadas para mostrar como contenido premium
                 </p>
-                <ImageManager
-                  productId={form.id || 'temp'}
-                  images={verifiedImages}
-                  onImagesUpdate={setVerifiedImages}
-                />
+                <Card className="p-4 border-green-200 bg-green-50 dark:bg-green-950 dark:border-green-800">
+                  <ImageManager
+                    productId={form.id || 'temp'}
+                    images={verifiedImages}
+                    onImagesUpdate={setVerifiedImages}
+                  />
+                </Card>
               </div>
               
               <div className="flex justify-end gap-2">
