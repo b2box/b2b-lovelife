@@ -23,43 +23,69 @@ export function useAdminGuard(): AdminGuardResult {
 
     const check = async () => {
       console.log("[AdminGuard] Checking session and role...");
-      const { data: userData, error: userErr } = await supabase.auth.getUser();
-      if (userErr) {
-        console.error("[AdminGuard] getUser error:", userErr);
-      }
-      const user = userData?.user ?? null;
-      if (!user) {
-        console.warn("[AdminGuard] No session, redirecting to /auth");
-        if (active) {
-          navigate("/auth", { replace: true, state: { from: location.pathname } });
+      
+      try {
+        const { data: userData, error: userErr } = await supabase.auth.getUser();
+        if (userErr) {
+          console.error("[AdminGuard] getUser error:", userErr);
+          if (active) {
+            setLoading(false);
+            setAllowed(false);
+          }
+          return;
         }
-        return;
-      }
+        
+        const user = userData?.user ?? null;
+        console.log("[AdminGuard] User found:", !!user, user?.id);
+        
+        if (!user) {
+          console.warn("[AdminGuard] No session, redirecting to /auth");
+          if (active) {
+            navigate("/auth", { replace: true, state: { from: location.pathname } });
+          }
+          return;
+        }
 
-      setUserId(user.id);
+        setUserId(user.id);
 
-      // Verificar si es admin o agente (ambos pueden acceder al admin)
-      const { data: hasAccess, error: accessErr } = await supabase.rpc("is_admin_or_agent", {
-        _user_id: user.id,
-      });
+        // Verificar si es admin o agente (ambos pueden acceder al admin)
+        console.log("[AdminGuard] Calling is_admin_or_agent RPC...");
+        const { data: hasAccess, error: accessErr } = await supabase.rpc("is_admin_or_agent", {
+          _user_id: user.id,
+        });
 
-      if (accessErr) {
-        console.error("[AdminGuard] is_admin_or_agent RPC error:", accessErr);
-      }
+        console.log("[AdminGuard] is_admin_or_agent result:", hasAccess, "error:", accessErr);
 
-      // Obtener el rol específico del usuario
-      const { data: role, error: roleErr } = await supabase.rpc("get_user_role", {
-        _user_id: user.id,
-      });
+        if (accessErr) {
+          console.error("[AdminGuard] is_admin_or_agent RPC error:", accessErr);
+          // Fallar silenciosamente y continuar sin acceso
+        }
 
-      if (roleErr) {
-        console.error("[AdminGuard] get_user_role RPC error:", roleErr);
-      }
+        // Obtener el rol específico del usuario
+        console.log("[AdminGuard] Calling get_user_role RPC...");
+        const { data: role, error: roleErr } = await supabase.rpc("get_user_role", {
+          _user_id: user.id,
+        });
 
-      if (active) {
-        setAllowed(Boolean(hasAccess));
-        setUserRole(role || null);
-        setLoading(false);
+        console.log("[AdminGuard] get_user_role result:", role, "error:", roleErr);
+
+        if (roleErr) {
+          console.error("[AdminGuard] get_user_role RPC error:", roleErr);
+          // Fallar silenciosamente y continuar sin rol
+        }
+
+        if (active) {
+          console.log("[AdminGuard] Setting final state - hasAccess:", Boolean(hasAccess), "role:", role);
+          setAllowed(Boolean(hasAccess));
+          setUserRole(role || null);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("[AdminGuard] Unexpected error:", error);
+        if (active) {
+          setAllowed(false);
+          setLoading(false);
+        }
       }
     };
 
