@@ -339,6 +339,48 @@ export type Database = {
           },
         ]
       }
+      pricing_settings: {
+        Row: {
+          ar_cny_to_usd: number
+          ar_tier1_pct: number
+          ar_tier2_pct: number
+          ar_tier3_pct: number
+          co_cny_to_cop: number
+          co_tier1_pct: number
+          co_tier2_pct: number
+          co_tier3_pct: number
+          created_at: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          ar_cny_to_usd?: number
+          ar_tier1_pct?: number
+          ar_tier2_pct?: number
+          ar_tier3_pct?: number
+          co_cny_to_cop?: number
+          co_tier1_pct?: number
+          co_tier2_pct?: number
+          co_tier3_pct?: number
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          ar_cny_to_usd?: number
+          ar_tier1_pct?: number
+          ar_tier2_pct?: number
+          ar_tier3_pct?: number
+          co_cny_to_cop?: number
+          co_tier1_pct?: number
+          co_tier2_pct?: number
+          co_tier3_pct?: number
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       product_categories: {
         Row: {
           category_id: string

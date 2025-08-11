@@ -4,13 +4,14 @@ import { useAdminGuard } from "@/hooks/useAdminGuard";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Package, ShoppingCart, Boxes, Users, Percent, Tag } from "lucide-react";
+import { Package, ShoppingCart, Boxes, Users, Percent, Tag, Settings as SettingsIcon } from "lucide-react";
 import ProductsPanel from "@/components/admin/ProductsPanel";
 import OrdersPanel from "@/components/admin/OrdersPanel";
 import InventoryPanel from "@/components/admin/InventoryPanel";
 import CustomersPanel from "@/components/admin/CustomersPanel";
 import PromotionsPanel from "@/components/admin/PromotionsPanel";
 import PriceListsPanel from "@/components/admin/PriceListsPanel";
+import SettingsPanel from "@/components/admin/SettingsPanel";
 
 type AdminSection =
   | "products"
@@ -18,7 +19,8 @@ type AdminSection =
   | "inventory"
   | "customers"
   | "promotions"
-  | "pricelists";
+  | "pricelists"
+  | "settings";
 
 const MENU: { key: AdminSection; label: string; icon: React.ReactNode }[] = [
   { key: "products", label: "Productos", icon: <Package className="size-4" /> },
@@ -27,6 +29,7 @@ const MENU: { key: AdminSection; label: string; icon: React.ReactNode }[] = [
   { key: "customers", label: "Clientes", icon: <Users className="size-4" /> },
   { key: "promotions", label: "Promociones", icon: <Percent className="size-4" /> },
   { key: "pricelists", label: "Listas de precios", icon: <Tag className="size-4" /> },
+  { key: "settings", label: "Ajustes", icon: <SettingsIcon className="size-4" /> },
 ];
 
 const Admin: React.FC = () => {
@@ -92,6 +95,7 @@ const Admin: React.FC = () => {
           {section === "customers" && <CustomersPanel />}
           {section === "promotions" && <PromotionsPanel />}
           {section === "pricelists" && <PriceListsPanel />}
+          {section === "settings" && <SettingsPanel />}
         </main>
       </div>
     </div>
