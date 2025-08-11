@@ -409,6 +409,13 @@ export type Database = {
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "product_categories_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       product_images: {
@@ -442,6 +449,13 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_images_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products_public"
             referencedColumns: ["id"]
           },
         ]
@@ -479,6 +493,13 @@ export type Database = {
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "product_price_tiers_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       product_tags: {
@@ -503,6 +524,13 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_tags_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products_public"
             referencedColumns: ["id"]
           },
           {
@@ -548,6 +576,13 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_translations_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products_public"
             referencedColumns: ["id"]
           },
         ]
@@ -675,6 +710,13 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_variants_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products_public"
             referencedColumns: ["id"]
           },
         ]
@@ -835,6 +877,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "promotion_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "promotion_products_promotion_id_fkey"
             columns: ["promotion_id"]
             isOneToOne: false
@@ -961,7 +1010,69 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      products_public: {
+        Row: {
+          active: boolean | null
+          brand: string | null
+          bx_code: string | null
+          collection: string | null
+          created_at: string | null
+          description: string | null
+          discountable: boolean | null
+          id: string | null
+          material: string | null
+          name: string | null
+          slug: string | null
+          status: Database["public"]["Enums"]["product_status"] | null
+          subtitle: string | null
+          type: string | null
+          updated_at: string | null
+          verified_product: boolean | null
+          verified_video: boolean | null
+          video_url: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          brand?: string | null
+          bx_code?: string | null
+          collection?: string | null
+          created_at?: string | null
+          description?: string | null
+          discountable?: boolean | null
+          id?: string | null
+          material?: string | null
+          name?: string | null
+          slug?: string | null
+          status?: Database["public"]["Enums"]["product_status"] | null
+          subtitle?: string | null
+          type?: string | null
+          updated_at?: string | null
+          verified_product?: boolean | null
+          verified_video?: boolean | null
+          video_url?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          brand?: string | null
+          bx_code?: string | null
+          collection?: string | null
+          created_at?: string | null
+          description?: string | null
+          discountable?: boolean | null
+          id?: string | null
+          material?: string | null
+          name?: string | null
+          slug?: string | null
+          status?: Database["public"]["Enums"]["product_status"] | null
+          subtitle?: string | null
+          type?: string | null
+          updated_at?: string | null
+          verified_product?: boolean | null
+          verified_video?: boolean | null
+          video_url?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_user_role: {
