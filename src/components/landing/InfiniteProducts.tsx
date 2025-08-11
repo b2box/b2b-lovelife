@@ -6,6 +6,7 @@ import { ArrowUp, ArrowDown, Unlock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCategoriesWithProductCount } from "@/hooks/useCategories";
 import { useProducts } from "@/hooks/useProducts";
+import { useCountryPricing } from "@/hooks/useCountryPricing";
 
 const AD_EYE = "/lovable-uploads/fa842b26-b9f1-4176-9073-6128c3c08fbc.png";
 const AD_VIRAL = "/lovable-uploads/025482cb-8da6-4438-85e8-ec4fe0abf877.png";
@@ -16,6 +17,7 @@ const InfiniteProducts = ({ publicMode = false }: { publicMode?: boolean }) => {
   const navigate = useNavigate();
   const { categories } = useCategoriesWithProductCount();
   const { products } = useProducts();
+  const { calculatePriceForCountry, getCountryFromStorage } = useCountryPricing();
   
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [page, setPage] = useState(1);
@@ -39,15 +41,21 @@ const InfiniteProducts = ({ publicMode = false }: { publicMode?: boolean }) => {
       .filter(product => 
         product.categories?.some(c => c.id === selectedCategoryId)
       )
-      .map(product => ({
-        id: product.id,
-        name: product.name,
-        price: product.variant_price_tiers?.[0]?.unit_price || 0,
-        image: product.variants?.[0]?.product_variant_images?.sort((a, b) => a.sort_order - b.sort_order)?.[0]?.url || 
-               "/placeholder.svg",
-        badge: product.verified_product ? "B2BOX verified" : undefined,
-        viral: false
-      }));
+      .map(product => {
+        const country = getCountryFromStorage();
+        const basePrice = product.variant_price_tiers?.[0]?.unit_price || 0;
+        const countryPrice = calculatePriceForCountry(basePrice, country);
+        
+        return {
+          id: product.id,
+          name: product.name,
+          price: countryPrice,
+          image: product.variants?.[0]?.product_variant_images?.sort((a, b) => a.sort_order - b.sort_order)?.[0]?.url || 
+                 "/placeholder.svg",
+          badge: product.verified_product ? "B2BOX verified" : undefined,
+          viral: false
+        };
+      });
   }, [products, selectedCategoryId]);
 
   useEffect(() => {

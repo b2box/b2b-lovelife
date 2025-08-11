@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { useCountryPricing } from "@/hooks/useCountryPricing";
 
 export type Product = {
   id: string;
@@ -14,6 +15,8 @@ type Props = { product: Product };
 
 const ProductCard = ({ product }: Props) => {
   const navigate = useNavigate();
+  const { getCountryFromStorage } = useCountryPricing();
+  const country = getCountryFromStorage();
   return (
     <Card
       className="card-elevated hover:lift transition-transform rounded-2xl border-0 cursor-pointer"
@@ -45,7 +48,10 @@ const ProductCard = ({ product }: Props) => {
           )}
         </div>
         <div className="mt-3">
-          <div className="text-2xl font-bold">${product.price.toFixed(2)}</div>
+          <div className="text-2xl font-bold">
+            {country === "AR" && `$${product.price.toFixed(2)} USD`}
+            {country === "CO" && `$${product.price.toFixed(0)} COP`}
+          </div>
           <p className="text-sm text-muted-foreground">{product.name}</p>
         </div>
       </CardContent>

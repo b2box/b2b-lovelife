@@ -3,20 +3,28 @@ import ProductCard from "./ProductCard";
 import { useNavigate } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
+import { useCountryPricing } from "@/hooks/useCountryPricing";
 
 const NewArrivals = () => {
   const navigate = useNavigate();
   const { products: dbProducts } = useProducts();
+  const { calculatePriceForCountry, getCountryFromStorage } = useCountryPricing();
   
-  const products = dbProducts.slice(0, 3).map(product => ({
-    id: product.id,
-    name: product.name,
-    price: product.variant_price_tiers?.[0]?.unit_price || 0,
-    image: product.variants?.[0]?.product_variant_images?.sort((a, b) => a.sort_order - b.sort_order)?.[0]?.url || 
-           "/placeholder.svg",
-    badge: product.verified_product ? "B2BOX verified" : undefined,
-    viral: false
-  }));
+  const products = dbProducts.slice(0, 3).map(product => {
+    const country = getCountryFromStorage();
+    const basePrice = product.variant_price_tiers?.[0]?.unit_price || 0;
+    const countryPrice = calculatePriceForCountry(basePrice, country);
+    
+    return {
+      id: product.id,
+      name: product.name,
+      price: countryPrice,
+      image: product.variants?.[0]?.product_variant_images?.sort((a, b) => a.sort_order - b.sort_order)?.[0]?.url || 
+             "/placeholder.svg",
+      badge: product.verified_product ? "B2BOX verified" : undefined,
+      viral: false
+    };
+  });
 
   return (
     <section aria-label="Lo más nuevo en B2BOX" className="container mx-auto">
