@@ -12,7 +12,7 @@ const NewArrivals = () => {
     id: product.id,
     name: product.name,
     price: product.variant_price_tiers?.[0]?.unit_price || 0,
-    image: product.images?.sort((a, b) => a.sort_order - b.sort_order)?.[0]?.url || 
+    image: product.variants?.[0]?.product_variant_images?.sort((a, b) => a.sort_order - b.sort_order)?.[0]?.url || 
            "/placeholder.svg",
     badge: product.verified_product ? "B2BOX verified" : undefined,
     viral: false

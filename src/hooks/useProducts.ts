@@ -41,6 +41,7 @@ export interface ProductVariant {
   has_battery: boolean;
   created_at: string;
   updated_at: string;
+  product_variant_images?: ProductImage[];
 }
 
 export interface ProductCategory {
@@ -84,7 +85,8 @@ export const useProducts = () => {
           product_variants!inner(
             id, name, sku, active, stock, sort_order, 
             length_cm, width_cm, height_cm, weight_kg,
-            is_clothing, has_battery, created_at, updated_at
+            is_clothing, has_battery, created_at, updated_at,
+            product_variant_images(id, url, alt, sort_order)
           ),
           product_categories!inner(
             categories(id, name, slug)
