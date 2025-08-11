@@ -835,7 +835,7 @@ export default ProductEditor;
           {edit && <VariantCard variant={edit} onChanged={() => setEdit(null)} />}
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 };
 
