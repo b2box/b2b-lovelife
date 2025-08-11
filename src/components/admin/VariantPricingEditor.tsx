@@ -135,8 +135,13 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
               newMarkets.COL[tierIndex].price = Number(tier.unit_price);
               if (pricingSettings) {
                 const baseCny = newBaseTiers[tierIndex];
-                const percent = (((tier.unit_price / (baseCny * pricingSettings.coRate)) - 1) * 100);
-                newMarkets.COL[tierIndex].percent = Number(percent.toFixed(2));
+                const expectedPrice = baseCny * pricingSettings.coRate;
+                if (expectedPrice > 0) {
+                  const percent = (((tier.unit_price / expectedPrice) - 1) * 100);
+                  newMarkets.COL[tierIndex].percent = Number(Math.max(0, percent).toFixed(2));
+                } else {
+                  newMarkets.COL[tierIndex].percent = pricingSettings.coPercents[tierIndex];
+                }
               }
             }
           }
