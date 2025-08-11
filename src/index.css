@@ -85,7 +85,7 @@ All colors MUST be HSL.
       hsl(var(--trends-purple)) 75%,
       hsl(var(--trends-blue)) 100%
     );
-    --shadow-elevate: 0 10px 30px -10px hsl(var(--brand) / 0.25);
+    --shadow-elevate: 0 4px 12px -2px hsl(var(--muted) / 0.1), 0 2px 6px -1px hsl(var(--muted) / 0.06);
     --shadow-elevate-green: 0 10px 30px -10px hsl(var(--brand-green) / 0.28);
     --shadow-glow: 0 12px 40px -12px hsl(var(--brand-2) / 0.35);
   }

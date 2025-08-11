@@ -38,15 +38,21 @@ export const NumericInput = React.forwardRef<HTMLInputElement, NumericInputProps
 
     const parse = (s: string): number => {
       if (!s) return 0;
+      // Remove all non-numeric characters except dots, commas
       const only = s.replace(/[^\d.,-]/g, "");
       const lastComma = only.lastIndexOf(",");
       const lastDot = only.lastIndexOf(".");
+      
       let normalized = only;
+      // If comma comes after dot, treat comma as decimal separator
       if (lastComma > lastDot) {
+        // Remove all dots (thousands) and replace comma with dot (decimal)
         normalized = only.replace(/\./g, "").replace(",", ".");
       } else {
+        // Remove all commas (thousands separators)
         normalized = only.replace(/,/g, "");
       }
+      
       const n = Number(normalized);
       return Number.isNaN(n) ? 0 : n;
     };
@@ -69,7 +75,11 @@ export const NumericInput = React.forwardRef<HTMLInputElement, NumericInputProps
         }}
         onBlur={(e) => {
           const n = parse(e.target.value);
-          setText(format(n));
+          // Always format on blur to ensure consistent display
+          const formatted = format(n);
+          setText(formatted);
+          // Trigger onValueChange with parsed value to ensure state consistency
+          onValueChange?.(n);
           rest.onBlur?.(e);
         }}
         onFocus={(e) => {

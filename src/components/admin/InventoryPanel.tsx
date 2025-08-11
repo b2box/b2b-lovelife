@@ -74,7 +74,7 @@ const InventoryPanel: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <Card className="p-4 md:p-6">
+      <Card className="p-4 md:p-6 card-glass">
         <h2 className="text-xl font-semibold mb-4">Inventario</h2>
         <div className="grid gap-3 md:grid-cols-5 items-end">
           <div className="md:col-span-2">
@@ -122,7 +122,7 @@ const InventoryPanel: React.FC = () => {
         </div>
       </Card>
 
-      <Card className="p-4 md:p-6">
+      <Card className="p-4 md:p-6 card-glass">
         <h3 className="text-lg font-semibold mb-3">Variantes recientes</h3>
         {isLoading && <p>Cargando…</p>}
         {error && <p className="text-destructive">Error al cargar variantes.</p>}

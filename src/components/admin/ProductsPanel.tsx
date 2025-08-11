@@ -54,10 +54,10 @@ const ProductsPanel: React.FC = () => {
 
 
   return (
-    <Card className="p-4 md:p-6">
+    <Card className="p-4 md:p-6 card-glass">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">Productos</h2>
-        <Button size="sm" onClick={() => { setSelected(null); setEditorOpen(true); }}>Nuevo</Button>
+        <Button size="sm" variant="secondary" onClick={() => { setSelected(null); setEditorOpen(true); }}>Nuevo</Button>
       </div>
       {isLoading && <p>Cargando…</p>}
       {error && <p className="text-destructive">Error al cargar productos.</p>}

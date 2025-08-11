@@ -14,7 +14,10 @@ import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Package, Languages, Truck, Layers, UserSquare, Settings, Tag, Shirt, Smartphone, Sparkles, HeartPulse, Watch, Gem, Gift, Calendar, PartyPopper, PawPrint, Home, Dumbbell, Briefcase, PencilRuler, Plug, Car, Wrench } from "lucide-react";
+import { Package, Languages, Truck, Layers, UserSquare, Settings, Tag, Shirt, Smartphone, Sparkles, HeartPulse, Watch, Gem, Gift, Calendar, PartyPopper, PawPrint, Home, Dumbbell, Briefcase, PencilRuler, Plug, Car, Wrench, Video } from "lucide-react";
+import { VideoManager } from "./VideoManager";
+import { ImageManager, ImageItem } from "./ImageManager";
+import { VariantImages as VariantImagesComponent } from "./VariantImages";
 import { usePricingSettings } from "@/hooks/usePricingSettings";
 import { ensureMarkets as calcEnsureMarkets, recomputeMarkets, computeMarketPrice, computePercentFromPrice } from "@/lib/pricing";
 
@@ -37,6 +40,7 @@ export type AdminProduct = {
   supplier_model?: string | null;
   type?: string | null;
   collection?: string | null;
+  video_url?: string | null;
 };
 
 export type AdminVariant = {
@@ -112,7 +116,10 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
     supplier_model: (product as any)?.supplier_model ?? "",
     type: (product as any)?.type ?? "",
     collection: (product as any)?.collection ?? "",
+    video_url: (product as any)?.video_url ?? null,
   });
+
+  const [productImages, setProductImages] = useState<ImageItem[]>([]);
 
   const [profiles, setProfiles] = useState<{id: string; display_name: string | null}[]>([]);
 const [categories, setCategories] = useState<{id: string; name: string; parent_id: string | null}[]>([]);
@@ -301,8 +308,9 @@ setSaving(true);
             supplier_model: form.supplier_model,
             type: form.type,
             collection: form.collection,
+            video_url: form.video_url,
           })
-.eq("id", form.id);
+          .eq("id", form.id);
         if (error) throw error;
         await syncRelations(form.id!);
       } else {
@@ -326,6 +334,7 @@ setSaving(true);
             supplier_model: form.supplier_model,
             type: form.type,
             collection: form.collection,
+            video_url: form.video_url,
           })
           .select("id")
           .maybeSingle();
@@ -369,7 +378,7 @@ if (error) throw error;
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="w-[95vw] max-w-5xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="w-[95vw] max-w-5xl max-h-[85vh] overflow-y-auto card-glass">
         <DialogHeader>
           <DialogTitle>{isEdit ? "Editar producto" : "Nuevo producto"}</DialogTitle>
         </DialogHeader>
@@ -378,6 +387,7 @@ if (error) throw error;
               <TabsTrigger value="producto" className="gap-2"><Package size={16} /> Producto</TabsTrigger>
               <TabsTrigger value="multilingual" className="gap-2"><Languages size={16} /> Contenido</TabsTrigger>
               <TabsTrigger value="supplier" className="gap-2"><Truck size={16} /> Proveedor</TabsTrigger>
+              <TabsTrigger value="media" className="gap-2"><Video size={16} /> Media</TabsTrigger>
               <TabsTrigger value="variantes" className="gap-2"><Layers size={16} /> Variantes</TabsTrigger>
               <TabsTrigger value="agente" className="gap-2"><UserSquare size={16} /> Agente</TabsTrigger>
               <TabsTrigger value="status" className="gap-2"><Settings size={16} /> Status</TabsTrigger>
@@ -602,6 +612,28 @@ if (error) throw error;
               )}
             </TabsContent>
 
+            <TabsContent value="media" className="space-y-4">
+              <div className="grid gap-6">
+                <VideoManager
+                  productId={form.id || 'temp'}
+                  currentVideoUrl={form.video_url}
+                  onVideoUpdate={(videoUrl) => setForm({ ...form, video_url: videoUrl })}
+                />
+                
+                <ImageManager
+                  images={productImages}
+                  onImagesUpdate={setProductImages}
+                  productId={form.id}
+                  maxImages={15}
+                />
+              </div>
+              
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={onClose}>Cerrar</Button>
+                <Button onClick={saveProduct} disabled={saving}>{saving ? "Guardando…" : "Guardar producto"}</Button>
+              </div>
+            </TabsContent>
+
             <TabsContent value="agente" className="space-y-4">
               <div>
                 <Label className="mb-2 block">Agente</Label>
@@ -744,7 +776,7 @@ const VariantsEditor: React.FC<{ productId: string }> = ({ productId }) => {
       </div>
       {loading && <p>Cargando…</p>}
       {!loading && (
-        <Card className="p-0">
+        <Card className="p-0 card-glass">
           <Table>
             <TableHeader>
               <TableRow>
@@ -1140,28 +1172,9 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
       </Card>
 
       {/* Sección 7: Media */}
-      <Card className="p-3">
-        <h4 className="font-medium mb-2">Media</h4>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="md:col-span-3">
-            <VariantImages key={imgVersion} variantId={v.id} hideHeader />
-          </div>
-          <div className="md:col-span-1 space-y-4">
-            <div
-              className="rounded-md border border-dashed p-4 text-center"
-              onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
-              onDrop={async (e) => { e.preventDefault(); e.stopPropagation(); await onImageFiles(e.dataTransfer.files); }}
-            >
-              <p className="text-sm mb-2">Upload images</p>
-              <input id={`img-uploader-${v.id}`} type="file" accept="image/*" multiple className="hidden" onChange={async (e) => { await onImageFiles(e.target.files); }} />
-              <Button size="sm" variant="outline" onClick={() => document.getElementById(`img-uploader-${v.id}`)?.click()}>Seleccionar</Button>
-            </div>
-            <div className="rounded-md border border-dashed p-4 text-center">
-              <p className="text-sm mb-2">Subir video</p>
-              <Input type="file" accept="video/*" onChange={onVideoFile} />
-            </div>
-          </div>
-        </div>
+      <Card className="p-3 card-glass">
+        <h4 className="font-medium mb-2">Imágenes</h4>
+        <VariantImagesComponent key={imgVersion} variantId={v.id} onImagesChange={() => setImgVersion(prev => prev + 1)} />
       </Card>
 
       <div className="flex justify-end gap-2">

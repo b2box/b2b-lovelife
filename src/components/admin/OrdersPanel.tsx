@@ -29,7 +29,7 @@ const OrdersPanel: React.FC = () => {
   });
 
   return (
-    <Card className="p-4 md:p-6">
+    <Card className="p-4 md:p-6 card-glass">
       <h2 className="text-xl font-semibold mb-4">Pedidos</h2>
       {isLoading && <p>Cargando…</p>}
       {error && <p className="text-destructive">Error al cargar pedidos.</p>}
