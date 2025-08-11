@@ -209,18 +209,31 @@ const ProductsPanel: React.FC = () => {
 
       console.log("Creating product with new BX code:", newBxCode);
 
-      // Duplicate the main product
+      // Duplicate the main product (exclude nested relationships)
+      const productData = {
+        name: `${fullProduct.name} (Copia)`,
+        slug: `${fullProduct.slug}-copia-${timestamp}`,
+        bx_code: newBxCode,
+        description: fullProduct.description,
+        brand: fullProduct.brand,
+        subtitle: fullProduct.subtitle,
+        material: fullProduct.material,
+        supplier_link: fullProduct.supplier_link,
+        supplier_model: fullProduct.supplier_model,
+        type: fullProduct.type,
+        collection: fullProduct.collection,
+        verified_product: fullProduct.verified_product,
+        verified_video: fullProduct.verified_video,
+        video_url: fullProduct.video_url,
+        agent_profile_id: fullProduct.agent_profile_id,
+        discountable: fullProduct.discountable,
+        status: fullProduct.status,
+        active: fullProduct.active
+      };
+
       const { data: newProduct, error: productError } = await supabase
         .from("products")
-        .insert({
-          ...fullProduct,
-          id: undefined,
-          name: `${fullProduct.name} (Copia)`,
-          slug: `${fullProduct.slug}-copia-${timestamp}`,
-          bx_code: newBxCode,
-          created_at: undefined,
-          updated_at: undefined,
-        })
+        .insert(productData)
         .select("id")
         .maybeSingle();
 
