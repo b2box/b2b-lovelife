@@ -37,7 +37,7 @@ export const CollectionSelector: React.FC<CollectionSelectorProps> = ({
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from("tags")
+        .from("collection")
         .select("id, name, slug")
         .order("name", { ascending: true });
 

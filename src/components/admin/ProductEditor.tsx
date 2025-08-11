@@ -182,14 +182,14 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
         setSelectedParentIds([...parents]);
         setSelectedSubcategoryIds([...subs]);
         
-        // Load tags/collections for this product
-        const { data: productTags } = await supabase
-          .from("product_tags")
-          .select("tag_id")
+        // Load collections for this product
+        const { data: productCollections } = await supabase
+          .from("product_collections")
+          .select("collection_id")
           .eq("product_id", product.id);
         
-        if (productTags) {
-          setSelectedCollectionIds(productTags.map(pt => pt.tag_id));
+        if (productCollections) {
+          setSelectedCollectionIds(productCollections.map(pc => pc.collection_id));
         }
 
         const { data: trans } = await supabase
@@ -261,23 +261,23 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
       if (toInsert.length) await supabase.from('product_categories').insert(toInsert as any);
       if (toDelete.length) await supabase.from('product_categories').delete().eq('product_id', productId).in('category_id', toDelete as any);
 
-      // Handle tags/collections
-      // Delete existing product_tags
-      await supabase.from("product_tags").delete().eq("product_id", productId);
+      // Handle collections
+      // Delete existing product_collections
+      await supabase.from("product_collections").delete().eq("product_id", productId);
       
-      // Insert new product_tags
+      // Insert new product_collections
       if (selectedCollectionIds.length > 0) {
-        const productTagsToInsert = selectedCollectionIds.map(tagId => ({
+        const productCollectionsToInsert = selectedCollectionIds.map(collectionId => ({
           product_id: productId,
-          tag_id: tagId,
+          collection_id: collectionId,
         }));
         
-        const { error: tagsError } = await supabase
-          .from("product_tags")
-          .insert(productTagsToInsert);
+        const { error: collectionsError } = await supabase
+          .from("product_collections")
+          .insert(productCollectionsToInsert);
         
-        if (tagsError) {
-          console.error("Error saving product tags:", tagsError);
+        if (collectionsError) {
+          console.error("Error saving product collections:", collectionsError);
         }
       }
     } catch (e) {

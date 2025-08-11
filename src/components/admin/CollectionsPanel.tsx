@@ -29,7 +29,7 @@ const CollectionsPanel: React.FC = () => {
   const loadCollections = async () => {
     setLoading(true);
     const { data, error } = await supabase
-      .from("tags")
+      .from("collection")
       .select("*")
       .order("name");
     
@@ -72,7 +72,7 @@ const CollectionsPanel: React.FC = () => {
     try {
       if (editingCollection) {
         const { error } = await supabase
-          .from("tags")
+          .from("collection")
           .update(payload)
           .eq("id", editingCollection.id);
         
@@ -80,7 +80,7 @@ const CollectionsPanel: React.FC = () => {
         toast({ title: "Éxito", description: "Colección actualizada correctamente." });
       } else {
         const { error } = await supabase
-          .from("tags")
+          .from("collection")
           .insert(payload);
         
         if (error) throw error;
@@ -98,9 +98,9 @@ const CollectionsPanel: React.FC = () => {
     try {
       // Check if collection is being used
       const { data: usageData } = await supabase
-        .from("product_tags")
+        .from("product_collections")
         .select("id")
-        .eq("tag_id", collection.id)
+        .eq("collection_id", collection.id)
         .limit(1);
 
       if (usageData && usageData.length > 0) {
@@ -113,7 +113,7 @@ const CollectionsPanel: React.FC = () => {
       }
 
       const { error } = await supabase
-        .from("tags")
+        .from("collection")
         .delete()
         .eq("id", collection.id);
       

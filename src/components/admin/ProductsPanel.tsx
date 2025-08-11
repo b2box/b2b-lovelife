@@ -42,9 +42,9 @@ type Product = {
       name: string;
     };
   }>;
-  product_tags: Array<{
-    tag_id: string;
-    tags: {
+  product_collections: Array<{
+    collection_id: string;
+    collection: {
       id: string;
       name: string;
     };
@@ -83,9 +83,9 @@ const fetchProducts = async (page: number, search: string, statusFilter: string,
         category_id,
         categories:categories(id, name)
       ),
-      product_tags:product_tags(
-        tag_id,
-        tags:tags(id, name)
+      product_collections:product_collections(
+        collection_id,
+        collection:collection(id, name)
       )
     `, { count: 'exact' })
     .order("updated_at", { ascending: false })
@@ -102,9 +102,9 @@ const fetchProducts = async (page: number, search: string, statusFilter: string,
   
   if (collectionFilter && collectionFilter !== "all") {
     const { data: productIds } = await supabase
-      .from("product_tags")
+      .from("product_collections")
       .select("product_id")
-      .eq("tag_id", collectionFilter);
+      .eq("collection_id", collectionFilter);
     
     if (productIds && productIds.length > 0) {
       query = query.in("id", productIds.map(pt => pt.product_id));
@@ -142,13 +142,13 @@ const fetchProducts = async (page: number, search: string, statusFilter: string,
 };
 
 const fetchFilterOptions = async () => {
-  const [categoriesRes, tagsRes] = await Promise.all([
+  const [categoriesRes, collectionsRes] = await Promise.all([
     supabase.from("categories").select("id, name, parent_id").is("parent_id", null).order("name"),
-    supabase.from("tags").select("id, name").order("name")
+    supabase.from("collection").select("id, name").order("name")
   ]);
 
   const categories = categoriesRes.data || [];
-  const collections = tagsRes.data || [];
+  const collections = collectionsRes.data || [];
 
   return { categories, collections };
 };
@@ -303,7 +303,7 @@ const ProductsPanel: React.FC = () => {
   };
 
   const getProductCollections = (product: Product) => {
-    return product.product_tags?.map(pt => pt.tags?.name).filter(Boolean).join(", ") || "-";
+    return product.product_collections?.map(pc => pc.collection?.name).filter(Boolean).join(", ") || "-";
   };
 
   return (

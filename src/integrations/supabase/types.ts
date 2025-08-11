@@ -166,6 +166,27 @@ export type Database = {
           },
         ]
       }
+      collection: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          slug: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          slug?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string | null
+        }
+        Relationships: []
+      }
       customer_price_tiers: {
         Row: {
           created_at: string
@@ -430,6 +451,46 @@ export type Database = {
           },
         ]
       }
+      product_collections: {
+        Row: {
+          collection_id: string
+          created_at: string
+          product_id: string
+        }
+        Insert: {
+          collection_id: string
+          created_at?: string
+          product_id: string
+        }
+        Update: {
+          collection_id?: string
+          created_at?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_tags_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_tags_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_tags_tag_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collection"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_images: {
         Row: {
           alt: string | null
@@ -510,46 +571,6 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products_public"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      product_tags: {
-        Row: {
-          created_at: string
-          product_id: string
-          tag_id: string
-        }
-        Insert: {
-          created_at?: string
-          product_id: string
-          tag_id: string
-        }
-        Update: {
-          created_at?: string
-          product_id?: string
-          tag_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "product_tags_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "product_tags_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products_public"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "product_tags_tag_id_fkey"
-            columns: ["tag_id"]
-            isOneToOne: false
-            referencedRelation: "tags"
             referencedColumns: ["id"]
           },
         ]
@@ -949,27 +970,6 @@ export type Database = {
           type?: Database["public"]["Enums"]["discount_type"]
           updated_at?: string
           value?: number
-        }
-        Relationships: []
-      }
-      tags: {
-        Row: {
-          created_at: string
-          id: string
-          name: string
-          slug: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          name: string
-          slug?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          name?: string
-          slug?: string | null
         }
         Relationships: []
       }
