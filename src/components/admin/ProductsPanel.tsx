@@ -183,6 +183,8 @@ const ProductsPanel: React.FC = () => {
 
   const duplicateProduct = async (product: Product) => {
     try {
+      console.log("Starting duplication for product:", product.id, product.name);
+      
       // Fetch complete product data with variants and images
       const { data: fullProduct, error: fetchError } = await supabase
         .from("products")
@@ -196,12 +198,16 @@ const ProductsPanel: React.FC = () => {
         .eq("id", product.id)
         .maybeSingle();
 
+      console.log("Fetch result:", { fullProduct, fetchError });
+
       if (fetchError) throw fetchError;
       if (!fullProduct) throw new Error("Producto no encontrado");
 
       // Create unique bx_code by appending timestamp
       const timestamp = Date.now();
       const newBxCode = fullProduct.bx_code ? `${fullProduct.bx_code}-${timestamp}` : `DUP-${timestamp}`;
+
+      console.log("Creating product with new BX code:", newBxCode);
 
       // Duplicate the main product
       const { data: newProduct, error: productError } = await supabase
@@ -218,11 +224,18 @@ const ProductsPanel: React.FC = () => {
         .select("id")
         .maybeSingle();
 
+      console.log("Product creation result:", { newProduct, productError });
+
       if (productError) throw productError;
       if (!newProduct?.id) throw new Error("Error al crear producto duplicado");
 
+      console.log("New product created with ID:", newProduct.id);
+      console.log("Variants to duplicate:", fullProduct.product_variants?.length || 0);
+
       // Duplicate variants and their images
       for (const variant of fullProduct.product_variants || []) {
+        console.log("Duplicating variant:", variant.id, variant.name);
+        
         const { data: newVariant, error: variantError } = await supabase
           .from("product_variants")
           .insert({
@@ -235,6 +248,8 @@ const ProductsPanel: React.FC = () => {
           .select("id")
           .maybeSingle();
 
+        console.log("Variant creation result:", { newVariant, variantError });
+
         if (variantError) {
           console.error("Error duplicating variant:", variantError);
           continue;
@@ -242,8 +257,13 @@ const ProductsPanel: React.FC = () => {
 
         if (!newVariant?.id) continue;
 
+        console.log("New variant created with ID:", newVariant.id);
+        console.log("Images to duplicate:", variant.product_variant_images?.length || 0);
+
         // Duplicate variant images
         for (const image of variant.product_variant_images || []) {
+          console.log("Duplicating image:", image.id, image.url);
+          
           const { error: imageError } = await supabase
             .from("product_variant_images")
             .insert({
@@ -255,15 +275,18 @@ const ProductsPanel: React.FC = () => {
 
           if (imageError) {
             console.error("Error duplicating variant image:", imageError);
+          } else {
+            console.log("Image duplicated successfully");
           }
         }
       }
 
+      console.log("Duplication completed successfully");
       toast.success("Producto duplicado correctamente");
       refetch();
     } catch (error: any) {
       console.error("Error duplicating product:", error);
-      toast.error("No se pudo duplicar el producto.");
+      toast.error(`No se pudo duplicar el producto: ${error.message}`);
     }
   };
 
