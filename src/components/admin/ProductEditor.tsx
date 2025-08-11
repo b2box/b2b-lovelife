@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { slugify } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -176,6 +177,13 @@ const [tagsText, setTagsText] = useState<string>("");
       collection: (product as any)?.collection ?? "",
     });
   }, [product]);
+
+  useEffect(() => {
+    const base = (form.name || '').trim() || (translations.ar?.title || '').trim() || (translations.co?.title || '').trim();
+    if (!form.slug && base) {
+      setForm((prev) => ({ ...prev, slug: slugify(base) }));
+    }
+  }, [form.name, form.slug, translations.ar?.title, translations.co?.title]);
 
   useEffect(() => {
     // Load agents, categories, tags and translations when opening
@@ -1008,11 +1016,11 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div>
               <Label>Precio empaque (CNY)</Label>
-              <Input
-                type="number"
-                value={pkg.cny_price ?? 0}
-                onChange={(e) => {
-                  const next = { ...attrs, packaging: { ...pkg, cny_price: Number(e.target.value) } };
+              <NumericInput
+                value={Number(pkg.cny_price ?? 0)}
+                decimals={2}
+                onValueChange={(val) => {
+                  const next = { ...attrs, packaging: { ...pkg, cny_price: Number(val) } };
                   setV({ ...v, attributes: next });
                   recalcMarketPrices(tierPrices, next.packaging);
                 }}
@@ -1064,11 +1072,11 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div>
             <Label>PCS/CTN</Label>
-            <Input type="number" value={v.pcs_per_carton ?? 0} onChange={(e) => setV({ ...v, pcs_per_carton: Number(e.target.value) })} />
+            <NumericInput value={Number(v.pcs_per_carton ?? 0)} decimals={0} onValueChange={(val) => setV({ ...v, pcs_per_carton: Number(val) })} />
           </div>
           <div>
             <Label>CBM/CTN</Label>
-            <Input type="number" value={v.cbm_per_carton ?? 0} onChange={(e) => setV({ ...v, cbm_per_carton: Number(e.target.value) })} />
+            <NumericInput value={Number(v.cbm_per_carton ?? 0)} decimals={3} onValueChange={(val) => setV({ ...v, cbm_per_carton: Number(val) })} />
           </div>
         </div>
       </Card>
@@ -1109,16 +1117,15 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
                       </div>
                       <div>
                         <Label>Precio</Label>
-                        <Input
-                          type="number"
-                          value={t.price}
-                          onChange={(e) => {
-                            const priceVal = Number(e.target.value);
+                        <NumericInput
+                          value={Number(t.price)}
+                          decimals={2}
+                          onValueChange={(priceVal) => {
                             const base = tierPrices[i] ?? 0;
                             const rate = mk === 'AR' ? settingsData.arRate : settingsData.coRate;
-                            const percent = computePercentFromPrice(priceVal || 0, base, rate);
+                            const percent = computePercentFromPrice(Number(priceVal) || 0, base, rate);
                             const next = calcEnsureMarkets(v.attributes?.markets, tierPrices, settingsData);
-                            next[mk][i] = { percent, price: priceVal };
+                            next[mk][i] = { percent, price: Number(priceVal) || 0 };
                             setV({ ...v, attributes: { ...attrs, markets: next } });
                           }}
                         />
@@ -1280,19 +1287,19 @@ const VariantTiers: React.FC<{ variantId: string; onBasePricesChange?: (arr: num
             <div className="space-y-2">
               <div>
                 <Label>Precio (CNY)</Label>
-                <Input
-                  type="number"
-                  value={row.unit_price}
-                  onChange={(e) => setRows((rs) => rs.map((r) => r.id === row.id ? { ...r, unit_price: Number(e.target.value) } : r))}
+                <NumericInput
+                  value={Number(row.unit_price)}
+                  decimals={2}
+                  onValueChange={(val) => setRows((rs) => rs.map((r) => r.id === row.id ? { ...r, unit_price: Number(val) } : r))}
                   onBlur={() => updateRow(rows.find((r) => r.id === row.id)!)}
                 />
               </div>
               <div>
                 <Label>Mínimo unidades</Label>
-                <Input
-                  type="number"
-                  value={row.min_qty}
-                  onChange={(e) => setRows((rs) => rs.map((r) => r.id === row.id ? { ...r, min_qty: Number(e.target.value) } : r))}
+                <NumericInput
+                  value={Number(row.min_qty)}
+                  decimals={0}
+                  onValueChange={(val) => setRows((rs) => rs.map((r) => r.id === row.id ? { ...r, min_qty: Number(val) } : r))}
                   onBlur={() => updateRow(rows.find((r) => r.id === row.id)!)}
                 />
               </div>
