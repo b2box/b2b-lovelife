@@ -82,9 +82,14 @@ const ProductsPanel: React.FC = () => {
           )
         `)
         .eq("id", product.id)
-        .single();
+        .maybeSingle();
 
       if (fetchError) throw fetchError;
+      if (!fullProduct) throw new Error("Producto no encontrado");
+
+      // Generar un nuevo BX_CODE único
+      const timestamp = Date.now().toString().slice(-6);
+      const newBxCode = fullProduct.bx_code ? `${fullProduct.bx_code}_${timestamp}` : null;
 
       // 2. Duplicar el producto padre
       const { data: newProduct, error: productError } = await supabase
@@ -102,16 +107,17 @@ const ProductsPanel: React.FC = () => {
           type: fullProduct.type,
           collection: fullProduct.collection,
           active: false,
-          bx_code: fullProduct.bx_code,
+          bx_code: newBxCode,
           verified_product: false,
           verified_video: false,
           agent_profile_id: fullProduct.agent_profile_id,
           video_url: fullProduct.video_url,
         })
         .select("id")
-        .single();
+        .maybeSingle();
       
       if (productError) throw productError;
+      if (!newProduct) throw new Error("Error al crear el producto duplicado");
 
       // 3. Duplicar las variantes si existen
       if (fullProduct.product_variants && fullProduct.product_variants.length > 0) {
@@ -146,9 +152,10 @@ const ProductsPanel: React.FC = () => {
               individual_packaging_required: (variant as any).individual_packaging_required || false,
             })
             .select("id")
-            .single();
+            .maybeSingle();
 
           if (variantError) throw variantError;
+          if (!newVariant) throw new Error("Error al crear la variante duplicada");
 
           // 4. Duplicar las imágenes de la variante si existen
           if (variant.product_variant_images && variant.product_variant_images.length > 0) {
