@@ -255,7 +255,7 @@ const CategoriesPanel: React.FC = () => {
                   <SelectValue placeholder="Seleccionar categoría padre" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Sin categoría padre</SelectItem>
+                  <SelectItem value="null">Sin categoría padre</SelectItem>
                   {parentCategories.map((category) => (
                     <SelectItem key={category.id} value={category.id}>
                       {category.name}
