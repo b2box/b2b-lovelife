@@ -5,6 +5,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
+import { Copy, Trash2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 import ProductEditor from "./ProductEditor";
 
@@ -52,16 +56,65 @@ async function fetchProducts(): Promise<Product[]> {
 
 
 const ProductsPanel: React.FC = () => {
-  
+  const { toast } = useToast();
   const qc = useQueryClient();
   const [editorOpen, setEditorOpen] = React.useState(false);
   const [selected, setSelected] = React.useState<Product | null>(null);
+  const [deleteText, setDeleteText] = React.useState("");
+  const [randomCode] = React.useState(() => Math.random().toString(36).substring(2, 8).toUpperCase());
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin", "products"],
     queryFn: fetchProducts,
   });
 
+
+  const duplicateProduct = async (product: Product) => {
+    try {
+      const { data, error } = await supabase
+        .from("products")
+        .insert({
+          name: `${product.name} (Copia)`,
+          brand: product.brand,
+          description: product.description,
+          status: 'draft',
+          subtitle: product.subtitle,
+          material: product.material,
+          discountable: product.discountable,
+          supplier_link: product.supplier_link,
+          supplier_model: product.supplier_model,
+          type: product.type,
+          collection: product.collection,
+          active: false,
+        })
+        .select("id")
+        .maybeSingle();
+      
+      if (error) throw error;
+      toast({ title: "Duplicado", description: "Producto duplicado correctamente." });
+      qc.invalidateQueries({ queryKey: ["admin", "products"] });
+    } catch (e) {
+      console.error(e);
+      toast({ title: "Error", description: "No se pudo duplicar el producto.", variant: "destructive" });
+    }
+  };
+
+  const deleteProduct = async (product: Product) => {
+    try {
+      const { error } = await supabase
+        .from("products")
+        .delete()
+        .eq("id", product.id);
+      
+      if (error) throw error;
+      toast({ title: "Eliminado", description: "Producto eliminado correctamente." });
+      qc.invalidateQueries({ queryKey: ["admin", "products"] });
+      setDeleteText("");
+    } catch (e) {
+      console.error(e);
+      toast({ title: "Error", description: "No se pudo eliminar el producto.", variant: "destructive" });
+    }
+  };
 
   return (
     <Card className="p-4 md:p-6 card-glass">
@@ -116,6 +169,42 @@ const ProductsPanel: React.FC = () => {
                     >
                       Editar
                     </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => duplicateProduct(p)}
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button size="sm" variant="destructive">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Eliminar Producto</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Para confirmar, escribe: <strong>{randomCode}</strong>
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <Input 
+                          value={deleteText} 
+                          onChange={(e) => setDeleteText(e.target.value)} 
+                          placeholder={`Escribe ${randomCode}`} 
+                        />
+                        <AlertDialogFooter>
+                          <AlertDialogCancel onClick={() => setDeleteText("")}>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction 
+                            disabled={deleteText !== randomCode}
+                            onClick={() => deleteProduct(p)}
+                          >
+                            Eliminar
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </TableCell>
                 </TableRow>
               ))}

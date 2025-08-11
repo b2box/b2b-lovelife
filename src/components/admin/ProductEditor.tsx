@@ -362,23 +362,15 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
                   <Input id="slug" value={form.slug ?? ""} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
                 </div>
                 <div>
-                  <Label htmlFor="brand">Marca</Label>
-                  <Input id="brand" value={form.brand ?? ""} onChange={(e) => setForm({ ...form, brand: e.target.value })} />
-                </div>
-                <div>
                   <Label htmlFor="bx_code">BX Code</Label>
                   <Input id="bx_code" value={form.bx_code ?? ""} onChange={(e) => setForm({ ...form, bx_code: e.target.value })} />
                 </div>
               </div>
-              <div>
-                <Label htmlFor="description">Descripción</Label>
-                <Textarea id="description" value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} />
-              </div>
 
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <Label className="mb-2 block">Categorías padre</Label>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                  <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto border rounded p-2">
                     {categories.filter((c) => !c.parent_id).map((cat) => (
                       <label key={cat.id} className="flex items-center gap-2 p-2 border rounded cursor-pointer hover:bg-muted">
                         <Checkbox
@@ -400,7 +392,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
                 {selectedParentIds.length > 0 && (
                   <div>
                     <Label className="mb-2 block">Subcategorías</Label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto border rounded p-2">
                       {categories.filter((c) => c.parent_id && selectedParentIds.includes(c.parent_id)).map((subcat) => (
                         <label key={subcat.id} className="flex items-center gap-2 p-2 border rounded cursor-pointer hover:bg-muted">
                           <Checkbox
@@ -419,16 +411,16 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
                     </div>
                   </div>
                 )}
+              </div>
 
-                <div>
-                  <Label htmlFor="tags">Tags (separados por coma)</Label>
-                  <Input
-                    id="tags"
-                    value={tagsText}
-                    onChange={(e) => setTagsText(e.target.value)}
-                    placeholder="tag1, tag2, tag3"
-                  />
-                </div>
+              <div>
+                <Label htmlFor="tags">Tags (separados por coma)</Label>
+                <Input
+                  id="tags"
+                  value={tagsText}
+                  onChange={(e) => setTagsText(e.target.value)}
+                  placeholder="tag1, tag2, tag3"
+                />
               </div>
 
               <div className="flex justify-end gap-2">
@@ -662,6 +654,21 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
         sku: v.sku,
         stock: v.stock,
         active: v.active,
+        price: v.price,
+        currency: v.currency,
+        option_name: v.option_name,
+        length_cm: v.length_cm,
+        width_cm: v.width_cm,
+        height_cm: v.height_cm,
+        weight_kg: v.weight_kg,
+        box_length_cm: v.box_length_cm,
+        box_width_cm: v.box_width_cm,
+        box_height_cm: v.box_height_cm,
+        box_weight_kg: v.box_weight_kg,
+        pcs_per_carton: v.pcs_per_carton,
+        cbm_per_carton: v.cbm_per_carton,
+        is_clothing: v.is_clothing,
+        has_battery: v.has_battery,
       }).eq("id", v.id);
       if (error) throw error;
       toast({ title: "Guardado", description: "Variante guardada correctamente." });
@@ -677,18 +684,116 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
   useEffect(() => setV(variant), [variant]);
 
   return (
-    <Card className="p-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <Card className="p-6 space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <Label>Título</Label>
           <Input value={v.name ?? ""} onChange={(e) => setV({ ...v, name: e.target.value })} />
         </div>
         <div>
-          <Label>SKU</Label>
+          <Label>PA Code</Label>
           <Input value={v.sku ?? ""} onChange={(e) => setV({ ...v, sku: e.target.value })} />
         </div>
+        <div>
+          <Label>Opción</Label>
+          <Input value={v.option_name ?? ""} onChange={(e) => setV({ ...v, option_name: e.target.value })} />
+        </div>
       </div>
-      <div className="flex justify-end gap-2 mt-4">
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <Label>Precio</Label>
+          <NumericInput value={v.price ?? 0} onValueChange={(val) => setV({ ...v, price: val })} />
+        </div>
+        <div>
+          <Label>Stock</Label>
+          <NumericInput value={v.stock} onValueChange={(val) => setV({ ...v, stock: val })} />
+        </div>
+        <div>
+          <Label>Moneda</Label>
+          <Select value={v.currency} onValueChange={(val) => setV({ ...v, currency: val })}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="USD">USD</SelectItem>
+              <SelectItem value="COP">COP</SelectItem>
+              <SelectItem value="ARS">ARS</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h4 className="font-medium">Dimensiones del producto</h4>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <Label>Largo (cm)</Label>
+            <NumericInput value={v.length_cm ?? 0} onValueChange={(val) => setV({ ...v, length_cm: val })} />
+          </div>
+          <div>
+            <Label>Ancho (cm)</Label>
+            <NumericInput value={v.width_cm ?? 0} onValueChange={(val) => setV({ ...v, width_cm: val })} />
+          </div>
+          <div>
+            <Label>Alto (cm)</Label>
+            <NumericInput value={v.height_cm ?? 0} onValueChange={(val) => setV({ ...v, height_cm: val })} />
+          </div>
+          <div>
+            <Label>Peso (kg)</Label>
+            <NumericInput value={v.weight_kg ?? 0} onValueChange={(val) => setV({ ...v, weight_kg: val })} />
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h4 className="font-medium">Dimensiones de la caja</h4>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <Label>Largo caja (cm)</Label>
+            <NumericInput value={v.box_length_cm ?? 0} onValueChange={(val) => setV({ ...v, box_length_cm: val })} />
+          </div>
+          <div>
+            <Label>Ancho caja (cm)</Label>
+            <NumericInput value={v.box_width_cm ?? 0} onValueChange={(val) => setV({ ...v, box_width_cm: val })} />
+          </div>
+          <div>
+            <Label>Alto caja (cm)</Label>
+            <NumericInput value={v.box_height_cm ?? 0} onValueChange={(val) => setV({ ...v, box_height_cm: val })} />
+          </div>
+          <div>
+            <Label>Peso caja (kg)</Label>
+            <NumericInput value={v.box_weight_kg ?? 0} onValueChange={(val) => setV({ ...v, box_weight_kg: val })} />
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <Label>Piezas por cartón</Label>
+          <NumericInput value={v.pcs_per_carton ?? 0} onValueChange={(val) => setV({ ...v, pcs_per_carton: val })} />
+        </div>
+        <div>
+          <Label>CBM por cartón</Label>
+          <NumericInput value={v.cbm_per_carton ?? 0} onValueChange={(val) => setV({ ...v, cbm_per_carton: val })} />
+        </div>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <Label>Es ropa</Label>
+            <Switch checked={!!v.is_clothing} onCheckedChange={(val) => setV({ ...v, is_clothing: val })} />
+          </div>
+          <div className="flex items-center justify-between">
+            <Label>Tiene batería</Label>
+            <Switch checked={!!v.has_battery} onCheckedChange={(val) => setV({ ...v, has_battery: val })} />
+          </div>
+          <div className="flex items-center justify-between">
+            <Label>Activo</Label>
+            <Switch checked={!!v.active} onCheckedChange={(val) => setV({ ...v, active: val })} />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-end gap-2">
         <Button onClick={save} disabled={saving}>{saving ? "Guardando…" : "Guardar"}</Button>
       </div>
     </Card>
