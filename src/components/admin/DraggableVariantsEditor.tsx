@@ -54,6 +54,9 @@ export type AdminVariant = {
   cbm_per_carton?: number | null;
   is_clothing?: boolean;
   has_battery?: boolean;
+  has_individual_packaging?: boolean;
+  individual_packaging_price_cny?: number | null;
+  individual_packaging_required?: boolean;
 };
 
 interface SortableVariantRowProps {
@@ -272,6 +275,9 @@ export const DraggableVariantsEditor: React.FC<DraggableVariantsEditorProps> = (
         cbm_per_carton: originalVariant.cbm_per_carton,
         is_clothing: originalVariant.is_clothing,
         has_battery: originalVariant.has_battery,
+        has_individual_packaging: originalVariant.has_individual_packaging,
+        individual_packaging_price_cny: originalVariant.individual_packaging_price_cny,
+        individual_packaging_required: originalVariant.individual_packaging_required,
         sort_order: maxOrder + 1,
       })
       .select("*")

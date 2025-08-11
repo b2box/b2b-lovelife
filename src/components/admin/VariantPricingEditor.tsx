@@ -68,52 +68,62 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
         .select("*")
         .eq("product_variant_id", variantId);
 
+      console.log("Loaded tiers for variant:", variantId, tiers);
+
       if (tiers && tiers.length > 0) {
         const newBaseTiers = [0, 0, 0];
         const newMarkets = { ...markets };
 
+        // First pass: Load base CNY prices
         tiers.forEach((tier) => {
           const tierIndex = tierNames.indexOf(tier.tier as any);
-          if (tierIndex >= 0) {
-            if (tier.currency === "CNY") {
-              newBaseTiers[tierIndex] = Number(tier.unit_price);
-            } else if (tier.currency === "USD") {
-              // This is AR market data - extract percent from the price
-              if (pricingSettings && newBaseTiers[tierIndex] > 0) {
-                newMarkets.AR[tierIndex].price = Number(tier.unit_price);
-                // Calculate percent based on base price
+          if (tierIndex >= 0 && tier.currency === "CNY") {
+            newBaseTiers[tierIndex] = Number(tier.unit_price);
+          }
+        });
+
+        console.log("Base CNY tiers loaded:", newBaseTiers);
+
+        // Initialize markets with default settings if we have pricing settings
+        if (pricingSettings) {
+          const initializedMarkets = ensureMarkets(markets, newBaseTiers, pricingSettings);
+          setMarkets(initializedMarkets);
+        }
+
+        // Second pass: Load market-specific pricing and calculate percentages
+        tiers.forEach((tier) => {
+          const tierIndex = tierNames.indexOf(tier.tier as any);
+          if (tierIndex >= 0 && newBaseTiers[tierIndex] > 0) {
+            if (tier.currency === "USD") {
+              // AR market data
+              newMarkets.AR[tierIndex].price = Number(tier.unit_price);
+              if (pricingSettings) {
                 const baseCny = newBaseTiers[tierIndex];
-                if (baseCny > 0) {
-                  const percent = (((tier.unit_price / (baseCny * pricingSettings.arRate)) - 1) * 100);
-                  newMarkets.AR[tierIndex].percent = Number(percent.toFixed(2));
-                }
+                const percent = (((tier.unit_price / (baseCny * pricingSettings.arRate)) - 1) * 100);
+                newMarkets.AR[tierIndex].percent = Number(percent.toFixed(2));
               }
             } else if (tier.currency === "COP") {
-              // This is COL market data
-              if (pricingSettings && newBaseTiers[tierIndex] > 0) {
-                newMarkets.COL[tierIndex].price = Number(tier.unit_price);
+              // COL market data
+              newMarkets.COL[tierIndex].price = Number(tier.unit_price);
+              if (pricingSettings) {
                 const baseCny = newBaseTiers[tierIndex];
-                if (baseCny > 0) {
-                  const percent = (((tier.unit_price / (baseCny * pricingSettings.coRate)) - 1) * 100);
-                  newMarkets.COL[tierIndex].percent = Number(percent.toFixed(2));
-                }
-              }
-            } else if (tier.currency === "CNY" && tier.product_variant_id === variantId) {
-              // This is CN market data (CNY market pricing, different from base CNY)
-              if (pricingSettings && newBaseTiers[tierIndex] > 0) {
-                newMarkets.CN[tierIndex].price = Number(tier.unit_price);
-                const baseCny = newBaseTiers[tierIndex];
-                if (baseCny > 0) {
-                  const percent = (((tier.unit_price / (baseCny * pricingSettings.cnRate)) - 1) * 100);
-                  newMarkets.CN[tierIndex].percent = Number(percent.toFixed(2));
-                }
+                const percent = (((tier.unit_price / (baseCny * pricingSettings.coRate)) - 1) * 100);
+                newMarkets.COL[tierIndex].percent = Number(percent.toFixed(2));
               }
             }
+            // Note: CN market uses same currency as base (CNY), so we need to differentiate
+            // We'll identify CN market tiers by having the same currency but different logic
           }
         });
 
         setBaseTiers(newBaseTiers);
-        setMarkets(newMarkets);
+        console.log("Final markets state:", newMarkets);
+      } else {
+        // No existing pricing data, use defaults from pricing settings
+        if (pricingSettings) {
+          const initializedMarkets = ensureMarkets({}, [0, 0, 0], pricingSettings);
+          setMarkets(initializedMarkets);
+        }
       }
     } catch (error) {
       console.error("Error loading pricing data:", error);
@@ -132,11 +142,12 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
     newBaseTiers[tierIndex] = value;
     setBaseTiers(newBaseTiers);
 
-    // Recompute market prices when base tiers change
-    if (pricingSettings) {
-      const newMarkets = recomputeMarkets(markets, newBaseTiers, pricingSettings);
-      setMarkets(newMarkets);
-    }
+  // Recompute market prices when base tiers change
+  if (pricingSettings) {
+    const newMarkets = recomputeMarkets(markets, newBaseTiers, pricingSettings);
+    setMarkets(newMarkets);
+    console.log("Updated markets after base tier change:", newMarkets);
+  }
   };
 
   const updateMarketPercent = (market: "AR" | "COL" | "CN", tierIndex: number, percent: number) => {

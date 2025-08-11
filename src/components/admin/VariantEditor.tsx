@@ -56,6 +56,10 @@ export const VariantEditor: React.FC<VariantEditorProps> = ({
     // Properties
     is_clothing: false,
     has_battery: false,
+    // Individual packaging
+    has_individual_packaging: true,
+    individual_packaging_price_cny: null as number | null,
+    individual_packaging_required: false,
   });
 
   // Supplier pricing (base tiers in CNY)
@@ -83,6 +87,9 @@ export const VariantEditor: React.FC<VariantEditorProps> = ({
         cbm_per_carton: variant.cbm_per_carton || 0,
         is_clothing: variant.is_clothing || false,
         has_battery: variant.has_battery || false,
+        has_individual_packaging: variant.has_individual_packaging ?? true,
+        individual_packaging_price_cny: variant.individual_packaging_price_cny || null,
+        individual_packaging_required: variant.individual_packaging_required || false,
       });
       loadSupplierPricing();
     }
@@ -144,6 +151,9 @@ export const VariantEditor: React.FC<VariantEditorProps> = ({
           cbm_per_carton: form.cbm_per_carton || null,
           is_clothing: form.is_clothing,
           has_battery: form.has_battery,
+          has_individual_packaging: form.has_individual_packaging,
+          individual_packaging_price_cny: form.individual_packaging_price_cny,
+          individual_packaging_required: form.individual_packaging_required,
           updated_at: new Date().toISOString(),
         })
         .eq("id", variant.id);
@@ -338,9 +348,9 @@ export const VariantEditor: React.FC<VariantEditorProps> = ({
 
           {/* Dimensiones */}
           <TabsContent value="dimensions" className="space-y-4">
-            {/* Dimensiones del Producto */}
+            {/* a) Dimensiones del Producto */}
             <Card className="p-4">
-              <h4 className="font-medium mb-4">Dimensiones del Producto</h4>
+              <h4 className="font-medium mb-4">a) Dimensiones del Producto</h4>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
                   <Label htmlFor="length">Largo (cm)</Label>
@@ -385,10 +395,10 @@ export const VariantEditor: React.FC<VariantEditorProps> = ({
               </div>
             </Card>
 
-            {/* Dimensiones de la Caja */}
+            {/* b) Dimensiones de la Caja */}
             <Card className="p-4">
-              <h4 className="font-medium mb-4">Dimensiones de la Caja</h4>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <h4 className="font-medium mb-4">b) Dimensiones de la Caja</h4>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
                   <Label htmlFor="box-length">Largo caja (cm)</Label>
                   <Input
@@ -429,8 +439,15 @@ export const VariantEditor: React.FC<VariantEditorProps> = ({
                     onChange={(e) => setForm({ ...form, box_weight_kg: Number(e.target.value) })}
                   />
                 </div>
+              </div>
+            </Card>
+
+            {/* c) Packaging Master */}
+            <Card className="p-4">
+              <h4 className="font-medium mb-4">c) Packaging Master</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="pcs-per-carton">Piezas por cartón</Label>
+                  <Label htmlFor="pcs-per-carton">Piezas por cartón (pcs/ctn)</Label>
                   <Input
                     id="pcs-per-carton"
                     type="number"
@@ -440,7 +457,7 @@ export const VariantEditor: React.FC<VariantEditorProps> = ({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="cbm-per-carton">CBM por cartón</Label>
+                  <Label htmlFor="cbm-per-carton">CBM por cartón (cbm/ctn)</Label>
                   <Input
                     id="cbm-per-carton"
                     type="number"
@@ -449,6 +466,52 @@ export const VariantEditor: React.FC<VariantEditorProps> = ({
                     onChange={(e) => setForm({ ...form, cbm_per_carton: Number(e.target.value) })}
                   />
                 </div>
+              </div>
+            </Card>
+
+            {/* d) Individual Packaging */}
+            <Card className="p-4">
+              <h4 className="font-medium mb-4">d) Individual Packaging</h4>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="has-individual-packaging"
+                    checked={form.has_individual_packaging}
+                    onCheckedChange={(checked) => setForm({ ...form, has_individual_packaging: checked })}
+                  />
+                  <Label htmlFor="has-individual-packaging">Tiene empaque individual</Label>
+                </div>
+                
+                {!form.has_individual_packaging && (
+                  <div className="space-y-4 pl-6 border-l-2 border-muted">
+                    <div>
+                      <Label htmlFor="individual-packaging-price">Precio empaque individual (CNY)</Label>
+                      <Input
+                        id="individual-packaging-price"
+                        type="number"
+                        step="0.01"
+                        value={form.individual_packaging_price_cny || ''}
+                        onChange={(e) => setForm({ ...form, individual_packaging_price_cny: Number(e.target.value) || null })}
+                        placeholder="0.00"
+                      />
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        id="individual-packaging-required"
+                        checked={form.individual_packaging_required}
+                        onCheckedChange={(checked) => setForm({ ...form, individual_packaging_required: checked })}
+                      />
+                      <Label htmlFor="individual-packaging-required">Empaque individual obligatorio</Label>
+                    </div>
+                    
+                    {form.individual_packaging_required && (
+                      <div className="text-sm text-muted-foreground p-2 bg-accent/50 rounded">
+                        ⚠️ Este costo se sumará automáticamente al precio del proveedor en los cálculos de precios para el cliente.
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </Card>
           </TabsContent>
