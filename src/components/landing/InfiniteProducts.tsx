@@ -17,7 +17,7 @@ const InfiniteProducts = ({ publicMode = false }: { publicMode?: boolean }) => {
   const navigate = useNavigate();
   const { categories } = useCategoriesWithProductCount();
   const { products } = useProducts();
-  const { calculatePriceForCountry, getCountryFromStorage } = useCountryPricing();
+  const { calculatePriceForCountry, country } = useCountryPricing();
   
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [page, setPage] = useState(1);
@@ -42,8 +42,9 @@ const InfiniteProducts = ({ publicMode = false }: { publicMode?: boolean }) => {
         product.categories?.some(c => c.id === selectedCategoryId)
       )
       .map(product => {
-        const country = getCountryFromStorage();
-        const basePrice = product.variant_price_tiers?.[0]?.unit_price || 0;
+        // Get the CNY base price (supplier price) to calculate from
+        const cnyPriceTier = product.variant_price_tiers?.find(tier => tier.currency === "CNY");
+        const basePrice = cnyPriceTier?.unit_price || 0;
         const countryPrice = calculatePriceForCountry(basePrice, country);
         
         return {

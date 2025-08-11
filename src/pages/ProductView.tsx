@@ -19,10 +19,14 @@ const ProductView = () => {
     const dbProduct = products.find(p => p.id === id);
     if (!dbProduct) return undefined;
     
+    // Get the CNY base price (supplier price) to calculate from  
+    const cnyPriceTier = dbProduct.variant_price_tiers?.find(tier => tier.currency === "CNY");
+    const basePrice = cnyPriceTier?.unit_price || 0;
+    
     return {
       id: dbProduct.id,
       name: dbProduct.name,
-      price: dbProduct.variant_price_tiers?.[0]?.unit_price || 0,
+      price: basePrice, // We'll format this properly in the component
       image: dbProduct.images?.[0]?.url || "/placeholder.svg",
       badge: dbProduct.verified_product ? "B2BOX verified" : undefined,
       viral: false

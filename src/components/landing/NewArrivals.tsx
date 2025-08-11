@@ -11,7 +11,9 @@ const NewArrivals = () => {
   const { calculatePriceForCountry, country } = useCountryPricing();
   
   const products = dbProducts.slice(0, 3).map(product => {
-    const basePrice = product.variant_price_tiers?.[0]?.unit_price || 0;
+    // Get the CNY base price (supplier price) to calculate from
+    const cnyPriceTier = product.variant_price_tiers?.find(tier => tier.currency === "CNY");
+    const basePrice = cnyPriceTier?.unit_price || 0;
     const countryPrice = calculatePriceForCountry(basePrice, country);
     
     return {

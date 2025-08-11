@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProductGrid from "./ProductGrid";
 import { useCategoriesWithProductCount } from "@/hooks/useCategories";
 import { useProducts } from "@/hooks/useProducts";
+import { useCountryPricing } from "@/hooks/useCountryPricing";
 
 const tabIcons: Record<string, string> = {
   "Moda femenina": "/lovable-uploads/ca6fd2f2-92d9-43f6-955b-e4f140912e9e.png",
@@ -15,6 +16,7 @@ const tabIcons: Record<string, string> = {
 const CategoryTabs = () => {
   const { categories, loading: categoriesLoading } = useCategoriesWithProductCount();
   const { products, loading: productsLoading } = useProducts();
+  const { calculatePriceForCountry, country } = useCountryPricing();
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
   if (categoriesLoading || productsLoading) {
@@ -44,14 +46,21 @@ const CategoryTabs = () => {
         product.categories?.some(c => c.id === categoryId)
       )
       .slice(0, limit)
-      .map(product => ({
-        id: product.id,
-        name: product.name,
-        price: product.variant_price_tiers?.[0]?.unit_price || 0,
-        image: product.images?.[0]?.url || "/placeholder.svg",
-        badge: product.verified_product ? "B2BOX verified" : undefined,
-        viral: false
-      }));
+      .map(product => {
+        // Get the CNY base price (supplier price) to calculate from
+        const cnyPriceTier = product.variant_price_tiers?.find(tier => tier.currency === "CNY");
+        const basePrice = cnyPriceTier?.unit_price || 0;
+        const countryPrice = calculatePriceForCountry(basePrice, country);
+        
+        return {
+          id: product.id,
+          name: product.name,
+          price: countryPrice,
+          image: product.images?.[0]?.url || "/placeholder.svg",
+          badge: product.verified_product ? "B2BOX verified" : undefined,
+          viral: false
+        };
+      });
   };
   return (
     <section className="container mx-auto">
