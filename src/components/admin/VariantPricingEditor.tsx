@@ -35,23 +35,46 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
   // Base pricing in CNY (supplier pricing)
   const [baseTiers, setBaseTiers] = useState([0, 0, 0]); // [inicial, mayorista, distribuidor] in CNY
   
-  // Market-specific pricing and percentages
-  const [markets, setMarkets] = useState<Markets>({
-    AR: [
-      { percent: 300, price: 0 },
-      { percent: 300, price: 0 },
-      { percent: 300, price: 0 }
-    ],
-    COL: [
-      { percent: 200, price: 0 },
-      { percent: 200, price: 0 },
-      { percent: 200, price: 0 }
-    ],
-    CN: [
-      { percent: 100, price: 0 },
-      { percent: 100, price: 0 },
-      { percent: 100, price: 0 }
-    ]
+  // Market-specific pricing and percentages - initialize with default values
+  const [markets, setMarkets] = useState<Markets>(() => {
+    // If we have pricing settings on first load, use them as defaults
+    if (pricingSettings) {
+      return {
+        AR: [
+          { percent: pricingSettings.arPercents[0], price: 0 },
+          { percent: pricingSettings.arPercents[1], price: 0 },
+          { percent: pricingSettings.arPercents[2], price: 0 }
+        ],
+        COL: [
+          { percent: pricingSettings.coPercents[0], price: 0 },
+          { percent: pricingSettings.coPercents[1], price: 0 },
+          { percent: pricingSettings.coPercents[2], price: 0 }
+        ],
+        CN: [
+          { percent: pricingSettings.cnPercents[0], price: 0 },
+          { percent: pricingSettings.cnPercents[1], price: 0 },
+          { percent: pricingSettings.cnPercents[2], price: 0 }
+        ]
+      };
+    }
+    // Fallback to hardcoded defaults if no pricing settings yet
+    return {
+      AR: [
+        { percent: 300, price: 0 },
+        { percent: 300, price: 0 },
+        { percent: 300, price: 0 }
+      ],
+      COL: [
+        { percent: 200, price: 0 },
+        { percent: 200, price: 0 },
+        { percent: 200, price: 0 }
+      ],
+      CN: [
+        { percent: 100, price: 0 },
+        { percent: 100, price: 0 },
+        { percent: 100, price: 0 }
+      ]
+    };
   });
 
   const tierLabels = ["Inicial", "Mayorista", "Distribuidor"];
@@ -169,9 +192,26 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
         console.log("No existing pricing data, initializing with defaults");
         if (pricingSettings) {
           console.log("Initializing with pricing settings:", pricingSettings);
-          const initializedMarkets = ensureMarkets({}, [0, 0, 0], pricingSettings);
-          console.log("Initialized default markets:", initializedMarkets);
-          setMarkets(initializedMarkets);
+          // Initialize with default percentages from settings
+          const defaultMarkets: Markets = {
+            AR: [
+              { percent: pricingSettings.arPercents[0], price: 0 },
+              { percent: pricingSettings.arPercents[1], price: 0 },
+              { percent: pricingSettings.arPercents[2], price: 0 }
+            ],
+            COL: [
+              { percent: pricingSettings.coPercents[0], price: 0 },
+              { percent: pricingSettings.coPercents[1], price: 0 },
+              { percent: pricingSettings.coPercents[2], price: 0 }
+            ],
+            CN: [
+              { percent: pricingSettings.cnPercents[0], price: 0 },
+              { percent: pricingSettings.cnPercents[1], price: 0 },
+              { percent: pricingSettings.cnPercents[2], price: 0 }
+            ]
+          };
+          console.log("Initialized default markets:", defaultMarkets);
+          setMarkets(defaultMarkets);
         } else {
           console.log("No pricing settings available for default initialization");
         }
