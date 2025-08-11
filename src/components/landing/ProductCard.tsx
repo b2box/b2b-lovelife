@@ -31,10 +31,13 @@ const ProductCard = ({ product }: Props) => {
             />
           )}
           <img
-            src={product.image}
+            src={product.image || "/placeholder.svg"}
             alt={product.name}
             loading="lazy"
             className="aspect-square w-full rounded-xl object-cover"
+            onError={(e) => {
+              e.currentTarget.src = "/placeholder.svg";
+            }}
           />
           {/* Viral badge */}
           {product.viral && (
