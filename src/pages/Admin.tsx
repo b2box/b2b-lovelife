@@ -14,6 +14,7 @@ import PriceListsPanel from "@/components/admin/PriceListsPanel";
 import SettingsPanel from "@/components/admin/SettingsPanel";
 import CategoriesPanel from "@/components/admin/CategoriesPanel";
 import CollectionsPanel from "@/components/admin/CollectionsPanel";
+import { UserHeader } from "@/components/admin/UserHeader";
 
 type AdminSection =
   | "products"
@@ -80,12 +81,15 @@ const Admin: React.FC = () => {
   return (
     <div className="container mx-auto p-4 md:p-6 font-sans">
       <header className="sticky top-2 z-10 mb-4 rounded-xl card-glass px-4 py-3 flex items-center justify-between">
-        <h1 className="text-lg font-semibold tracking-tight">
-          Panel de {userRole === 'admin' ? 'administración' : 'agente'}
-        </h1>
-        <span className="text-sm text-muted-foreground capitalize">
-          {userRole === 'admin' ? 'Administrador' : 'Agente'}
-        </span>
+        <div className="flex items-center gap-3">
+          <h1 className="text-lg font-semibold tracking-tight">
+            Panel de {userRole === 'admin' ? 'administración' : 'agente'}
+          </h1>
+          <span className="text-sm text-muted-foreground capitalize px-2 py-1 bg-secondary/50 rounded-md">
+            {userRole === 'admin' ? 'Administrador' : 'Agente'}
+          </span>
+        </div>
+        <UserHeader />
       </header>
       <div className="flex gap-4">
         {/* Lateral menu */}
