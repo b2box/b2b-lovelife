@@ -14,7 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Package, Languages, Truck, Layers, UserSquare, Settings, Tag, Shirt, Smartphone, Sparkles, HeartPulse, Watch, Gem, Gift, Calendar, PartyPopper, PawPrint, Home, Dumbbell, Briefcase, PencilRuler, Plug, Car, Wrench, Video } from "lucide-react";
+import { Package, Languages, Truck, Layers, UserSquare, Settings, Tag, Shirt, Smartphone, Sparkles, HeartPulse, Watch, Gem, Gift, Calendar, PartyPopper, PawPrint, Home, Dumbbell, Briefcase, PencilRuler, Plug, Car, Wrench, Video, Copy } from "lucide-react";
 import { VideoManager } from "./VideoManager";
 import { ImageManager, ImageItem } from "./ImageManager";
 import { VariantImages as VariantImagesComponent } from "./VariantImages";
@@ -613,20 +613,11 @@ if (error) throw error;
             </TabsContent>
 
             <TabsContent value="media" className="space-y-4">
-              <div className="grid gap-6">
-                <VideoManager
-                  productId={form.id || 'temp'}
-                  currentVideoUrl={form.video_url}
-                  onVideoUpdate={(videoUrl) => setForm({ ...form, video_url: videoUrl })}
-                />
-                
-                <ImageManager
-                  images={productImages}
-                  onImagesUpdate={setProductImages}
-                  productId={form.id}
-                  maxImages={15}
-                />
-              </div>
+              <VideoManager
+                productId={form.id || 'temp'}
+                currentVideoUrl={form.video_url}
+                onVideoUpdate={(videoUrl) => setForm({ ...form, video_url: videoUrl })}
+              />
               
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={onClose}>Cerrar</Button>
@@ -758,6 +749,64 @@ const VariantsEditor: React.FC<{ productId: string }> = ({ productId }) => {
     }
   };
 
+  const duplicateVariant = async (originalVariant: AdminVariant) => {
+    const { data, error } = await supabase
+      .from("product_variants")
+      .insert({
+        product_id: productId,
+        name: `${originalVariant.name} (Copia)`,
+        sku: originalVariant.sku ? `${originalVariant.sku}-copy` : null,
+        currency: originalVariant.currency,
+        stock: 0,
+        active: false,
+        price: originalVariant.price,
+        attributes: originalVariant.attributes,
+        length_cm: originalVariant.length_cm,
+        width_cm: originalVariant.width_cm,
+        height_cm: originalVariant.height_cm,
+        weight_kg: originalVariant.weight_kg,
+        box_length_cm: originalVariant.box_length_cm,
+        box_width_cm: originalVariant.box_width_cm,
+        box_height_cm: originalVariant.box_height_cm,
+        box_weight_kg: originalVariant.box_weight_kg,
+        pcs_per_carton: originalVariant.pcs_per_carton,
+        cbm_per_carton: originalVariant.cbm_per_carton,
+        is_clothing: originalVariant.is_clothing,
+        has_battery: originalVariant.has_battery,
+      })
+      .select("*")
+      .maybeSingle();
+    
+    if (error) {
+      console.error(error);
+      toast({ title: "Error", description: "No se pudo duplicar la variante.", variant: "destructive" });
+      return;
+    }
+    
+    if (data) {
+      // Copy price tiers
+      const { data: priceTiers } = await supabase
+        .from("variant_price_tiers")
+        .select("*")
+        .eq("product_variant_id", originalVariant.id);
+      
+      if (priceTiers && priceTiers.length > 0) {
+        const tiersToInsert = priceTiers.map(tier => ({
+          product_variant_id: data.id,
+          tier: tier.tier,
+          min_qty: tier.min_qty,
+          unit_price: tier.unit_price,
+          currency: tier.currency,
+        }));
+        
+        await supabase.from("variant_price_tiers").insert(tiersToInsert);
+      }
+      
+      setVariants((v) => [...v, data as any]);
+      toast({ title: "Éxito", description: "Variante duplicada correctamente." });
+    }
+  };
+
   const toggleActive = async (id: string, val: boolean) => {
     const { error } = await supabase.from('product_variants').update({ active: val }).eq('id', id);
     if (error) {
@@ -780,24 +829,22 @@ const VariantsEditor: React.FC<{ productId: string }> = ({ productId }) => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[80px]">Imagen</TableHead>
                 <TableHead>Título</TableHead>
                 <TableHead>PA Code</TableHead>
                 <TableHead className="w-[120px]">Activo</TableHead>
-                <TableHead className="w-[120px]">Acciones</TableHead>
+                <TableHead className="w-[160px]">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {variants.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell>{row.name ?? "-"}</TableCell>
-                  <TableCell>{row.sku ?? "-"}</TableCell>
-                  <TableCell>
-                    <Switch checked={!!row.active} onCheckedChange={(val) => toggleActive(row.id, !!val)} />
-                  </TableCell>
-                  <TableCell>
-                    <Button size="sm" variant="outline" onClick={() => setEdit(row)}>Editar</Button>
-                  </TableCell>
-                </TableRow>
+                <VariantRow 
+                  key={row.id} 
+                  variant={row} 
+                  onEdit={setEdit}
+                  onToggleActive={toggleActive}
+                  onDuplicate={duplicateVariant}
+                />
               ))}
             </TableBody>
           </Table>
@@ -810,6 +857,69 @@ const VariantsEditor: React.FC<{ productId: string }> = ({ productId }) => {
         </DialogContent>
       </Dialog>
     </div>
+  );
+};
+
+const VariantRow: React.FC<{
+  variant: AdminVariant;
+  onEdit: (variant: AdminVariant) => void;
+  onToggleActive: (id: string, active: boolean) => void;
+  onDuplicate: (variant: AdminVariant) => void;
+}> = ({ variant, onEdit, onToggleActive, onDuplicate }) => {
+  const [thumbnail, setThumbnail] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadThumbnail = async () => {
+      const { data } = await supabase
+        .from("product_variant_images")
+        .select("url")
+        .eq("product_variant_id", variant.id)
+        .order("sort_order", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      setThumbnail(data?.url || null);
+    };
+    loadThumbnail();
+  }, [variant.id]);
+
+  return (
+    <TableRow>
+      <TableCell>
+        {thumbnail ? (
+          <img 
+            src={thumbnail} 
+            alt="Thumbnail" 
+            className="w-12 h-12 object-cover rounded border"
+          />
+        ) : (
+          <div className="w-12 h-12 bg-muted rounded border flex items-center justify-center">
+            <Package className="h-6 w-6 text-muted-foreground" />
+          </div>
+        )}
+      </TableCell>
+      <TableCell>{variant.name ?? "-"}</TableCell>
+      <TableCell>{variant.sku ?? "-"}</TableCell>
+      <TableCell>
+        <Switch 
+          checked={!!variant.active} 
+          onCheckedChange={(val) => onToggleActive(variant.id, !!val)} 
+        />
+      </TableCell>
+      <TableCell>
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" onClick={() => onEdit(variant)}>
+            Editar
+          </Button>
+          <Button 
+            size="sm" 
+            variant="outline" 
+            onClick={() => onDuplicate(variant)}
+          >
+            <Copy className="h-4 w-4" />
+          </Button>
+        </div>
+      </TableCell>
+    </TableRow>
   );
 };
 
