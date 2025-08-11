@@ -4,7 +4,7 @@ import { useAdminGuard } from "@/hooks/useAdminGuard";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Package, ShoppingCart, Boxes, Users, Percent, Tag, Settings as SettingsIcon } from "lucide-react";
+import { Package, ShoppingCart, Boxes, Users, Percent, Tag, Settings as SettingsIcon, FolderTree, Layers3 } from "lucide-react";
 import ProductsPanel from "@/components/admin/ProductsPanel";
 import OrdersPanel from "@/components/admin/OrdersPanel";
 import InventoryPanel from "@/components/admin/InventoryPanel";
@@ -12,6 +12,8 @@ import CustomersPanel from "@/components/admin/CustomersPanel";
 import PromotionsPanel from "@/components/admin/PromotionsPanel";
 import PriceListsPanel from "@/components/admin/PriceListsPanel";
 import SettingsPanel from "@/components/admin/SettingsPanel";
+import CategoriesPanel from "@/components/admin/CategoriesPanel";
+import CollectionsPanel from "@/components/admin/CollectionsPanel";
 
 type AdminSection =
   | "products"
@@ -20,10 +22,14 @@ type AdminSection =
   | "customers"
   | "promotions"
   | "pricelists"
+  | "categories"
+  | "collections"
   | "settings";
 
 const MENU: { key: AdminSection; label: string; icon: React.ReactNode; adminOnly?: boolean }[] = [
   { key: "products", label: "Productos", icon: <Package className="size-4" /> },
+  { key: "categories", label: "Categorías", icon: <FolderTree className="size-4" /> },
+  { key: "collections", label: "Colecciones", icon: <Layers3 className="size-4" /> },
   { key: "orders", label: "Pedidos", icon: <ShoppingCart className="size-4" />, adminOnly: true },
   { key: "inventory", label: "Inventario", icon: <Boxes className="size-4" />, adminOnly: true },
   { key: "customers", label: "Clientes", icon: <Users className="size-4" />, adminOnly: true },
@@ -107,6 +113,8 @@ const Admin: React.FC = () => {
         {/* Content */}
         <main className="flex-1">
           {section === "products" && <ProductsPanel />}
+          {section === "categories" && <CategoriesPanel />}
+          {section === "collections" && <CollectionsPanel />}
           {section === "orders" && userRole === 'admin' && <OrdersPanel />}
           {section === "inventory" && userRole === 'admin' && <InventoryPanel />}
           {section === "customers" && userRole === 'admin' && <CustomersPanel />}

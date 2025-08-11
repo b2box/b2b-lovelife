@@ -360,8 +360,8 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
                   />
                 </div>
                 <div>
-                  <Label htmlFor="slug">Slug</Label>
-                  <Input id="slug" value={form.slug ?? ""} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
+                  <Label htmlFor="slug">Slug (generado automáticamente)</Label>
+                  <Input id="slug" value={form.slug ?? ""} readOnly className="bg-muted" />
                 </div>
                 <div>
                   <Label htmlFor="bx_code">BX Code</Label>
@@ -394,34 +394,49 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
                 {selectedParentIds.length > 0 && (
                   <div>
                     <Label className="mb-2 block">Subcategorías</Label>
-                    <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto border rounded p-2">
-                      {categories.filter((c) => c.parent_id && selectedParentIds.includes(c.parent_id)).map((subcat) => (
-                        <label key={subcat.id} className="flex items-center gap-2 p-2 border rounded cursor-pointer hover:bg-muted">
-                          <Checkbox
-                            checked={selectedSubcategoryIds.includes(subcat.id)}
-                            onCheckedChange={(checked) => {
-                              if (checked) setSelectedSubcategoryIds((prev) => [...prev, subcat.id]);
-                              else setSelectedSubcategoryIds((prev) => prev.filter((id) => id !== subcat.id));
-                            }}
-                          />
-                          <span className="flex items-center gap-1 text-xs">
-                            {categoryIcon(subcat.name)}
-                            {subcat.name}
-                          </span>
-                        </label>
-                      ))}
+                    <div className="space-y-3 max-h-48 overflow-y-auto border rounded p-2">
+                      {selectedParentIds.map((parentId) => {
+                        const parent = categories.find(c => c.id === parentId);
+                        const subcategories = categories.filter((c) => c.parent_id === parentId);
+                        if (!parent || subcategories.length === 0) return null;
+                        
+                        return (
+                          <div key={parentId} className="space-y-2">
+                            <div className="text-xs font-medium text-muted-foreground border-b pb-1">
+                              {parent.name}
+                            </div>
+                            <div className="grid grid-cols-1 gap-1 pl-2">
+                              {subcategories.map((subcat) => (
+                                <label key={subcat.id} className="flex items-center gap-2 p-1 rounded cursor-pointer hover:bg-muted/50">
+                                  <Checkbox
+                                    checked={selectedSubcategoryIds.includes(subcat.id)}
+                                    onCheckedChange={(checked) => {
+                                      if (checked) setSelectedSubcategoryIds((prev) => [...prev, subcat.id]);
+                                      else setSelectedSubcategoryIds((prev) => prev.filter((id) => id !== subcat.id));
+                                    }}
+                                  />
+                                  <span className="flex items-center gap-1 text-xs">
+                                    {categoryIcon(subcat.name)}
+                                    {subcat.name}
+                                  </span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
               </div>
 
               <div>
-                <Label htmlFor="tags">Tags (separados por coma)</Label>
+                <Label htmlFor="collections">Colecciones (separadas por coma)</Label>
                 <Input
-                  id="tags"
+                  id="collections"
                   value={tagsText}
                   onChange={(e) => setTagsText(e.target.value)}
-                  placeholder="tag1, tag2, tag3"
+                  placeholder="colección1, colección2, colección3"
                 />
               </div>
 
