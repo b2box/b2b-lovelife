@@ -236,6 +236,55 @@ export const VariantEditor: React.FC<VariantEditorProps> = ({
     setSupplierTiers(newTiers);
   };
 
+  const saveSupplierPricing = async () => {
+    if (!variant?.id) return;
+    
+    setSaving(true);
+    try {
+      // Save supplier pricing (CNY base prices)
+      await supabase
+        .from("variant_price_tiers")
+        .delete()
+        .eq("product_variant_id", variant.id)
+        .eq("currency", "CNY");
+
+      const supplierTiersToInsert = supplierTiers
+        .filter(tier => tier.unit_price > 0)
+        .map(tier => ({
+          product_variant_id: variant.id,
+          tier: tier.tier,
+          min_qty: tier.min_qty,
+          unit_price: tier.unit_price,
+          currency: "CNY",
+        }));
+
+      if (supplierTiersToInsert.length > 0) {
+        const { error: tiersError } = await supabase
+          .from("variant_price_tiers")
+          .insert(supplierTiersToInsert);
+
+        if (tiersError) throw tiersError;
+      }
+
+      toast({
+        title: "Guardado",
+        description: "Precios del supplier guardados correctamente",
+      });
+
+      // Trigger a refresh for the pricing tab
+      onSave();
+    } catch (error) {
+      console.error("Error saving supplier pricing:", error);
+      toast({
+        title: "Error",
+        description: "No se pudieron guardar los precios del supplier",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (!variant) return null;
 
   return (
@@ -359,6 +408,16 @@ export const VariantEditor: React.FC<VariantEditorProps> = ({
                     </div>
                   </div>
                 ))}
+              </div>
+              
+              <div className="flex justify-end mt-4">
+                <Button 
+                  onClick={saveSupplierPricing} 
+                  disabled={saving}
+                  variant="outline"
+                >
+                  {saving ? "Guardando..." : "Guardar Precios Supplier"}
+                </Button>
               </div>
             </Card>
           </TabsContent>
