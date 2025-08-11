@@ -72,7 +72,7 @@ const fetchProducts = async (page: number, search: string, statusFilter: string,
         id,
         name,
         sku,
-        product_variant_images(
+        product_variant_images!left(
           id,
           url,
           alt,
@@ -192,7 +192,7 @@ const ProductsPanel: React.FC = () => {
           *,
           product_variants!inner(
             *,
-            product_variant_images(*)
+            product_variant_images!left(*)
           )
         `)
         .eq("id", product.id)
