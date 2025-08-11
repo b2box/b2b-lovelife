@@ -23,6 +23,7 @@ import { DraggableVariantsEditor, AdminVariant } from "./DraggableVariantsEditor
 import { VariantPricingEditor } from "./VariantPricingEditor";
 import { CollectionSelector } from "./CollectionSelector";
 import { useUserRole } from "@/hooks/useUserRole";
+import { VariantEditor } from "./VariantEditor";
 
 export type AdminProduct = {
   id?: string;
@@ -353,9 +354,9 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
               <TabsTrigger value="producto" className="gap-2"><Package size={16} /> Producto</TabsTrigger>
               <TabsTrigger value="multilingual" className="gap-2"><Languages size={16} /> Contenido</TabsTrigger>
               <TabsTrigger value="supplier" className="gap-2"><Truck size={16} /> Proveedor</TabsTrigger>
-              <TabsTrigger value="media" className="gap-2"><Video size={16} /> Media</TabsTrigger>
               <TabsTrigger value="variantes" className="gap-2"><Layers size={16} /> Variantes</TabsTrigger>
               <TabsTrigger value="pricing" className="gap-2"><Settings size={16} /> Pricing</TabsTrigger>
+              <TabsTrigger value="media" className="gap-2"><Video size={16} /> Media</TabsTrigger>
               {userRole === 'admin' && <TabsTrigger value="agente" className="gap-2"><UserSquare size={16} /> Agente</TabsTrigger>}
               {userRole === 'admin' && <TabsTrigger value="status" className="gap-2"><Settings size={16} /> Status</TabsTrigger>}
             </TabsList>
@@ -689,181 +690,13 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
         </DialogContent>
       </Dialog>
 
-      <Dialog open={!!edit} onOpenChange={(o) => !o && setEdit(null)}>
-        <DialogContent className="w-[95vw] max-w-5xl max-h-[85vh] overflow-y-auto">
-          {edit && <VariantCard variant={edit} onChanged={() => setEdit(null)} />}
-        </DialogContent>
-      </Dialog>
+      <VariantEditor 
+        variant={edit} 
+        isOpen={!!edit} 
+        onClose={() => setEdit(null)}
+        onSave={() => setEdit(null)}
+      />
     </>
-  );
-};
-
-const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = ({ variant, onChanged }) => {
-  const { toast } = useToast();
-  const [v, setV] = useState<AdminVariant>(variant);
-  const [saving, setSaving] = useState(false);
-
-  const save = async () => {
-    setSaving(true);
-    try {
-      const { error } = await supabase.from("product_variants").update({
-        name: v.name,
-        sku: v.sku,
-        stock: v.stock,
-        active: v.active,
-        price: v.price,
-        currency: v.currency,
-        option_name: v.option_name,
-        length_cm: v.length_cm,
-        width_cm: v.width_cm,
-        height_cm: v.height_cm,
-        weight_kg: v.weight_kg,
-        box_length_cm: v.box_length_cm,
-        box_width_cm: v.box_width_cm,
-        box_height_cm: v.box_height_cm,
-        box_weight_kg: v.box_weight_kg,
-        pcs_per_carton: v.pcs_per_carton,
-        cbm_per_carton: v.cbm_per_carton,
-        is_clothing: v.is_clothing,
-        has_battery: v.has_battery,
-      }).eq("id", v.id);
-      if (error) throw error;
-      toast({ title: "Guardado", description: "Variante guardada correctamente." });
-      onChanged();
-    } catch (e) {
-      console.error(e);
-      toast({ title: "Error", description: "No se pudo guardar la variante.", variant: "destructive" });
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  useEffect(() => setV(variant), [variant]);
-
-  return (
-    <Card className="p-6 space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <Label>Título</Label>
-          <Input value={v.name ?? ""} onChange={(e) => setV({ ...v, name: e.target.value })} />
-        </div>
-        <div>
-          <Label>PA Code</Label>
-          <Input value={v.sku ?? ""} onChange={(e) => setV({ ...v, sku: e.target.value })} />
-        </div>
-        <div>
-          <Label>Opción</Label>
-          <Input value={v.option_name ?? ""} onChange={(e) => setV({ ...v, option_name: e.target.value })} />
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <Label>Precio</Label>
-          <NumericInput value={v.price ?? 0} onValueChange={(val) => setV({ ...v, price: val })} />
-        </div>
-        <div>
-          <Label>Stock</Label>
-          <NumericInput value={v.stock} onValueChange={(val) => setV({ ...v, stock: val })} />
-        </div>
-        <div>
-          <Label>Moneda</Label>
-          <Select value={v.currency} onValueChange={(val) => setV({ ...v, currency: val })}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="USD">USD</SelectItem>
-              <SelectItem value="COP">COP</SelectItem>
-              <SelectItem value="ARS">ARS</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <h4 className="font-medium">Dimensiones del producto</h4>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div>
-            <Label>Largo (cm)</Label>
-            <NumericInput value={v.length_cm ?? 0} onValueChange={(val) => setV({ ...v, length_cm: val })} />
-          </div>
-          <div>
-            <Label>Ancho (cm)</Label>
-            <NumericInput value={v.width_cm ?? 0} onValueChange={(val) => setV({ ...v, width_cm: val })} />
-          </div>
-          <div>
-            <Label>Alto (cm)</Label>
-            <NumericInput value={v.height_cm ?? 0} onValueChange={(val) => setV({ ...v, height_cm: val })} />
-          </div>
-          <div>
-            <Label>Peso (kg)</Label>
-            <NumericInput value={v.weight_kg ?? 0} onValueChange={(val) => setV({ ...v, weight_kg: val })} />
-          </div>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <h4 className="font-medium">Dimensiones de la caja</h4>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div>
-            <Label>Largo caja (cm)</Label>
-            <NumericInput value={v.box_length_cm ?? 0} onValueChange={(val) => setV({ ...v, box_length_cm: val })} />
-          </div>
-          <div>
-            <Label>Ancho caja (cm)</Label>
-            <NumericInput value={v.box_width_cm ?? 0} onValueChange={(val) => setV({ ...v, box_width_cm: val })} />
-          </div>
-          <div>
-            <Label>Alto caja (cm)</Label>
-            <NumericInput value={v.box_height_cm ?? 0} onValueChange={(val) => setV({ ...v, box_height_cm: val })} />
-          </div>
-          <div>
-            <Label>Peso caja (kg)</Label>
-            <NumericInput value={v.box_weight_kg ?? 0} onValueChange={(val) => setV({ ...v, box_weight_kg: val })} />
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <Label>Piezas por cartón</Label>
-          <NumericInput value={v.pcs_per_carton ?? 0} onValueChange={(val) => setV({ ...v, pcs_per_carton: val })} />
-        </div>
-        <div>
-          <Label>CBM por cartón</Label>
-          <NumericInput value={v.cbm_per_carton ?? 0} onValueChange={(val) => setV({ ...v, cbm_per_carton: val })} />
-        </div>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <Label>Es ropa</Label>
-            <Switch checked={!!v.is_clothing} onCheckedChange={(val) => setV({ ...v, is_clothing: val })} />
-          </div>
-          <div className="flex items-center justify-between">
-            <Label>Tiene batería</Label>
-            <Switch checked={!!v.has_battery} onCheckedChange={(val) => setV({ ...v, has_battery: val })} />
-          </div>
-          <div className="flex items-center justify-between">
-            <Label>Activo</Label>
-            <Switch checked={!!v.active} onCheckedChange={(val) => setV({ ...v, active: val })} />
-          </div>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <h4 className="font-medium">Imágenes de la variante</h4>
-        <VariantImagesComponent variantId={v.id} />
-      </div>
-
-      <div className="space-y-4">
-        <h4 className="font-medium">Pricing y Mercados</h4>
-        <VariantPricingEditor variantId={v.id} onPricingUpdate={() => {}} />
-      </div>
-
-      <div className="flex justify-end gap-2">
-        <Button onClick={save} disabled={saving}>{saving ? "Guardando…" : "Guardar"}</Button>
-      </div>
-    </Card>
   );
 };
 

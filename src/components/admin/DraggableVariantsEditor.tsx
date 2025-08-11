@@ -232,8 +232,6 @@ export const DraggableVariantsEditor: React.FC<DraggableVariantsEditorProps> = (
       .insert({ 
         product_id: productId, 
         name: "Nueva variante", 
-        currency: "USD", 
-        stock: 0, 
         active: true,
         sort_order: maxOrder + 1
       })
@@ -260,10 +258,7 @@ export const DraggableVariantsEditor: React.FC<DraggableVariantsEditorProps> = (
         product_id: productId,
         name: `${originalVariant.name} (Copia)`,
         sku: originalVariant.sku ? `${originalVariant.sku}-copy` : null,
-        currency: originalVariant.currency,
-        stock: 0,
         active: false,
-        price: originalVariant.price,
         attributes: originalVariant.attributes,
         length_cm: originalVariant.length_cm,
         width_cm: originalVariant.width_cm,
