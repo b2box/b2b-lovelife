@@ -36,7 +36,6 @@ export type AdminVariant = {
   sku: string | null;
   price: number | null;
   stock: number;
-  active: boolean;
   created_at: string;
   updated_at: string;
   currency: string;
@@ -63,7 +62,6 @@ export type AdminVariant = {
 interface SortableVariantRowProps {
   variant: AdminVariant;
   onEdit: (variant: AdminVariant) => void;
-  onToggleActive: (id: string, active: boolean) => void;
   onDuplicate: (variant: AdminVariant) => void;
   onDelete: (variant: AdminVariant) => void;
 }
@@ -71,7 +69,6 @@ interface SortableVariantRowProps {
 const SortableVariantRow: React.FC<SortableVariantRowProps> = ({
   variant,
   onEdit,
-  onToggleActive,
   onDuplicate,
   onDelete,
 }) => {
@@ -134,12 +131,6 @@ const SortableVariantRow: React.FC<SortableVariantRowProps> = ({
       </TableCell>
       <TableCell>{variant.name ?? "-"}</TableCell>
       <TableCell>{variant.sku ?? "-"}</TableCell>
-      <TableCell>
-        <Switch 
-          checked={!!variant.active} 
-          onCheckedChange={(val) => onToggleActive(variant.id, !!val)} 
-        />
-      </TableCell>
       <TableCell>
         <div className="flex gap-2">
           <Button size="sm" variant="outline" onClick={() => onEdit(variant)}>
@@ -295,7 +286,6 @@ export const DraggableVariantsEditor: React.FC<DraggableVariantsEditorProps> = (
       .insert({ 
         product_id: productId, 
         name: "Nueva variante", 
-        active: true,
         sort_order: maxOrder + 1
       })
       .select("*")
@@ -323,7 +313,6 @@ export const DraggableVariantsEditor: React.FC<DraggableVariantsEditorProps> = (
         product_id: productId,
         name: `${originalVariant.name} (Copia)`,
         sku: originalVariant.sku ? `${originalVariant.sku}-copy` : null,
-        active: false,
         attributes: originalVariant.attributes,
         length_cm: originalVariant.length_cm,
         width_cm: originalVariant.width_cm,
@@ -375,15 +364,6 @@ export const DraggableVariantsEditor: React.FC<DraggableVariantsEditorProps> = (
     }
   };
 
-  const toggleActive = async (id: string, val: boolean) => {
-    const { error } = await supabase.from('product_variants').update({ active: val }).eq('id', id);
-    if (error) {
-      console.error(error);
-      toast({ title: 'Error', description: 'No se pudo actualizar el estado.', variant: 'destructive' });
-      return;
-    }
-    setVariants((prev) => prev.map((x) => (x.id === id ? { ...x, active: val } : x)));
-  };
 
   const deleteVariant = async (variant: AdminVariant) => {
     const { error } = await supabase.from('product_variants').delete().eq('id', variant.id);
@@ -465,7 +445,6 @@ export const DraggableVariantsEditor: React.FC<DraggableVariantsEditorProps> = (
                   <TableHead className="w-[80px]">Imagen</TableHead>
                   <TableHead>Título</TableHead>
                   <TableHead>PA Code</TableHead>
-                  <TableHead className="w-[120px]">Activo</TableHead>
                   <TableHead className="w-[160px]">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
@@ -479,7 +458,6 @@ export const DraggableVariantsEditor: React.FC<DraggableVariantsEditorProps> = (
                       key={variant.id}
                       variant={variant}
                       onEdit={onVariantEdit}
-                      onToggleActive={toggleActive}
                       onDuplicate={duplicateVariant}
                       onDelete={deleteVariant}
                     />

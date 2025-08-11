@@ -657,7 +657,6 @@ export type Database = {
       }
       product_variants: {
         Row: {
-          active: boolean
           attributes: Json
           box_height_cm: number | null
           box_length_cm: number | null
@@ -687,7 +686,6 @@ export type Database = {
           width_cm: number | null
         }
         Insert: {
-          active?: boolean
           attributes?: Json
           box_height_cm?: number | null
           box_length_cm?: number | null
@@ -717,7 +715,6 @@ export type Database = {
           width_cm?: number | null
         }
         Update: {
-          active?: boolean
           attributes?: Json
           box_height_cm?: number | null
           box_length_cm?: number | null

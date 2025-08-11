@@ -30,7 +30,6 @@ export interface ProductVariant {
   product_id?: string;
   name?: string;
   sku?: string;
-  active: boolean;
   stock: number;
   sort_order: number;
   length_cm?: number;
@@ -83,7 +82,7 @@ export const useProducts = () => {
           *,
           product_images(id, url, alt, sort_order),
           product_variants(
-            id, name, sku, active, stock, sort_order, 
+            id, name, sku, stock, sort_order, 
             length_cm, width_cm, height_cm, weight_kg,
             is_clothing, has_battery, created_at, updated_at,
             product_variant_images(id, url, alt, sort_order)
@@ -163,7 +162,7 @@ export const useProduct = (id: string) => {
           *,
           product_images(id, url, alt, sort_order),
           product_variants(
-            id, name, sku, active, stock, sort_order, 
+            id, name, sku, stock, sort_order, 
             length_cm, width_cm, height_cm, weight_kg,
             is_clothing, has_battery, created_at, updated_at
           ),
@@ -239,7 +238,7 @@ export const useProductsByCategory = (categoryName?: string) => {
           *,
           product_images(id, url, alt, sort_order),
           product_variants!inner(
-            id, name, sku, active, stock, sort_order, 
+            id, name, sku, stock, sort_order, 
             length_cm, width_cm, height_cm, weight_kg,
             is_clothing, has_battery, created_at, updated_at
           ),
@@ -248,8 +247,7 @@ export const useProductsByCategory = (categoryName?: string) => {
           )
         `)
         .eq('active', true)
-        .eq('status', 'published')
-        .eq('product_variants.active', true);
+        .eq('status', 'published');
 
       // Filter by category if provided
       if (categoryName) {

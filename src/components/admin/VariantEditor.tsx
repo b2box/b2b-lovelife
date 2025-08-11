@@ -40,7 +40,6 @@ export const VariantEditor: React.FC<VariantEditorProps> = ({
   const [form, setForm] = useState({
     name: "",
     sku: "",
-    active: true,
     // Product dimensions
     length_cm: 0,
     width_cm: 0,
@@ -77,7 +76,6 @@ export const VariantEditor: React.FC<VariantEditorProps> = ({
       const currentForm = {
         name: variant.name || "",
         sku: variant.sku || "",
-        active: variant.active,
         length_cm: variant.length_cm || 0,
         width_cm: variant.width_cm || 0,
         height_cm: variant.height_cm || 0,
@@ -164,7 +162,6 @@ export const VariantEditor: React.FC<VariantEditorProps> = ({
         .update({
           name: form.name,
           sku: form.sku,
-          active: form.active,
           length_cm: form.length_cm || null,
           width_cm: form.width_cm || null,
           height_cm: form.height_cm || null,
@@ -342,16 +339,6 @@ export const VariantEditor: React.FC<VariantEditorProps> = ({
                 </div>
               </div>
 
-              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="variant-active"
-                    checked={form.active}
-                    onCheckedChange={(checked) => setForm({ ...form, active: checked })}
-                  />
-                  <Label htmlFor="variant-active">Variante activa</Label>
-                </div>
-              </div>
 
               <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center space-x-2">
