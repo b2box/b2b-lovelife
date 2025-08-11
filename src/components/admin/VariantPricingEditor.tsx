@@ -181,12 +181,12 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
     newBaseTiers[tierIndex] = value;
     setBaseTiers(newBaseTiers);
 
-  // Recompute market prices when base tiers change
-  if (pricingSettings) {
-    const newMarkets = recomputeMarkets(markets, newBaseTiers, pricingSettings);
-    setMarkets(newMarkets);
-    console.log("Updated markets after base tier change:", newMarkets);
-  }
+    // Recompute market prices when base tiers change
+    if (pricingSettings) {
+      const newMarkets = recomputeMarkets(markets, newBaseTiers, pricingSettings);
+      setMarkets(newMarkets);
+      console.log("Updated markets after base tier change:", newMarkets);
+    }
   };
 
   const updateMarketPercent = (market: "AR" | "COL" | "CN", tierIndex: number, percent: number) => {
