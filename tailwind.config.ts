@@ -67,7 +67,7 @@ export default {
 			},
 			fontFamily: {
 				display: ["Playfair Display", "serif"],
-				sans: ["DM Sans", "ui-sans-serif", "system-ui", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "Noto Sans", "sans-serif"],
+				 sans: ["-apple-system", "SF Pro Text", "SF Pro Display", "Inter", "DM Sans", "ui-sans-serif", "system-ui", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "Noto Sans", "sans-serif"],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

@@ -156,7 +156,11 @@ All colors MUST be HSL.
   .pill { @apply rounded-full; }
   .badge-viral { background: linear-gradient(90deg, hsl(var(--viral-orange)), hsl(var(--viral-red))); border-radius: 9999px; }
   .text-gradient-primary { background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  /* Apple-like glass surfaces */
+  .card-glass { background-color: hsl(var(--card) / 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-color: hsl(var(--border) / 0.5); box-shadow: var(--shadow-elevate); }
+  .glass-header { background-color: hsl(var(--background) / 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid hsl(var(--border) / 0.5); box-shadow: var(--shadow-elevate); }
 }
+
 
 @layer utilities {
   @keyframes float {

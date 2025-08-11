@@ -45,7 +45,7 @@ const Admin: React.FC = () => {
   if (loading) {
     return (
       <div className="container mx-auto p-6">
-        <Card className="p-8">Verificando permisos…</Card>
+        <Card className="p-8 card-glass">Verificando permisos…</Card>
       </div>
     );
   }
@@ -53,7 +53,7 @@ const Admin: React.FC = () => {
   if (!allowed) {
     return (
       <div className="container mx-auto p-6">
-        <Card className="p-8">
+        <Card className="p-8 card-glass">
           <p className="text-sm text-muted-foreground">
             Acceso denegado. Inicia sesión con una cuenta administradora.
           </p>
@@ -64,18 +64,21 @@ const Admin: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4 md:p-6 font-sans">
+      <header className="sticky top-2 z-10 mb-4 rounded-xl card-glass px-4 py-3 flex items-center justify-between">
+        <h1 className="text-lg font-semibold tracking-tight">Panel de administración</h1>
+      </header>
       <div className="flex gap-4">
         {/* Lateral menu */}
         <aside className="w-64 shrink-0">
-          <Card className="p-2">
+          <Card className="p-2 card-glass">
             <nav className="flex flex-col gap-1">
               {MENU.map((item) => {
                 const active = section === item.key;
                 return (
                   <Button
                     key={item.key}
-                    variant={active ? "brand" : "ghost"}
-                    className={`justify-start gap-2 ${active ? "font-semibold" : ""}`}
+                    variant={active ? "secondary" : "ghost"}
+                    className={`justify-start gap-2 rounded-lg ${active ? "font-medium" : ""}`}
                     onClick={() => setSection(item.key)}
                   >
                     {item.icon}
