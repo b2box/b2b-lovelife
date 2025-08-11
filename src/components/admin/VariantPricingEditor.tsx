@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { usePricingSettings } from "@/hooks/usePricingSettings";
-import { ensureMarkets, recomputeMarkets, type Markets } from "@/lib/pricing";
+import { ensureMarkets, recomputeMarkets, defaultPricingSettings, type Markets } from "@/lib/pricing";
 
 interface VariantPricingEditorProps {
   variantId: string;
@@ -57,22 +57,22 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
         ]
       };
     }
-    // Fallback to hardcoded defaults if no pricing settings yet
+    // Use default pricing settings
     return {
       AR: [
-        { percent: 300, price: 0 },
-        { percent: 300, price: 0 },
-        { percent: 300, price: 0 }
+        { percent: defaultPricingSettings.arPercents[0], price: 0 },
+        { percent: defaultPricingSettings.arPercents[1], price: 0 },
+        { percent: defaultPricingSettings.arPercents[2], price: 0 }
       ],
       COL: [
-        { percent: 200, price: 0 },
-        { percent: 200, price: 0 },
-        { percent: 200, price: 0 }
+        { percent: defaultPricingSettings.coPercents[0], price: 0 },
+        { percent: defaultPricingSettings.coPercents[1], price: 0 },
+        { percent: defaultPricingSettings.coPercents[2], price: 0 }
       ],
       CN: [
-        { percent: 100, price: 0 },
-        { percent: 100, price: 0 },
-        { percent: 100, price: 0 }
+        { percent: defaultPricingSettings.cnPercents[0], price: 0 },
+        { percent: defaultPricingSettings.cnPercents[1], price: 0 },
+        { percent: defaultPricingSettings.cnPercents[2], price: 0 }
       ]
     };
   });
