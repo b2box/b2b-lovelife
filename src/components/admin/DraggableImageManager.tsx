@@ -6,6 +6,26 @@ import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Upload, X, Star, ImageIcon, GripVertical } from "lucide-react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  rectSortingStrategy,
+} from '@dnd-kit/sortable';
+import {
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 export interface ImageItem {
   id: string;
@@ -22,7 +42,118 @@ interface ImageManagerProps {
   maxImages?: number;
 }
 
-export const ImageManager: React.FC<ImageManagerProps> = ({
+interface SortableImageProps {
+  image: ImageItem;
+  index: number;
+  onSetThumbnail: (imageId: string) => void;
+  onRemoveImage: (imageId: string) => void;
+  onUpdateAlt: (imageId: string, alt: string) => void;
+}
+
+const SortableImage: React.FC<SortableImageProps> = ({
+  image,
+  index,
+  onSetThumbnail,
+  onRemoveImage,
+  onUpdateAlt,
+}) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: image.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 1000 : 1,
+  };
+
+  return (
+    <Card
+      ref={setNodeRef}
+      style={style}
+      className={`card-glass overflow-hidden transition-all duration-200 ${
+        isDragging ? 'scale-105 shadow-lg' : 'hover:scale-[1.02]'
+      }`}
+    >
+      <CardContent className="p-0">
+        <div className="relative aspect-square">
+          {/* Drag handle - always visible */}
+          <div
+            {...attributes}
+            {...listeners}
+            className="absolute top-2 right-2 z-10 bg-black/70 text-white p-2 rounded-lg cursor-grab active:cursor-grabbing hover:bg-black/80 transition-colors"
+            title="Arrastra para reordenar"
+          >
+            <GripVertical className="h-4 w-4" />
+          </div>
+
+          <img
+            src={image.url}
+            alt={image.alt || `Imagen ${index + 1}`}
+            className="w-full h-full object-cover"
+            draggable={false}
+          />
+
+          {/* Thumbnail indicator */}
+          {index === 0 && (
+            <div className="absolute top-2 left-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
+              <Star className="h-3 w-3" />
+              Principal
+            </div>
+          )}
+
+          {/* Actions overlay - only on hover */}
+          <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant="secondary"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSetThumbnail(image.id);
+              }}
+              disabled={index === 0}
+              title="Establecer como principal"
+            >
+              <Star className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="destructive"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemoveImage(image.id);
+              }}
+              title="Eliminar imagen"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Alt text input */}
+        <div className="p-2">
+          <Input
+            placeholder="Texto alternativo..."
+            value={image.alt || ""}
+            onChange={(e) => onUpdateAlt(image.id, e.target.value)}
+            className="text-xs"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export const DraggableImageManager: React.FC<ImageManagerProps> = ({
   images,
   onImagesUpdate,
   productId,
@@ -31,8 +162,18 @@ export const ImageManager: React.FC<ImageManagerProps> = ({
 }) => {
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
-  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const { toast } = useToast();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const handleFileUpload = async (files: File[]) => {
     if (files.length === 0) return;
@@ -62,7 +203,7 @@ export const ImageManager: React.FC<ImageManagerProps> = ({
 
         const entityId = productId || variantId || 'temp';
         const fileName = `${entityId}/image_${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${file.name.split('.').pop()}`;
-        
+
         const { data, error } = await supabase.storage
           .from("product-images")
           .upload(fileName, file);
@@ -122,7 +263,12 @@ export const ImageManager: React.FC<ImageManagerProps> = ({
 
   const handleRemoveImage = (imageId: string) => {
     const newImages = images.filter(img => img.id !== imageId);
-    onImagesUpdate(newImages);
+    // Update sort orders
+    const updatedImages = newImages.map((img, index) => ({
+      ...img,
+      sort_order: index,
+    }));
+    onImagesUpdate(updatedImages);
   };
 
   const handleSetThumbnail = (imageId: string) => {
@@ -137,52 +283,24 @@ export const ImageManager: React.FC<ImageManagerProps> = ({
     });
   };
 
-  const handleDragStart = (e: React.DragEvent, index: number) => {
-    setDraggedIndex(index);
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', index.toString());
-    
-    // Create a custom drag image
-    const dragImage = document.createElement('div');
-    dragImage.style.padding = '8px';
-    dragImage.style.backgroundColor = 'rgba(0,0,0,0.8)';
-    dragImage.style.color = 'white';
-    dragImage.style.borderRadius = '8px';
-    dragImage.style.fontSize = '14px';
-    dragImage.textContent = `Moviendo imagen ${index + 1}`;
-    document.body.appendChild(dragImage);
-    e.dataTransfer.setDragImage(dragImage, 0, 0);
-    
-    // Clean up drag image after a short delay
-    setTimeout(() => {
-      document.body.removeChild(dragImage);
-    }, 0);
+  const handleUpdateAlt = (imageId: string, alt: string) => {
+    const newImages = images.map(img =>
+      img.id === imageId ? { ...img, alt } : img
+    );
+    onImagesUpdate(newImages);
   };
 
-  const handleDragEnd = () => {
-    setDraggedIndex(null);
-  };
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
 
-  const handleImageDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-  };
-
-  const handleImageDrop = async (e: React.DragEvent, dropIndex: number) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    if (draggedIndex === null || draggedIndex === dropIndex) {
-      setDraggedIndex(null);
+    if (!over || active.id === over.id) {
       return;
     }
 
-    const newImages = [...images];
-    const draggedImage = newImages[draggedIndex];
-    
-    // Remove the dragged image and insert it at the new position
-    newImages.splice(draggedIndex, 1);
-    newImages.splice(dropIndex, 0, draggedImage);
+    const oldIndex = images.findIndex((item) => item.id === active.id);
+    const newIndex = images.findIndex((item) => item.id === over.id);
+
+    const newImages = arrayMove(images, oldIndex, newIndex);
     
     // Update sort_order for all images
     const updatedImages = newImages.map((img, index) => ({
@@ -192,7 +310,6 @@ export const ImageManager: React.FC<ImageManagerProps> = ({
 
     // Update local state immediately for smooth UX
     onImagesUpdate(updatedImages);
-    setDraggedIndex(null);
 
     // Update database in background
     try {
@@ -206,18 +323,21 @@ export const ImageManager: React.FC<ImageManagerProps> = ({
             .eq('id', img.id)
         )
       );
+      
+      toast({
+        title: "Orden actualizado",
+        description: "El orden de las imágenes se ha guardado.",
+      });
     } catch (error) {
       console.error('Error updating image order:', error);
       // Revert on error
       onImagesUpdate(images);
+      toast({
+        title: "Error",
+        description: "No se pudo actualizar el orden de las imágenes.",
+        variant: "destructive",
+      });
     }
-  };
-
-  const handleUpdateAlt = (imageId: string, alt: string) => {
-    const newImages = images.map(img =>
-      img.id === imageId ? { ...img, alt } : img
-    );
-    onImagesUpdate(newImages);
   };
 
   return (
@@ -274,97 +394,34 @@ export const ImageManager: React.FC<ImageManagerProps> = ({
       )}
 
       {images.length > 0 && (
-        <div 
-          className="grid grid-cols-2 md:grid-cols-3 gap-4"
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
         >
-          {images.map((image, index) => (
-            <Card 
-              key={image.id} 
-              className={`card-glass overflow-hidden transition-all duration-200 ${
-                draggedIndex === index ? 'scale-105 opacity-50 rotate-2' : 'hover:scale-102'
-              } ${draggedIndex !== null && draggedIndex !== index ? 'opacity-70' : ''}`}
-              draggable
-              onDragStart={(e) => handleDragStart(e, index)}
-              onDragEnd={handleDragEnd}
-              onDragOver={handleImageDragOver}
-              onDrop={(e) => handleImageDrop(e, index)}
-              style={{ cursor: draggedIndex === index ? 'grabbing' : 'grab' }}
+          <SortableContext
+            items={images.map(img => img.id)}
+            strategy={rectSortingStrategy}
+          >
+            <div 
+              className="grid grid-cols-2 md:grid-cols-3 gap-4"
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
             >
-              <CardContent className="p-0">
-                <div className="relative aspect-square">
-                  {/* Drag handle - always visible */}
-                  <div className="absolute top-2 right-2 z-10 bg-black/70 text-white p-2 rounded-lg cursor-grab active:cursor-grabbing">
-                    <GripVertical className="h-4 w-4" />
-                  </div>
-
-                  <img
-                    src={image.url}
-                    alt={image.alt || `Imagen ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                  
-                  {/* Thumbnail indicator */}
-                  {index === 0 && (
-                    <div className="absolute top-2 left-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
-                      <Star className="h-3 w-3" />
-                      Principal
-                    </div>
-                  )}
-
-                  {/* Actions overlay - only on hover */}
-                  <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="secondary"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleSetThumbnail(image.id);
-                      }}
-                      disabled={index === 0}
-                      title="Establecer como principal"
-                    >
-                      <Star className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="destructive"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRemoveImage(image.id);
-                      }}
-                      title="Eliminar imagen"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-
-                  {/* Drop zone indicator */}
-                  {draggedIndex !== null && draggedIndex !== index && (
-                    <div className="absolute inset-0 border-2 border-dashed border-primary/50 bg-primary/10 rounded-lg flex items-center justify-center opacity-0 transition-opacity duration-200 hover:opacity-100">
-                      <span className="text-sm font-medium text-primary">Soltar aquí</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Alt text input */}
-                <div className="p-2">
-                  <Input
-                    placeholder="Texto alternativo..."
-                    value={image.alt || ""}
-                    onChange={(e) => handleUpdateAlt(image.id, e.target.value)}
-                    className="text-xs"
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+              {images.map((image, index) => (
+                <SortableImage
+                  key={image.id}
+                  image={image}
+                  index={index}
+                  onSetThumbnail={handleSetThumbnail}
+                  onRemoveImage={handleRemoveImage}
+                  onUpdateAlt={handleUpdateAlt}
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
       )}
 
       {uploading && (

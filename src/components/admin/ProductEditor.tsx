@@ -16,7 +16,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Package, Languages, Truck, Layers, UserSquare, Settings, Tag, Shirt, Smartphone, Sparkles, HeartPulse, Watch, Gem, Gift, Calendar, PartyPopper, PawPrint, Home, Dumbbell, Briefcase, PencilRuler, Plug, Car, Wrench, Video, Copy } from "lucide-react";
 import { VideoManager } from "./VideoManager";
-import { ImageManager, ImageItem } from "./ImageManager";
+import { DraggableImageManager as ImageManager, ImageItem } from "./DraggableImageManager";
 import { VariantImages as VariantImagesComponent } from "./VariantImages";
 import { usePricingSettings } from "@/hooks/usePricingSettings";
 import { ensureMarkets as calcEnsureMarkets, recomputeMarkets, computeMarketPrice, computePercentFromPrice } from "@/lib/pricing";
