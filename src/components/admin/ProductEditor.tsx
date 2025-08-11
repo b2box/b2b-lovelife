@@ -801,6 +801,29 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
     loadTierPrices();
   }, [variant.id]);
 
+  const recalcMarketPrices = (baseArr: number[]) => {
+    const current = v.attributes?.markets;
+    const next = ensureMarkets(current, baseArr);
+    (['AR','COL'] as const).forEach((mk) => {
+      for (let i = 0; i < 3; i++) {
+        const percent = next[mk][i]?.percent ?? (mk === 'AR' ? 300 : 200);
+        const base = baseArr[i] ?? 0;
+        next[mk][i] = { percent, price: Number((base * (1 + (percent || 0) / 100)).toFixed(2)) };
+      }
+    });
+    setV((prev) => ({ ...prev, attributes: { ...(prev.attributes || {}), markets: next } }));
+  };
+
+  const handleBasePricesChange = (arr: number[]) => {
+    setTierPrices(arr);
+    recalcMarketPrices(arr);
+  };
+
+  useEffect(() => {
+    if (tierPrices) recalcMarketPrices(tierPrices);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tierPrices]);
+
   const onImageFiles = async (files: FileList | null) => {
     if (!files) return;
     for (const file of Array.from(files)) {
@@ -1043,7 +1066,7 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
       {/* Sección 5: Supplier tiers */}
       <Card className="p-3">
         <h4 className="font-medium mb-2">Proveedor (3 tiers)</h4>
-        <VariantTiers variantId={v.id} />
+        <VariantTiers variantId={v.id} onBasePricesChange={handleBasePricesChange} />
       </Card>
 
       {/* Sección 6: Precio por mercado (AR, COL) */}
@@ -1129,7 +1152,7 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
   );
 };
 
-const VariantTiers: React.FC<{ variantId: string }> = ({ variantId }) => {
+const VariantTiers: React.FC<{ variantId: string; onBasePricesChange?: (arr: number[]) => void }> = ({ variantId, onBasePricesChange }) => {
   const { toast } = useToast();
   const [rows, setRows] = useState<VariantPriceTier[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1212,6 +1235,13 @@ const VariantTiers: React.FC<{ variantId: string }> = ({ variantId }) => {
   useEffect(() => {
     load();
   }, [variantId]);
+
+  useEffect(() => {
+    if (!rows.length) return;
+    const ordered = [...rows].sort((a, b) => orderIndex(a.tier) - orderIndex(b.tier)).slice(0, 3);
+    onBasePricesChange?.(ordered.map((r) => Number(r.unit_price) || 0));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows]);
 
   const updateRow = async (row: VariantPriceTier) => {
     const { error } = await (supabase as any)
