@@ -8,10 +8,9 @@ import { useCountryPricing } from "@/hooks/useCountryPricing";
 const NewArrivals = () => {
   const navigate = useNavigate();
   const { products: dbProducts } = useProducts();
-  const { calculatePriceForCountry, getCountryFromStorage } = useCountryPricing();
+  const { calculatePriceForCountry, country } = useCountryPricing();
   
   const products = dbProducts.slice(0, 3).map(product => {
-    const country = getCountryFromStorage();
     const basePrice = product.variant_price_tiers?.[0]?.unit_price || 0;
     const countryPrice = calculatePriceForCountry(basePrice, country);
     

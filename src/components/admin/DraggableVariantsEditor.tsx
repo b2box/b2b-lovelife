@@ -121,7 +121,7 @@ const SortableVariantRow: React.FC<SortableVariantRowProps> = ({
           <img 
             src={thumbnail} 
             alt="Thumbnail" 
-            className="w-12 h-12 object-cover rounded border"
+            className="w-12 h-12 object-cover object-center rounded border"
           />
         ) : (
           <div className="w-12 h-12 bg-muted rounded border flex items-center justify-center">

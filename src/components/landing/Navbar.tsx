@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Menu, Search, ChevronDown, User } from "lucide-react";
+import { useCountryPricing } from "@/hooks/useCountryPricing";
 
 const TEXTS = {
   AR: { cart: "Carrito", orders: "Pedidos", profile: "Perfil", us: "Nosotros", search: "Buscar productos, categorías, marcas…", login: "Iniciar sesión", register: "Registrarse" },
@@ -14,8 +15,7 @@ type Country = keyof typeof TEXTS;
 const Navbar = () => {
   const location = useLocation();
   const isApp = location.pathname.startsWith("/app");
-  const [country, setCountry] = React.useState<Country>(() => (localStorage.getItem("country") as Country) || "AR");
-  React.useEffect(() => { localStorage.setItem("country", country); }, [country]);
+  const { country, setCountryAndNotify } = useCountryPricing();
   return (
     <header className="sticky top-0 z-40 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       {/* Row 1 */}
@@ -69,10 +69,10 @@ const Navbar = () => {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="z-[60] bg-background">
-                <DropdownMenuItem onSelect={() => setCountry("AR")} className="gap-2">
+                <DropdownMenuItem onSelect={() => setCountryAndNotify("AR")} className="gap-2">
                   <img src="/images/flags/ar.svg" alt="Argentina" className="h-5 w-5 rounded-full" /> Argentina
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => setCountry("CO")} className="gap-2">
+                <DropdownMenuItem onSelect={() => setCountryAndNotify("CO")} className="gap-2">
                   <img src="/images/flags/co.svg" alt="Colombia" className="h-5 w-5 rounded-full" /> Colombia
                 </DropdownMenuItem>
               </DropdownMenuContent>

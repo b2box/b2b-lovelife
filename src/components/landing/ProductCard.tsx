@@ -15,8 +15,7 @@ type Props = { product: Product };
 
 const ProductCard = ({ product }: Props) => {
   const navigate = useNavigate();
-  const { getCountryFromStorage } = useCountryPricing();
-  const country = getCountryFromStorage();
+  const { country } = useCountryPricing();
   return (
     <Card
       className="card-elevated hover:lift transition-transform rounded-2xl border-0 cursor-pointer"
@@ -37,7 +36,7 @@ const ProductCard = ({ product }: Props) => {
             src={product.image || "/placeholder.svg"}
             alt={product.name}
             loading="lazy"
-            className="aspect-square w-full rounded-xl object-cover max-w-full h-full object-center"
+            className="aspect-square w-full rounded-xl object-cover object-center"
             onError={(e) => {
               e.currentTarget.src = "/placeholder.svg";
             }}
