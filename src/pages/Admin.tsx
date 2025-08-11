@@ -22,19 +22,28 @@ type AdminSection =
   | "pricelists"
   | "settings";
 
-const MENU: { key: AdminSection; label: string; icon: React.ReactNode }[] = [
+const MENU: { key: AdminSection; label: string; icon: React.ReactNode; adminOnly?: boolean }[] = [
   { key: "products", label: "Productos", icon: <Package className="size-4" /> },
-  { key: "orders", label: "Pedidos", icon: <ShoppingCart className="size-4" /> },
-  { key: "inventory", label: "Inventario", icon: <Boxes className="size-4" /> },
-  { key: "customers", label: "Clientes", icon: <Users className="size-4" /> },
-  { key: "promotions", label: "Promociones", icon: <Percent className="size-4" /> },
-  { key: "pricelists", label: "Listas de precios", icon: <Tag className="size-4" /> },
-  { key: "settings", label: "Ajustes", icon: <SettingsIcon className="size-4" /> },
+  { key: "orders", label: "Pedidos", icon: <ShoppingCart className="size-4" />, adminOnly: true },
+  { key: "inventory", label: "Inventario", icon: <Boxes className="size-4" />, adminOnly: true },
+  { key: "customers", label: "Clientes", icon: <Users className="size-4" />, adminOnly: true },
+  { key: "promotions", label: "Promociones", icon: <Percent className="size-4" />, adminOnly: true },
+  { key: "pricelists", label: "Listas de precios", icon: <Tag className="size-4" />, adminOnly: true },
+  { key: "settings", label: "Ajustes", icon: <SettingsIcon className="size-4" />, adminOnly: true },
 ];
 
 const Admin: React.FC = () => {
-  const { loading, allowed } = useAdminGuard();
+  const { loading, allowed, userRole } = useAdminGuard();
   const [section, setSection] = React.useState<AdminSection>("products");
+
+  // Filtrar menú según el rol del usuario
+  const availableMenu = React.useMemo(() => {
+    if (userRole === 'admin') {
+      return MENU; // Admin ve todo
+    }
+    // Agentes solo ven productos
+    return MENU.filter(item => !item.adminOnly);
+  }, [userRole]);
 
   React.useEffect(() => {
     if (!loading && !allowed) {
@@ -65,14 +74,19 @@ const Admin: React.FC = () => {
   return (
     <div className="container mx-auto p-4 md:p-6 font-sans">
       <header className="sticky top-2 z-10 mb-4 rounded-xl card-glass px-4 py-3 flex items-center justify-between">
-        <h1 className="text-lg font-semibold tracking-tight">Panel de administración</h1>
+        <h1 className="text-lg font-semibold tracking-tight">
+          Panel de {userRole === 'admin' ? 'administración' : 'agente'}
+        </h1>
+        <span className="text-sm text-muted-foreground capitalize">
+          {userRole === 'admin' ? 'Administrador' : 'Agente'}
+        </span>
       </header>
       <div className="flex gap-4">
         {/* Lateral menu */}
         <aside className="w-64 shrink-0">
           <Card className="p-2 card-glass">
             <nav className="flex flex-col gap-1">
-              {MENU.map((item) => {
+              {availableMenu.map((item) => {
                 const active = section === item.key;
                 return (
                   <Button
@@ -93,12 +107,12 @@ const Admin: React.FC = () => {
         {/* Content */}
         <main className="flex-1">
           {section === "products" && <ProductsPanel />}
-          {section === "orders" && <OrdersPanel />}
-          {section === "inventory" && <InventoryPanel />}
-          {section === "customers" && <CustomersPanel />}
-          {section === "promotions" && <PromotionsPanel />}
-          {section === "pricelists" && <PriceListsPanel />}
-          {section === "settings" && <SettingsPanel />}
+          {section === "orders" && userRole === 'admin' && <OrdersPanel />}
+          {section === "inventory" && userRole === 'admin' && <InventoryPanel />}
+          {section === "customers" && userRole === 'admin' && <CustomersPanel />}
+          {section === "promotions" && userRole === 'admin' && <PromotionsPanel />}
+          {section === "pricelists" && userRole === 'admin' && <PriceListsPanel />}
+          {section === "settings" && userRole === 'admin' && <SettingsPanel />}
         </main>
       </div>
     </div>

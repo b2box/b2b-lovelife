@@ -20,6 +20,7 @@ import { VariantImages as VariantImagesComponent } from "./VariantImages";
 import { usePricingSettings } from "@/hooks/usePricingSettings";
 import { ensureMarkets as calcEnsureMarkets, recomputeMarkets, computeMarketPrice, computePercentFromPrice } from "@/lib/pricing";
 import { DraggableVariantsEditor, AdminVariant } from "./DraggableVariantsEditor";
+import { useUserRole } from "@/hooks/useUserRole";
 
 export type AdminProduct = {
   id?: string;
@@ -53,6 +54,7 @@ type ProductEditorProps = {
 const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, product }) => {
   const isEdit = !!product?.id;
   const { toast } = useToast();
+  const { userRole } = useUserRole();
 
   const [form, setForm] = useState<AdminProduct>({
     name: "",
@@ -338,8 +340,8 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
               <TabsTrigger value="supplier" className="gap-2"><Truck size={16} /> Proveedor</TabsTrigger>
               <TabsTrigger value="media" className="gap-2"><Video size={16} /> Media</TabsTrigger>
               <TabsTrigger value="variantes" className="gap-2"><Layers size={16} /> Variantes</TabsTrigger>
-              <TabsTrigger value="agente" className="gap-2"><UserSquare size={16} /> Agente</TabsTrigger>
-              <TabsTrigger value="status" className="gap-2"><Settings size={16} /> Status</TabsTrigger>
+              {userRole === 'admin' && <TabsTrigger value="agente" className="gap-2"><UserSquare size={16} /> Agente</TabsTrigger>}
+              {userRole === 'admin' && <TabsTrigger value="status" className="gap-2"><Settings size={16} /> Status</TabsTrigger>}
             </TabsList>
 
             <TabsContent value="producto" className="space-y-4">
@@ -535,99 +537,103 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
               </div>
             </TabsContent>
 
-            <TabsContent value="agente" className="space-y-4">
-              <div>
-                <Label className="mb-2 block">Agente</Label>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  {(() => {
-                    const p = agentOptions.find(p => (p.display_name || '').toLowerCase().includes('gabriel'));
-                    const id = p?.id;
-                    const checked = form.agent_profile_id === id;
-                    return (
-                      <label className="flex items-center justify-between gap-3">
-                        <span>Gabriel</span>
-                        <Switch
-                          checked={!!checked}
-                          disabled={!id}
-                          onCheckedChange={(val) => setForm({ ...form, agent_profile_id: val ? id : "" })}
-                        />
-                      </label>
-                    );
-                  })()}
-                  {(() => {
-                    const p = agentOptions.find(p => (p.display_name || '').toLowerCase().includes('jessica'));
-                    const id = p?.id;
-                    const checked = form.agent_profile_id === id;
-                    return (
-                      <label className="flex items-center justify-between gap-3">
-                        <span>Jessica</span>
-                        <Switch
-                          checked={!!checked}
-                          disabled={!id}
-                          onCheckedChange={(val) => setForm({ ...form, agent_profile_id: val ? id : "" })}
-                        />
-                      </label>
-                    );
-                  })()}
-                  {(() => {
-                    const p = agentOptions.find(p => (p.display_name || '').toLowerCase().includes('kerwin'));
-                    const id = p?.id;
-                    const checked = form.agent_profile_id === id;
-                    return (
-                      <label className="flex items-center justify-between gap-3">
-                        <span>Kerwin</span>
-                        <Switch
-                          checked={!!checked}
-                          disabled={!id}
-                          onCheckedChange={(val) => setForm({ ...form, agent_profile_id: val ? id : "" })}
-                        />
-                      </label>
-                    );
-                  })()}
+            {userRole === 'admin' && (
+              <TabsContent value="agente" className="space-y-4">
+                <div>
+                  <Label className="mb-2 block">Agente</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    {(() => {
+                      const p = agentOptions.find(p => (p.display_name || '').toLowerCase().includes('gabriel'));
+                      const id = p?.id;
+                      const checked = form.agent_profile_id === id;
+                      return (
+                        <label className="flex items-center justify-between gap-3">
+                          <span>Gabriel</span>
+                          <Switch
+                            checked={!!checked}
+                            disabled={!id}
+                            onCheckedChange={(val) => setForm({ ...form, agent_profile_id: val ? id : "" })}
+                          />
+                        </label>
+                      );
+                    })()}
+                    {(() => {
+                      const p = agentOptions.find(p => (p.display_name || '').toLowerCase().includes('jessica'));
+                      const id = p?.id;
+                      const checked = form.agent_profile_id === id;
+                      return (
+                        <label className="flex items-center justify-between gap-3">
+                          <span>Jessica</span>
+                          <Switch
+                            checked={!!checked}
+                            disabled={!id}
+                            onCheckedChange={(val) => setForm({ ...form, agent_profile_id: val ? id : "" })}
+                          />
+                        </label>
+                      );
+                    })()}
+                    {(() => {
+                      const p = agentOptions.find(p => (p.display_name || '').toLowerCase().includes('kerwin'));
+                      const id = p?.id;
+                      const checked = form.agent_profile_id === id;
+                      return (
+                        <label className="flex items-center justify-between gap-3">
+                          <span>Kerwin</span>
+                          <Switch
+                            checked={!!checked}
+                            disabled={!id}
+                            onCheckedChange={(val) => setForm({ ...form, agent_profile_id: val ? id : "" })}
+                          />
+                        </label>
+                      );
+                    })()}
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={onClose}>Cerrar</Button>
-                <Button onClick={saveProduct} disabled={saving}>{saving ? "Guardando…" : "Guardar"}</Button>
-              </div>
-            </TabsContent>
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" onClick={onClose}>Cerrar</Button>
+                  <Button onClick={saveProduct} disabled={saving}>{saving ? "Guardando…" : "Guardar"}</Button>
+                </div>
+              </TabsContent>
+            )}
 
-            <TabsContent value="status" className="space-y-4">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label>Activo</Label>
-                  <Switch
-                    checked={!!form.active}
-                    onCheckedChange={(v) => setForm({ ...form, active: v })}
-                  />
+            {userRole === 'admin' && (
+              <TabsContent value="status" className="space-y-4">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Label>Activo</Label>
+                    <Switch
+                      checked={!!form.active}
+                      onCheckedChange={(v) => setForm({ ...form, active: v })}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label>Verificado (Producto)</Label>
+                    <Switch
+                      checked={!!form.verified_product}
+                      onCheckedChange={(v) => setForm({ ...form, verified_product: v })}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label>Verificado (Video)</Label>
+                    <Switch
+                      checked={!!form.verified_video}
+                      onCheckedChange={(v) => setForm({ ...form, verified_video: v })}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label>Publicado</Label>
+                    <Switch
+                      checked={form.status === 'published'}
+                      onCheckedChange={(v) => setForm({ ...form, status: v ? 'published' : 'draft' })}
+                    />
+                  </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <Label>Verificado (Producto)</Label>
-                  <Switch
-                    checked={!!form.verified_product}
-                    onCheckedChange={(v) => setForm({ ...form, verified_product: v })}
-                  />
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" onClick={onClose}>Cerrar</Button>
+                  <Button onClick={saveProduct} disabled={saving}>{saving ? "Guardando…" : "Guardar"}</Button>
                 </div>
-                <div className="flex items-center justify-between">
-                  <Label>Verificado (Video)</Label>
-                  <Switch
-                    checked={!!form.verified_video}
-                    onCheckedChange={(v) => setForm({ ...form, verified_video: v })}
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <Label>Publicado</Label>
-                  <Switch
-                    checked={form.status === 'published'}
-                    onCheckedChange={(v) => setForm({ ...form, status: v ? 'published' : 'draft' })}
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={onClose}>Cerrar</Button>
-                <Button onClick={saveProduct} disabled={saving}>{saving ? "Guardando…" : "Guardar"}</Button>
-              </div>
-            </TabsContent>
+              </TabsContent>
+            )}
           </Tabs>
         </DialogContent>
       </Dialog>

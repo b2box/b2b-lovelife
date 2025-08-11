@@ -7,12 +7,14 @@ type AdminGuardResult = {
   loading: boolean;
   allowed: boolean;
   userId: string | null;
+  userRole: string | null;
 };
 
 export function useAdminGuard(): AdminGuardResult {
   const [loading, setLoading] = useState(true);
   const [allowed, setAllowed] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -36,18 +38,27 @@ export function useAdminGuard(): AdminGuardResult {
 
       setUserId(user.id);
 
-      // Usa la función RPC has_role(_user_id, _role)
-      const { data: hasRole, error: roleErr } = await supabase.rpc("has_role", {
+      // Verificar si es admin o agente (ambos pueden acceder al admin)
+      const { data: hasAccess, error: accessErr } = await supabase.rpc("is_admin_or_agent", {
         _user_id: user.id,
-        _role: "admin",
+      });
+
+      if (accessErr) {
+        console.error("[AdminGuard] is_admin_or_agent RPC error:", accessErr);
+      }
+
+      // Obtener el rol específico del usuario
+      const { data: role, error: roleErr } = await supabase.rpc("get_user_role", {
+        _user_id: user.id,
       });
 
       if (roleErr) {
-        console.error("[AdminGuard] has_role RPC error:", roleErr);
+        console.error("[AdminGuard] get_user_role RPC error:", roleErr);
       }
 
       if (active) {
-        setAllowed(Boolean(hasRole));
+        setAllowed(Boolean(hasAccess));
+        setUserRole(role || null);
         setLoading(false);
       }
     };
@@ -59,6 +70,6 @@ export function useAdminGuard(): AdminGuardResult {
     };
   }, [navigate, location.pathname]);
 
-  return { loading, allowed, userId };
+  return { loading, allowed, userId, userRole };
 }
 
