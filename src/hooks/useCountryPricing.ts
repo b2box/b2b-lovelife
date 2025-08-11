@@ -66,12 +66,12 @@ export function useCountryPricing() {
     const price = calculatePriceForCountry(basePrice, targetCountry);
     
     if (targetCountry === "AR") {
-      return `$${price.toFixed(2)} USD`;
+      return `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
     } else if (targetCountry === "CO") {
-      return `$${price.toFixed(0)} COP`;
+      return `$${price.toLocaleString('es-CO', { maximumFractionDigits: 0 })} COP`;
     }
     
-    return `$${price.toFixed(2)}`;
+    return `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
   return {

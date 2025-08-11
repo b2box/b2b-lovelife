@@ -30,33 +30,37 @@ const InfiniteProducts = ({ publicMode = false }: { publicMode?: boolean }) => {
   // Set initial category when categories load
   useEffect(() => {
     if (categories.length > 0 && !selectedCategoryId) {
-      setSelectedCategoryId(categories[0].id);
+      setSelectedCategoryId("all"); // Start with all products
     }
   }, [categories, selectedCategoryId]);
 
   // Get products for selected category
   const categoryProducts = useMemo(() => {
     if (!selectedCategoryId) return [];
-    return products
-      .filter(product => 
-        product.categories?.some(c => c.id === selectedCategoryId)
-      )
-      .map(product => {
-        // Get the CNY base price (supplier price) to calculate from
-        const cnyPriceTier = product.variant_price_tiers?.find(tier => tier.currency === "CNY");
-        const basePrice = cnyPriceTier?.unit_price || 0;
-        const countryPrice = calculatePriceForCountry(basePrice, country);
-        
-        return {
-          id: product.id,
-          name: product.name,
-          price: countryPrice,
-          image: product.variants?.[0]?.product_variant_images?.sort((a, b) => a.sort_order - b.sort_order)?.[0]?.url || 
-                 "/placeholder.svg",
-          badge: product.verified_product ? "B2BOX verified" : undefined,
-          viral: false
-        };
-      });
+    
+    // Transform all products or filtered products to Product format
+    const productsToTransform = selectedCategoryId === "all" 
+      ? products 
+      : products.filter(product => 
+          product.categories?.some(c => c.id === selectedCategoryId)
+        );
+    
+    return productsToTransform.map(product => {
+      // Get the CNY base price (supplier price) to calculate from
+      const cnyPriceTier = product.variant_price_tiers?.find(tier => tier.currency === "CNY");
+      const basePrice = cnyPriceTier?.unit_price || 0;
+      const countryPrice = calculatePriceForCountry(basePrice, country);
+      
+      return {
+        id: product.id,
+        name: product.name,
+        price: countryPrice,
+        image: product.variants?.[0]?.product_variant_images?.sort((a, b) => a.sort_order - b.sort_order)?.[0]?.url || 
+               "/placeholder.svg",
+        badge: product.verified_product ? "B2BOX verified" : undefined,
+        viral: false
+      };
+    });
   }, [products, selectedCategoryId]);
 
   useEffect(() => {
@@ -115,6 +119,13 @@ const InfiniteProducts = ({ publicMode = false }: { publicMode?: boolean }) => {
         return (
           <>
             <nav className="mb-4 flex items-center gap-2 overflow-x-auto py-1" aria-label="Filtros de categorías">
+              <Button
+                onClick={() => setSelectedCategoryId("all")}
+                variant={selectedCategoryId === "all" ? "default" : "outline"}
+                className="rounded-full h-9 px-4 whitespace-nowrap"
+              >
+                Todos
+              </Button>
               {categories.map((category) => (
                 <Button
                   key={category.id}
