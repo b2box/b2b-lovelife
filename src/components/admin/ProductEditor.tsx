@@ -345,7 +345,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
   return (
     <>
       <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-        <DialogContent className="w-[95vw] max-w-5xl max-h-[85vh] overflow-y-auto bg-background/95 backdrop-blur-sm border border-border/40">
+        <DialogContent className="w-[95vw] max-w-5xl max-h-[85vh] overflow-y-auto bg-background border border-border shadow-lg">
           <DialogHeader>
             <DialogTitle>{isEdit ? "Editar producto" : "Nuevo producto"}</DialogTitle>
           </DialogHeader>

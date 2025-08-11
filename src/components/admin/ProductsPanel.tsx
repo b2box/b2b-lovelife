@@ -42,6 +42,13 @@ type Product = {
       name: string;
     };
   }>;
+  product_tags: Array<{
+    tag_id: string;
+    tags: {
+      id: string;
+      name: string;
+    };
+  }>;
 };
 
 const ITEMS_PER_PAGE = 50;
@@ -75,6 +82,10 @@ const fetchProducts = async (page: number, search: string, statusFilter: string,
       product_categories:product_categories(
         category_id,
         categories:categories(id, name)
+      ),
+      product_tags:product_tags(
+        tag_id,
+        tags:tags(id, name)
       )
     `, { count: 'exact' })
     .order("updated_at", { ascending: false })
@@ -90,7 +101,17 @@ const fetchProducts = async (page: number, search: string, statusFilter: string,
   }
   
   if (collectionFilter && collectionFilter !== "all") {
-    query = query.eq("collection", collectionFilter);
+    const { data: productIds } = await supabase
+      .from("product_tags")
+      .select("product_id")
+      .eq("tag_id", collectionFilter);
+    
+    if (productIds && productIds.length > 0) {
+      query = query.in("id", productIds.map(pt => pt.product_id));
+    } else {
+      // No products with this tag
+      return { products: [], totalCount: 0 };
+    }
   }
 
   if (categoryFilter && categoryFilter !== "all") {
@@ -121,13 +142,13 @@ const fetchProducts = async (page: number, search: string, statusFilter: string,
 };
 
 const fetchFilterOptions = async () => {
-  const [categoriesRes, collectionsRes] = await Promise.all([
+  const [categoriesRes, tagsRes] = await Promise.all([
     supabase.from("categories").select("id, name, parent_id").is("parent_id", null).order("name"),
-    supabase.from("products").select("collection").not("collection", "is", null).not("collection", "eq", "").order("collection")
+    supabase.from("tags").select("id, name").order("name")
   ]);
 
   const categories = categoriesRes.data || [];
-  const collections = [...new Set((collectionsRes.data || []).map(p => p.collection).filter(Boolean))];
+  const collections = tagsRes.data || [];
 
   return { categories, collections };
 };
@@ -281,6 +302,10 @@ const ProductsPanel: React.FC = () => {
     return product.product_categories?.map(pc => pc.categories?.name).filter(Boolean).join(", ") || "-";
   };
 
+  const getProductCollections = (product: Product) => {
+    return product.product_tags?.map(pt => pt.tags?.name).filter(Boolean).join(", ") || "-";
+  };
+
   return (
     <Card className="p-6 card-glass">
       <div className="flex items-center justify-between mb-6">
@@ -338,8 +363,8 @@ const ProductsPanel: React.FC = () => {
             <SelectContent>
               <SelectItem value="all">Todas las colecciones</SelectItem>
               {filterOptions?.collections.map((collection) => (
-                <SelectItem key={collection} value={collection}>
-                  {collection}
+                <SelectItem key={collection.id} value={collection.id}>
+                  {collection.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -388,7 +413,7 @@ const ProductsPanel: React.FC = () => {
                       {getProductCategories(product)}
                     </TableCell>
                     <TableCell className="text-sm">
-                      {product.collection || "-"}
+                      {getProductCollections(product)}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">

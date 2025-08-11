@@ -112,33 +112,44 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
           }
         });
 
-        // Handle USD prices - try to distinguish AR vs CN based on expected percentages
+        // Handle USD prices - assign based on price ranges to determine market
         usdTiers.forEach((tier) => {
           const tierIndex = tierNames.indexOf(tier.tier as any);
           if (tierIndex >= 0 && newBaseTiers[tierIndex] > 0 && pricingSettings) {
             const baseCny = newBaseTiers[tierIndex];
+            const price = Number(tier.unit_price);
             
             // Calculate what the percent would be for AR
-            const arPercent = (((tier.unit_price / (baseCny * pricingSettings.arRate)) - 1) * 100);
+            const arPercent = (((price / (baseCny * pricingSettings.arRate)) - 1) * 100);
             
-            // Calculate what the percent would be for CN
-            const cnPercent = (((tier.unit_price / (baseCny * pricingSettings.cnRate)) - 1) * 100);
+            // Calculate what the percent would be for CN  
+            const cnPercent = (((price / (baseCny * pricingSettings.cnRate)) - 1) * 100);
             
-            // Determine which market this belongs to based on which expected percentage is closer
+            // Use price thresholds and expected percentages to determine market
             const arExpected = pricingSettings.arPercents[tierIndex];
             const cnExpected = pricingSettings.cnPercents[tierIndex];
             
-            const arDiff = Math.abs(arPercent - arExpected);
-            const cnDiff = Math.abs(cnPercent - cnExpected);
-            
-            if (arDiff < cnDiff) {
-              // Closer to AR expected percentage
-              newMarkets.AR[tierIndex].price = Number(tier.unit_price);
-              newMarkets.AR[tierIndex].percent = Number(arPercent.toFixed(2));
+            // If the percentage is closer to AR expected range (200-400%) assign to AR
+            // If closer to CN expected range (20-150%) assign to CN
+            if (Math.abs(arPercent - arExpected) < Math.abs(cnPercent - cnExpected) && arPercent > 150) {
+              // Assign to AR market
+              newMarkets.AR[tierIndex].price = price;
+              newMarkets.AR[tierIndex].percent = Number(Math.max(0, arPercent).toFixed(2));
+            } else if (cnPercent >= 0 && cnPercent <= 200) {
+              // Assign to CN market
+              newMarkets.CN[tierIndex].price = price;
+              newMarkets.CN[tierIndex].percent = Number(Math.max(0, cnPercent).toFixed(2));
             } else {
-              // Closer to CN expected percentage
-              newMarkets.CN[tierIndex].price = Number(tier.unit_price);
-              newMarkets.CN[tierIndex].percent = Number(cnPercent.toFixed(2));
+              // Default assignment based on price range
+              if (price > baseCny * 2) {
+                // High markup likely AR market
+                newMarkets.AR[tierIndex].price = price;
+                newMarkets.AR[tierIndex].percent = Number(Math.max(0, arPercent).toFixed(2));
+              } else {
+                // Lower markup likely CN market
+                newMarkets.CN[tierIndex].price = price;
+                newMarkets.CN[tierIndex].percent = Number(Math.max(0, cnPercent).toFixed(2));
+              }
             }
           }
         });
