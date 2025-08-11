@@ -805,14 +805,17 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
   }, [variant.id]);
 
 
-  const recalcMarketPrices = (baseArr: number[]) => {
+  const recalcMarketPrices = (baseArr: number[], pkgOverride?: any) => {
     const settingsData = {
       arRate: pricing?.arRate ?? 1,
       coRate: pricing?.coRate ?? 1,
       arPercents: pricing?.arPercents ?? [300, 300, 300],
       coPercents: pricing?.coPercents ?? [200, 200, 200],
     };
-    const next = recomputeMarkets(v.attributes?.markets, baseArr, settingsData);
+    const p = pkgOverride ?? (v.attributes?.packaging ?? { packed: true, required: false, cny_price: 0 });
+    const add = !p.packed && p.required ? Number(p.cny_price) || 0 : 0;
+    const effectiveBase = baseArr.map((b) => (b || 0) + add);
+    const next = recomputeMarkets(v.attributes?.markets, effectiveBase, settingsData);
     setV((prev) => ({ ...prev, attributes: { ...(prev.attributes || {}), markets: next } }));
   };
 
@@ -902,7 +905,10 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
     arPercents: pricing?.arPercents ?? [300, 300, 300],
     coPercents: pricing?.coPercents ?? [200, 200, 200],
   };
-  const markets = calcEnsureMarkets(attrs.markets, tierPrices, settingsData);
+  const addPkg = !pkg.packed && pkg.required ? Number(pkg.cny_price) || 0 : 0;
+  const effectiveBase = tierPrices.map((b) => (b || 0) + addPkg);
+  const markets = calcEnsureMarkets(attrs.markets, effectiveBase, settingsData);
+  const formatThousands = (num: number) => new Intl.NumberFormat('es-AR').format(Number(num || 0));
   const onVideoFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -994,6 +1000,7 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
             onCheckedChange={(val) => {
               const next = { ...attrs, packaging: { ...pkg, packed: !!val } };
               setV({ ...v, attributes: next });
+              recalcMarketPrices(tierPrices, next.packaging);
             }}
           />
         </div>
@@ -1007,6 +1014,7 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
                 onChange={(e) => {
                   const next = { ...attrs, packaging: { ...pkg, cny_price: Number(e.target.value) } };
                   setV({ ...v, attributes: next });
+                  recalcMarketPrices(tierPrices, next.packaging);
                 }}
               />
             </div>
@@ -1018,6 +1026,7 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
                   onCheckedChange={(val) => {
                     const next = { ...attrs, packaging: { ...pkg, required: !!val } };
                     setV({ ...v, attributes: next });
+                    recalcMarketPrices(tierPrices, next.packaging);
                   }}
                 />
               </label>
@@ -1076,7 +1085,7 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
           <div className="grid grid-cols-1 gap-4">
           {(["AR", "COL"] as const).map((mk) => (
             <Card key={mk} className="p-3">
-              <h5 className="text-sm font-medium mb-2">{mk}</h5>
+              <h5 className="text-sm font-medium mb-2">{mk === 'AR' ? 'AR (USD)' : 'COL (COP)'}</h5>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {markets[mk].map((t, i) => (
                   <div key={i} className="space-y-2">
@@ -1089,10 +1098,10 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
                           value={t.percent}
                           onChange={(e) => {
                             const val = Number(e.target.value);
-                            const base = tierPrices[i] ?? 0;
+                            const base = effectiveBase[i] ?? 0;
                             const rate = mk === 'AR' ? settingsData.arRate : settingsData.coRate;
                             const price = computeMarketPrice(base, val, rate);
-                            const next = calcEnsureMarkets(v.attributes?.markets, tierPrices, settingsData);
+                            const next = calcEnsureMarkets(v.attributes?.markets, effectiveBase, settingsData);
                             next[mk][i] = { percent: val, price };
                             setV({ ...v, attributes: { ...attrs, markets: next } });
                           }}
