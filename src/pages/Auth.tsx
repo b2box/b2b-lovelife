@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import HCaptcha from "@hcaptcha/react-hcaptcha";
+// import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 const Auth = () => {
   const [mode, setMode] = useState<"login" | "signup">("login");
@@ -14,7 +14,8 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const captchaRef = useRef<HCaptcha>(null);
+  // const captchaRef = useRef<HCaptcha>(null);
+  const captchaRef = useRef<any>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -120,16 +121,12 @@ const Auth = () => {
                 <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
               </div>
               
-              {/* hCaptcha - Solo mostrar en registro o si hay errores */}
-              <div className="flex justify-center">
-                <HCaptcha
-                  ref={captchaRef}
-                  sitekey={HCAPTCHA_SITE_KEY}
-                  onVerify={onCaptchaVerify}
-                  onExpire={onCaptchaExpire}
-                  theme="light"
-                />
-              </div>
+              {/* hCaptcha temporalmente deshabilitado */}
+              {false && (
+                <div className="flex justify-center">
+                  <div>Captcha placeholder</div>
+                </div>
+              )}
               
               <Button type="submit" className="w-full" variant="brand" disabled={loading}>
                 {loading ? "Procesando…" : mode === "login" ? "Iniciar sesión" : "Registrarse"}
