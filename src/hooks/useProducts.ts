@@ -82,22 +82,23 @@ export const useProducts = () => {
         .select(`
           *,
           product_images(id, url, alt, sort_order),
-          product_variants!inner(
+          product_variants(
             id, name, sku, active, stock, sort_order, 
             length_cm, width_cm, height_cm, weight_kg,
             is_clothing, has_battery, created_at, updated_at,
             product_variant_images(id, url, alt, sort_order)
           ),
-          product_categories!inner(
+          product_categories(
             categories(id, name, slug)
           )
         `)
         .eq('active', true)
         .eq('status', 'published')
-        .eq('product_variants.active', true)
         .order('created_at', { ascending: false });
 
       if (productsError) throw productsError;
+
+      console.log("Raw products data from DB:", productsData?.length, productsData);
 
       // Fetch price tiers for all variants
       const variantIds = productsData?.flatMap(p => p.product_variants?.map(v => v.id)) || [];
@@ -124,6 +125,7 @@ export const useProducts = () => {
         )
       })) || [];
 
+      console.log("Transformed products:", transformedProducts.length, transformedProducts);
       setProducts(transformedProducts);
     } catch (err) {
       console.error('Error fetching products:', err);

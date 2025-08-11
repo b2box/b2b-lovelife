@@ -34,7 +34,7 @@ const ProductCard = ({ product }: Props) => {
             src={product.image || "/placeholder.svg"}
             alt={product.name}
             loading="lazy"
-            className="aspect-square w-full rounded-xl object-cover"
+            className="aspect-square w-full rounded-xl object-cover max-w-full h-full object-center"
             onError={(e) => {
               e.currentTarget.src = "/placeholder.svg";
             }}
