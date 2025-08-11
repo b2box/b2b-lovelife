@@ -14,6 +14,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Package, Languages, Truck, Layers, UserSquare, Settings, Tag, Shirt, Smartphone, Sparkles, HeartPulse, Watch, Gem, Gift, Calendar, PartyPopper, PawPrint, Home, Dumbbell, Briefcase, PencilRuler, Plug, Car, Wrench } from "lucide-react";
+import { usePricingSettings } from "@/hooks/usePricingSettings";
+import { ensureMarkets as calcEnsureMarkets, recomputeMarkets, computeMarketPrice, computePercentFromPrice } from "@/lib/pricing";
 
 export type AdminProduct = {
   id?: string;
@@ -777,7 +779,7 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
   const [saving, setSaving] = useState(false);
   const [imgVersion, setImgVersion] = useState(0);
   const [tierPrices, setTierPrices] = useState<number[]>([0, 0, 0]);
-  const [pricingSettings, setPricingSettings] = useState<{ ar_cny_to_usd: number; co_cny_to_cop: number; ar: number[]; co: number[] } | null>(null);
+  const { data: pricing } = usePricingSettings();
 
   // Load CNY base prices per tier for calculations in markets
   useEffect(() => {
@@ -802,43 +804,15 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
     loadTierPrices();
   }, [variant.id]);
 
-  // Load pricing settings (exchange rates + default increments)
-  useEffect(() => {
-    const loadSettings = async () => {
-      const { data } = await (supabase as any)
-        .from("pricing_settings")
-        .select("*")
-        .limit(1)
-        .maybeSingle();
-      if (data) {
-        setPricingSettings({
-          ar_cny_to_usd: Number(data.ar_cny_to_usd) || 1,
-          co_cny_to_cop: Number(data.co_cny_to_cop) || 1,
-          ar: [Number(data.ar_tier1_pct) || 300, Number(data.ar_tier2_pct) || 300, Number(data.ar_tier3_pct) || 300],
-          co: [Number(data.co_tier1_pct) || 200, Number(data.co_tier2_pct) || 200, Number(data.co_tier3_pct) || 200],
-        });
-      } else {
-        setPricingSettings({ ar_cny_to_usd: 1, co_cny_to_cop: 1, ar: [300,300,300], co: [200,200,200] });
-      }
-    };
-    loadSettings();
-  }, []);
 
   const recalcMarketPrices = (baseArr: number[]) => {
-    const current = v.attributes?.markets;
-    const next = ensureMarkets(current, baseArr);
-    const arRate = pricingSettings?.ar_cny_to_usd ?? 1;
-    const coRate = pricingSettings?.co_cny_to_cop ?? 1;
-    const arDefaults = pricingSettings?.ar ?? [300,300,300];
-    const coDefaults = pricingSettings?.co ?? [200,200,200];
-    (['AR','COL'] as const).forEach((mk) => {
-      for (let i = 0; i < 3; i++) {
-        const base = baseArr[i] ?? 0;
-        const percent = next[mk][i]?.percent ?? (mk === 'AR' ? arDefaults[i] : coDefaults[i]);
-        const rate = mk === 'AR' ? arRate : coRate;
-        next[mk][i] = { percent, price: Number((base * (1 + (percent || 0) / 100) * rate).toFixed(2)) };
-      }
-    });
+    const settingsData = {
+      arRate: pricing?.arRate ?? 1,
+      coRate: pricing?.coRate ?? 1,
+      arPercents: pricing?.arPercents ?? [300, 300, 300],
+      coPercents: pricing?.coPercents ?? [200, 200, 200],
+    };
+    const next = recomputeMarkets(v.attributes?.markets, baseArr, settingsData);
     setV((prev) => ({ ...prev, attributes: { ...(prev.attributes || {}), markets: next } }));
   };
 
@@ -853,9 +827,9 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
   }, [tierPrices]);
 
   useEffect(() => {
-    if (pricingSettings) recalcMarketPrices(tierPrices);
+    if (pricing) recalcMarketPrices(tierPrices);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pricingSettings]);
+  }, [pricing]);
 
   const onImageFiles = async (files: FileList | null) => {
     if (!files) return;
@@ -922,23 +896,13 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
 
   const attrs: any = v.attributes ?? {};
   const pkg = attrs.packaging ?? { packed: true, cny_price: 0, required: false };
-  const ensureMarkets = (m?: any, base?: number[]) => ({
-    AR: Array.from({ length: 3 }, (_, i) => {
-      const defaultPct = pricingSettings?.ar?.[i] ?? 300;
-      const percent = m?.AR?.[i]?.percent ?? defaultPct;
-      const rate = pricingSettings?.ar_cny_to_usd ?? 1;
-      const price = m?.AR?.[i]?.price ?? Number(((base?.[i] ?? 0) * (1 + percent / 100) * rate).toFixed(2));
-      return { percent, price };
-    }),
-    COL: Array.from({ length: 3 }, (_, i) => {
-      const defaultPct = pricingSettings?.co?.[i] ?? 200;
-      const percent = m?.COL?.[i]?.percent ?? defaultPct;
-      const rate = pricingSettings?.co_cny_to_cop ?? 1;
-      const price = m?.COL?.[i]?.price ?? Number(((base?.[i] ?? 0) * (1 + percent / 100) * rate).toFixed(2));
-      return { percent, price };
-    }),
-  });
-  const markets = ensureMarkets(attrs.markets, tierPrices);
+  const settingsData = {
+    arRate: pricing?.arRate ?? 1,
+    coRate: pricing?.coRate ?? 1,
+    arPercents: pricing?.arPercents ?? [300, 300, 300],
+    coPercents: pricing?.coPercents ?? [200, 200, 200],
+  };
+  const markets = calcEnsureMarkets(attrs.markets, tierPrices, settingsData);
   const onVideoFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -1126,9 +1090,9 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
                           onChange={(e) => {
                             const val = Number(e.target.value);
                             const base = tierPrices[i] ?? 0;
-                            const rate = mk === 'AR' ? (pricingSettings?.ar_cny_to_usd ?? 1) : (pricingSettings?.co_cny_to_cop ?? 1);
-                            const price = Number((base * (1 + (val || 0) / 100) * rate).toFixed(2));
-                            const next = ensureMarkets(v.attributes?.markets, tierPrices);
+                            const rate = mk === 'AR' ? settingsData.arRate : settingsData.coRate;
+                            const price = computeMarketPrice(base, val, rate);
+                            const next = calcEnsureMarkets(v.attributes?.markets, tierPrices, settingsData);
                             next[mk][i] = { percent: val, price };
                             setV({ ...v, attributes: { ...attrs, markets: next } });
                           }}
@@ -1142,9 +1106,9 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
                           onChange={(e) => {
                             const priceVal = Number(e.target.value);
                             const base = tierPrices[i] ?? 0;
-                            const rate = mk === 'AR' ? (pricingSettings?.ar_cny_to_usd ?? 1) : (pricingSettings?.co_cny_to_cop ?? 1);
-                            const percent = base > 0 && rate > 0 ? Number((((priceVal || 0) / (base * rate) - 1) * 100).toFixed(2)) : 0;
-                            const next = ensureMarkets(v.attributes?.markets, tierPrices);
+                            const rate = mk === 'AR' ? settingsData.arRate : settingsData.coRate;
+                            const percent = computePercentFromPrice(priceVal || 0, base, rate);
+                            const next = calcEnsureMarkets(v.attributes?.markets, tierPrices, settingsData);
                             next[mk][i] = { percent, price: priceVal };
                             setV({ ...v, attributes: { ...attrs, markets: next } });
                           }}
