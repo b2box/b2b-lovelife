@@ -190,9 +190,9 @@ const ProductsPanel: React.FC = () => {
         .from("products")
         .select(`
           *,
-          product_variants:product_variants(
+          product_variants(
             *,
-            product_variant_images:product_variant_images(*)
+            product_variant_images(*)
           )
         `)
         .eq("id", product.id)
