@@ -5,7 +5,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Package, Copy, GripVertical } from "lucide-react";
+import { Package, Copy, GripVertical, Trash2 } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
 import {
   DndContext,
   closestCenter,
@@ -59,6 +61,7 @@ interface SortableVariantRowProps {
   onEdit: (variant: AdminVariant) => void;
   onToggleActive: (id: string, active: boolean) => void;
   onDuplicate: (variant: AdminVariant) => void;
+  onDelete: (variant: AdminVariant) => void;
 }
 
 const SortableVariantRow: React.FC<SortableVariantRowProps> = ({
@@ -66,8 +69,11 @@ const SortableVariantRow: React.FC<SortableVariantRowProps> = ({
   onEdit,
   onToggleActive,
   onDuplicate,
+  onDelete,
 }) => {
   const [thumbnail, setThumbnail] = useState<string | null>(null);
+  const [deleteText, setDeleteText] = useState("");
+  const randomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
   const {
     attributes,
     listeners,
@@ -135,13 +141,38 @@ const SortableVariantRow: React.FC<SortableVariantRowProps> = ({
           <Button size="sm" variant="outline" onClick={() => onEdit(variant)}>
             Editar
           </Button>
-          <Button 
-            size="sm" 
-            variant="outline" 
-            onClick={() => onDuplicate(variant)}
-          >
+          <Button size="sm" variant="outline" onClick={() => onDuplicate(variant)}>
             <Copy className="h-4 w-4" />
           </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button size="sm" variant="destructive">
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Eliminar Variante</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Para confirmar, escribe: <strong>{randomCode}</strong>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <Input 
+                value={deleteText} 
+                onChange={(e) => setDeleteText(e.target.value)} 
+                placeholder={`Escribe ${randomCode}`} 
+              />
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setDeleteText("")}>Cancelar</AlertDialogCancel>
+                <AlertDialogAction 
+                  disabled={deleteText !== randomCode}
+                  onClick={() => onDelete(variant)}
+                >
+                  Eliminar
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </TableCell>
     </TableRow>
@@ -291,6 +322,17 @@ export const DraggableVariantsEditor: React.FC<DraggableVariantsEditorProps> = (
     setVariants((prev) => prev.map((x) => (x.id === id ? { ...x, active: val } : x)));
   };
 
+  const deleteVariant = async (variant: AdminVariant) => {
+    const { error } = await supabase.from('product_variants').delete().eq('id', variant.id);
+    if (error) {
+      console.error(error);
+      toast({ title: 'Error', description: 'No se pudo eliminar la variante.', variant: 'destructive' });
+      return;
+    }
+    setVariants((prev) => prev.filter((x) => x.id !== variant.id));
+    toast({ title: 'Eliminado', description: 'Variante eliminada correctamente.' });
+  };
+
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -376,6 +418,7 @@ export const DraggableVariantsEditor: React.FC<DraggableVariantsEditorProps> = (
                       onEdit={onVariantEdit}
                       onToggleActive={toggleActive}
                       onDuplicate={duplicateVariant}
+                      onDelete={deleteVariant}
                     />
                   ))}
                 </SortableContext>

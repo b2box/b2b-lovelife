@@ -832,10 +832,56 @@ export default ProductEditor;
 
       <Dialog open={!!edit} onOpenChange={(o) => !o && setEdit(null)}>
         <DialogContent className="w-[95vw] max-w-5xl max-h-[85vh] overflow-y-auto">
-          {edit && <VariantCard variant={edit} onChanged={() => { setEdit(null); }} />}
+          {edit && <VariantCard variant={edit} onChanged={() => setEdit(null)} />}
         </DialogContent>
       </Dialog>
     </>
+  );
+};
+
+const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = ({ variant, onChanged }) => {
+  const { toast } = useToast();
+  const [v, setV] = useState<AdminVariant>(variant);
+  const [saving, setSaving] = useState(false);
+
+  const save = async () => {
+    setSaving(true);
+    try {
+      const { error } = await supabase.from("product_variants").update({
+        name: v.name,
+        sku: v.sku,
+        stock: v.stock,
+        active: v.active,
+      }).eq("id", v.id);
+      if (error) throw error;
+      toast({ title: "Guardado", description: "Variante guardada correctamente." });
+      onChanged();
+    } catch (e) {
+      console.error(e);
+      toast({ title: "Error", description: "No se pudo guardar la variante.", variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  useEffect(() => setV(variant), [variant]);
+
+  return (
+    <Card className="p-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <Label>Título</Label>
+          <Input value={v.name ?? ""} onChange={(e) => setV({ ...v, name: e.target.value })} />
+        </div>
+        <div>
+          <Label>SKU</Label>
+          <Input value={v.sku ?? ""} onChange={(e) => setV({ ...v, sku: e.target.value })} />
+        </div>
+      </div>
+      <div className="flex justify-end gap-2 mt-4">
+        <Button onClick={save} disabled={saving}>{saving ? "Guardando…" : "Guardar"}</Button>
+      </div>
+    </Card>
   );
 };
 
