@@ -71,12 +71,17 @@ const InfiniteProducts = ({ publicMode = false }: { publicMode?: boolean }) => {
   useEffect(() => {
     if (categoryProducts.length === 0) return;
     setPage(1);
-    setItems(publicMode ? [...makePage(categoryProducts, 0), ...makePage(categoryProducts, 1)] : makePage(categoryProducts, 0));
+    setItems(publicMode ? categoryProducts.slice(0, PAGE_SIZE * 2) : categoryProducts.slice(0, PAGE_SIZE));
   }, [selectedCategoryId, categoryProducts, publicMode]);
 
   useEffect(() => {
     if (page <= 1 || categoryProducts.length === 0) return;
-    setItems((prev) => [...prev, ...makePage(categoryProducts, page - 1)]);
+    const startIndex = (page - 1) * PAGE_SIZE;
+    const endIndex = page * PAGE_SIZE;
+    const newItems = categoryProducts.slice(startIndex, endIndex);
+    if (newItems.length > 0) {
+      setItems((prev) => [...prev, ...newItems]);
+    }
   }, [page, categoryProducts]);
 
   const itemsWithAds = useMemo(() => {
@@ -117,7 +122,7 @@ const InfiniteProducts = ({ publicMode = false }: { publicMode?: boolean }) => {
             >
               {nodes.map((node, i) =>
                 node.kind === "product" ? (
-                  <ProductCard key={node.data.id + i} product={node.data} />
+                  <ProductCard key={node.data.id} product={node.data} />
                 ) : (
                   <AdCard key={(node as any).key} variant={(node as any).variant} />
                 )
@@ -172,12 +177,6 @@ const InfiniteProducts = ({ publicMode = false }: { publicMode?: boolean }) => {
   );
 };
 
-function makePage(base: Product[], pageIndex: number): Product[] {
-  return Array.from({ length: PAGE_SIZE }, (_, i) => {
-    const b = base[i % base.length];
-    return { ...b, id: `inf-${pageIndex}-${i}` };
-  });
-}
 
 function AdCard({ variant }: { variant: "eye" | "viral" }) {
   const src = variant === "eye" ? AD_EYE : AD_VIRAL;
