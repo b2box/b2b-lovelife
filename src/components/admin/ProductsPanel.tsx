@@ -43,7 +43,7 @@ async function fetchProducts(): Promise<Product[]> {
     .select(`
       id,name,slug,brand,description,status,subtitle,bx_code,verified_product,verified_video,
       material,discountable,agent_profile_id,supplier_link,supplier_model,type,collection,active,
-      product_variants!inner(
+      product_variants(
         id,
         product_variant_images(url, sort_order)
       )
