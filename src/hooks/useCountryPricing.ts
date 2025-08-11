@@ -68,7 +68,7 @@ export function useCountryPricing() {
     if (targetCountry === "AR") {
       return `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
     } else if (targetCountry === "CO") {
-      return `$${price.toLocaleString('es-CO', { maximumFractionDigits: 0 })} COP`;
+      return `$${Math.round(price).toLocaleString('es-CO')} COP`;
     }
     
     return `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
