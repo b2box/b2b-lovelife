@@ -355,7 +355,6 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
               <TabsTrigger value="multilingual" className="gap-2"><Languages size={16} /> Contenido</TabsTrigger>
               <TabsTrigger value="supplier" className="gap-2"><Truck size={16} /> Proveedor</TabsTrigger>
               <TabsTrigger value="variantes" className="gap-2"><Layers size={16} /> Variantes</TabsTrigger>
-              <TabsTrigger value="pricing" className="gap-2"><Settings size={16} /> Pricing</TabsTrigger>
               <TabsTrigger value="media" className="gap-2"><Video size={16} /> Media</TabsTrigger>
               {userRole === 'admin' && <TabsTrigger value="agente" className="gap-2"><UserSquare size={16} /> Agente</TabsTrigger>}
               {userRole === 'admin' && <TabsTrigger value="status" className="gap-2"><Settings size={16} /> Status</TabsTrigger>}
@@ -568,26 +567,6 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
               </div>
             </TabsContent>
 
-            <TabsContent value="pricing" className="space-y-4">
-              {form.id ? (
-                <div className="space-y-4">
-                  <p className="text-sm text-muted-foreground">
-                    El pricing se gestiona a nivel de variante. Selecciona una variante en la pestaña "Variantes" para configurar sus precios.
-                  </p>
-                  <DraggableVariantsEditor 
-                    productId={form.id!} 
-                    onVariantEdit={(variant) => setEdit(variant)}
-                  />
-                </div>
-              ) : (
-                <Card className="p-4">
-                  <p className="text-sm text-muted-foreground mb-3">Guarda el producto primero para poder gestionar precios.</p>
-                  <Button onClick={saveProduct} disabled={saving || !form.name.trim()}>
-                    {saving ? "Guardando…" : "Guardar producto"}
-                  </Button>
-                </Card>
-              )}
-            </TabsContent>
 
             {userRole === 'admin' && (
               <TabsContent value="agente" className="space-y-4">

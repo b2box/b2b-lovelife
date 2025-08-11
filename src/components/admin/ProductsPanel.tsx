@@ -1,84 +1,174 @@
 
-import React from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Copy, Trash2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-
-import ProductEditor from "./ProductEditor";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { Edit, Trash2, Copy, Search, Filter } from "lucide-react";
+import { toast } from "sonner";
+import ProductEditor, { AdminProduct } from "./ProductEditor";
 
 type Product = {
   id: string;
   name: string;
-  slug: string | null;
-  brand: string | null;
-  description: string | null;
-  status: string | null;
-  subtitle: string | null;
-  bx_code: string | null;
-  verified_product: boolean;
-  verified_video: boolean;
-  material: string | null;
-  discountable: boolean;
-  agent_profile_id: string | null;
-  supplier_link: string | null;
-  supplier_model: string | null;
-  type: string | null;
-  collection: string | null;
+  bx_code: string;
+  slug: string;
+  status: "draft" | "published";
+  collection: string;
+  created_at: string;
+  updated_at: string;
   active: boolean;
-  product_variants?: {
+  product_variants: Array<{
     id: string;
-    product_variant_images: { url: string; sort_order: number }[];
-  }[];
+    name: string;
+    sku: string;
+    product_variant_images: Array<{
+      id: string;
+      url: string;
+      alt: string;
+      sort_order: number;
+    }>;
+  }>;
+  product_categories: Array<{
+    category_id: string;
+    categories: {
+      id: string;
+      name: string;
+    };
+  }>;
 };
 
-async function fetchProducts(): Promise<Product[]> {
-  const { data, error } = await supabase
+const ITEMS_PER_PAGE = 50;
+
+const fetchProducts = async (page: number, search: string, statusFilter: string, categoryFilter: string, collectionFilter: string) => {
+  const offset = (page - 1) * ITEMS_PER_PAGE;
+  
+  let query = supabase
     .from("products")
     .select(`
-      id,name,slug,brand,description,status,subtitle,bx_code,verified_product,verified_video,
-      material,discountable,agent_profile_id,supplier_link,supplier_model,type,collection,active,
-      product_variants(
+      id,
+      name,
+      bx_code,
+      slug,
+      status,
+      collection,
+      created_at,
+      updated_at,
+      active,
+      product_variants:product_variants(
         id,
-        product_variant_images(url, sort_order)
+        name,
+        sku,
+        product_variant_images:product_variant_images(
+          id,
+          url,
+          alt,
+          sort_order
+        )
+      ),
+      product_categories:product_categories(
+        category_id,
+        categories:categories(id, name)
       )
-    `)
+    `, { count: 'exact' })
     .order("updated_at", { ascending: false })
-    .limit(50);
-  if (error) throw error;
-  return data as unknown as Product[];
-}
+    .range(offset, offset + ITEMS_PER_PAGE - 1);
+
+  // Apply filters
+  if (search.trim()) {
+    query = query.or(`name.ilike.%${search}%,bx_code.ilike.%${search}%`);
+  }
+  
+  if (statusFilter && statusFilter !== "all") {
+    query = query.eq("status", statusFilter as "draft" | "published");
+  }
+  
+  if (collectionFilter && collectionFilter !== "all") {
+    query = query.eq("collection", collectionFilter);
+  }
+
+  if (categoryFilter && categoryFilter !== "all") {
+    const { data: productIds } = await supabase
+      .from("product_categories")
+      .select("product_id")
+      .eq("category_id", categoryFilter);
+    
+    if (productIds && productIds.length > 0) {
+      query = query.in("id", productIds.map(pc => pc.product_id));
+    } else {
+      // No products in this category
+      return { products: [], totalCount: 0 };
+    }
+  }
+
+  const { data, error, count } = await query;
+
+  if (error) {
+    console.error("Error fetching products:", error);
+    throw new Error("Error al cargar productos");
+  }
+
+  return { 
+    products: data as Product[] || [], 
+    totalCount: count || 0 
+  };
+};
+
+const fetchFilterOptions = async () => {
+  const [categoriesRes, collectionsRes] = await Promise.all([
+    supabase.from("categories").select("id, name").order("name"),
+    supabase.from("products").select("collection").not("collection", "is", null).order("collection")
+  ]);
+
+  const categories = categoriesRes.data || [];
+  const collections = [...new Set((collectionsRes.data || []).map(p => p.collection).filter(Boolean))];
+
+  return { categories, collections };
+};
 
 
 const ProductsPanel: React.FC = () => {
-  const { toast } = useToast();
-  const qc = useQueryClient();
-  const [editorOpen, setEditorOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState<Product | null>(null);
-  const [deleteText, setDeleteText] = React.useState("");
-  const [randomCode] = React.useState(() => Math.random().toString(36).substring(2, 8).toUpperCase());
+  const [editingProduct, setEditingProduct] = useState<AdminProduct | null>(null);
+  const [showEditor, setShowEditor] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<Product | null>(null);
+  
+  // Filters and search
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [collectionFilter, setCollectionFilter] = useState("all");
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["admin", "products"],
-    queryFn: fetchProducts,
+  const { data: filterOptions } = useQuery({
+    queryKey: ["filter-options"],
+    queryFn: fetchFilterOptions,
   });
+
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["products", currentPage, searchTerm, statusFilter, categoryFilter, collectionFilter],
+    queryFn: () => fetchProducts(currentPage, searchTerm, statusFilter, categoryFilter, collectionFilter),
+  });
+
+  const products = data?.products || [];
+  const totalPages = Math.ceil((data?.totalCount || 0) / ITEMS_PER_PAGE);
 
 
   const duplicateProduct = async (product: Product) => {
     try {
-      // 1. Obtener el producto completo con todas sus variantes e imágenes
+      // Fetch complete product data with variants and images
       const { data: fullProduct, error: fetchError } = await supabase
         .from("products")
         .select(`
           *,
-          product_variants(
+          product_variants:product_variants(
             *,
-            product_variant_images(*)
+            product_variant_images:product_variant_images(*)
           )
         `)
         .eq("id", product.id)
@@ -87,221 +177,324 @@ const ProductsPanel: React.FC = () => {
       if (fetchError) throw fetchError;
       if (!fullProduct) throw new Error("Producto no encontrado");
 
-      // Generar un nuevo BX_CODE único
-      const timestamp = Date.now().toString().slice(-6);
-      const newBxCode = fullProduct.bx_code ? `${fullProduct.bx_code}_${timestamp}` : null;
+      // Create unique bx_code by appending timestamp
+      const timestamp = Date.now();
+      const newBxCode = fullProduct.bx_code ? `${fullProduct.bx_code}-${timestamp}` : `DUP-${timestamp}`;
 
-      // 2. Duplicar el producto padre
+      // Duplicate the main product
       const { data: newProduct, error: productError } = await supabase
         .from("products")
         .insert({
+          ...fullProduct,
+          id: undefined,
           name: `${fullProduct.name} (Copia)`,
-          brand: fullProduct.brand,
-          description: fullProduct.description,
-          status: 'draft',
-          subtitle: fullProduct.subtitle,
-          material: fullProduct.material,
-          discountable: fullProduct.discountable,
-          supplier_link: fullProduct.supplier_link,
-          supplier_model: fullProduct.supplier_model,
-          type: fullProduct.type,
-          collection: fullProduct.collection,
-          active: false,
+          slug: `${fullProduct.slug}-copia-${timestamp}`,
           bx_code: newBxCode,
-          verified_product: false,
-          verified_video: false,
-          agent_profile_id: fullProduct.agent_profile_id,
-          video_url: fullProduct.video_url,
+          created_at: undefined,
+          updated_at: undefined,
         })
         .select("id")
         .maybeSingle();
-      
+
       if (productError) throw productError;
-      if (!newProduct) throw new Error("Error al crear el producto duplicado");
+      if (!newProduct?.id) throw new Error("Error al crear producto duplicado");
 
-      // 3. Duplicar las variantes si existen
-      if (fullProduct.product_variants && fullProduct.product_variants.length > 0) {
-        for (const variant of fullProduct.product_variants) {
-          const { data: newVariant, error: variantError } = await supabase
-            .from("product_variants")
+      // Duplicate variants and their images
+      for (const variant of fullProduct.product_variants || []) {
+        const { data: newVariant, error: variantError } = await supabase
+          .from("product_variants")
+          .insert({
+            ...variant,
+            id: undefined,
+            product_id: newProduct.id,
+            created_at: undefined,
+            updated_at: undefined,
+          })
+          .select("id")
+          .maybeSingle();
+
+        if (variantError) {
+          console.error("Error duplicating variant:", variantError);
+          continue;
+        }
+
+        if (!newVariant?.id) continue;
+
+        // Duplicate variant images
+        for (const image of variant.product_variant_images || []) {
+          const { error: imageError } = await supabase
+            .from("product_variant_images")
             .insert({
-              product_id: newProduct.id,
-              name: variant.name,
-              sku: variant.sku,
-              price: variant.price,
-              currency: variant.currency,
-              stock: 0, // Reset stock for duplicated variants
-              active: variant.active,
-              attributes: variant.attributes,
-              sort_order: variant.sort_order,
-              option_name: variant.option_name,
-              is_clothing: variant.is_clothing,
-              length_cm: variant.length_cm,
-              width_cm: variant.width_cm,
-              height_cm: variant.height_cm,
-              weight_kg: variant.weight_kg,
-              box_length_cm: variant.box_length_cm,
-              box_width_cm: variant.box_width_cm,
-              box_height_cm: variant.box_height_cm,
-              box_weight_kg: variant.box_weight_kg,
-              pcs_per_carton: variant.pcs_per_carton,
-              cbm_per_carton: variant.cbm_per_carton,
-              has_battery: variant.has_battery,
-              has_individual_packaging: (variant as any).has_individual_packaging || false,
-              individual_packaging_price_cny: (variant as any).individual_packaging_price_cny || null,
-              individual_packaging_required: (variant as any).individual_packaging_required || false,
-            })
-            .select("id")
-            .maybeSingle();
-
-          if (variantError) throw variantError;
-          if (!newVariant) throw new Error("Error al crear la variante duplicada");
-
-          // 4. Duplicar las imágenes de la variante si existen
-          if (variant.product_variant_images && variant.product_variant_images.length > 0) {
-            const variantImages = variant.product_variant_images.map(img => ({
+              ...image,
+              id: undefined,
               product_variant_id: newVariant.id,
-              url: img.url,
-              alt: img.alt,
-              sort_order: img.sort_order,
-            }));
+              created_at: undefined,
+            });
 
-            const { error: imagesError } = await supabase
-              .from("product_variant_images")
-              .insert(variantImages);
-
-            if (imagesError) throw imagesError;
+          if (imageError) {
+            console.error("Error duplicating variant image:", imageError);
           }
         }
       }
 
-      toast({ title: "Duplicado", description: "Producto y variantes duplicados correctamente." });
-      qc.invalidateQueries({ queryKey: ["admin", "products"] });
-    } catch (e) {
-      console.error(e);
-      toast({ title: "Error", description: "No se pudo duplicar el producto.", variant: "destructive" });
+      toast.success("Producto duplicado correctamente");
+      refetch();
+    } catch (error: any) {
+      console.error("Error duplicating product:", error);
+      toast.error("No se pudo duplicar el producto.");
     }
   };
 
   const deleteProduct = async (product: Product) => {
     try {
-      const { error } = await supabase
-        .from("products")
-        .delete()
-        .eq("id", product.id);
-      
+      const { error } = await supabase.from("products").delete().eq("id", product.id);
       if (error) throw error;
-      toast({ title: "Eliminado", description: "Producto eliminado correctamente." });
-      qc.invalidateQueries({ queryKey: ["admin", "products"] });
-      setDeleteText("");
-    } catch (e) {
-      console.error(e);
-      toast({ title: "Error", description: "No se pudo eliminar el producto.", variant: "destructive" });
+      toast.success("Producto eliminado");
+      setDeleteConfirm(null);
+      refetch();
+    } catch (error: any) {
+      console.error("Error deleting product:", error);
+      toast.error("No se pudo eliminar el producto.");
     }
   };
 
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
+  };
+
+  const handleFilterChange = (type: string, value: string) => {
+    if (type === "status") setStatusFilter(value);
+    else if (type === "category") setCategoryFilter(value);
+    else if (type === "collection") setCollectionFilter(value);
+    setCurrentPage(1);
+  };
+
+  const getProductThumbnail = (product: Product) => {
+    const firstVariant = product.product_variants?.[0];
+    const firstImage = firstVariant?.product_variant_images?.[0];
+    return firstImage?.url || "/placeholder.svg";
+  };
+
+  const getProductCategories = (product: Product) => {
+    return product.product_categories?.map(pc => pc.categories?.name).filter(Boolean).join(", ") || "-";
+  };
+
   return (
-    <Card className="p-4 md:p-6 card-glass">
-      <div className="flex items-center justify-between mb-4">
+    <Card className="p-6 card-glass">
+      <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-semibold">Productos</h2>
-        <Button size="sm" variant="secondary" onClick={() => { setSelected(null); setEditorOpen(true); }}>Nuevo</Button>
+        <Button onClick={() => { setEditingProduct(null); setShowEditor(true); }}>
+          Nuevo producto
+        </Button>
       </div>
-      {isLoading && <p>Cargando…</p>}
-      {error && <p className="text-destructive">Error al cargar productos.</p>}
-      {!isLoading && data && (
-        <div className="overflow-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Thumbnail</TableHead>
-                <TableHead>BX CODE</TableHead>
-                <TableHead>Nombre</TableHead>
-                <TableHead>Acciones</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {data.map((p) => (
-                <TableRow key={p.id}>
-                  <TableCell>
-                    {(() => {
-                      // Get first variant's first image
-                      const firstVariant = (p.product_variants ?? [])[0];
-                      const img = firstVariant 
-                        ? (firstVariant.product_variant_images ?? []).sort((a, b) => a.sort_order - b.sort_order)[0]
-                        : null;
-                      return img ? (
-                        <img
-                          src={img.url}
-                          alt={`Miniatura de ${p.name}`}
-                          className="h-12 w-12 rounded-md object-cover"
-                          loading="lazy"
-                        />
-                      ) : (
-                        <div className="h-12 w-12 rounded-md bg-muted flex items-center justify-center" aria-label="Sin imagen">
-                          <span className="text-xs text-muted-foreground">Sin imagen</span>
-                        </div>
-                      );
-                    })()}
-                  </TableCell>
-                  <TableCell className="font-mono text-xs">{p.bx_code ?? "-"}</TableCell>
-                  <TableCell>{p.name}</TableCell>
-                  <TableCell className="space-x-2">
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => { setSelected(p as any); setEditorOpen(true); }}
-                    >
-                      Editar
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => duplicateProduct(p)}
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button size="sm" variant="destructive">
+
+      {/* Search and Filters */}
+      <div className="space-y-4 mb-6">
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar por nombre, BX CODE o PA CODE..."
+              value={searchTerm}
+              onChange={(e) => handleSearch(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <Filter className="h-4 w-4 text-muted-foreground" />
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Select value={statusFilter} onValueChange={(value) => handleFilterChange("status", value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Estado" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos los estados</SelectItem>
+              <SelectItem value="draft">Borrador</SelectItem>
+              <SelectItem value="published">Publicado</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={categoryFilter} onValueChange={(value) => handleFilterChange("category", value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Categoría" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas las categorías</SelectItem>
+              {filterOptions?.categories.map((category) => (
+                <SelectItem key={category.id} value={category.id}>
+                  {category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={collectionFilter} onValueChange={(value) => handleFilterChange("collection", value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Colección" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas las colecciones</SelectItem>
+              {filterOptions?.collections.map((collection) => (
+                <SelectItem key={collection} value={collection}>
+                  {collection}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {/* Products Table */}
+      {isLoading ? (
+        <div className="text-center py-8">Cargando productos...</div>
+      ) : (
+        <div className="space-y-4">
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-16">Imagen</TableHead>
+                  <TableHead>BX CODE</TableHead>
+                  <TableHead>Nombre</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead>Categorías</TableHead>
+                  <TableHead>Colección</TableHead>
+                  <TableHead className="text-right">Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {products.map((product) => (
+                  <TableRow key={product.id}>
+                    <TableCell>
+                      <img
+                        src={getProductThumbnail(product)}
+                        alt={product.name}
+                        className="w-10 h-10 object-cover rounded"
+                      />
+                    </TableCell>
+                    <TableCell className="font-mono text-sm">
+                      {product.bx_code || "-"}
+                    </TableCell>
+                    <TableCell className="font-medium">{product.name}</TableCell>
+                    <TableCell>
+                      <Badge variant={product.status === "published" ? "default" : "secondary"}>
+                        {product.status === "published" ? "Publicado" : "Borrador"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {getProductCategories(product)}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {product.collection || "-"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setEditingProduct(product as AdminProduct);
+                            setShowEditor(true);
+                          }}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => duplicateProduct(product)}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setDeleteConfirm(product)}
+                        >
                           <Trash2 className="h-4 w-4" />
                         </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Eliminar Producto</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Para confirmar, escribe: <strong>{randomCode}</strong>
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <Input 
-                          value={deleteText} 
-                          onChange={(e) => setDeleteText(e.target.value)} 
-                          placeholder={`Escribe ${randomCode}`} 
-                        />
-                        <AlertDialogFooter>
-                          <AlertDialogCancel onClick={() => setDeleteText("")}>Cancelar</AlertDialogCancel>
-                          <AlertDialogAction 
-                            disabled={deleteText !== randomCode}
-                            onClick={() => deleteProduct(p)}
-                          >
-                            Eliminar
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious 
+                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+                
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  const pageNum = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
+                  if (pageNum > totalPages) return null;
+                  
+                  return (
+                    <PaginationItem key={pageNum}>
+                      <PaginationLink
+                        onClick={() => setCurrentPage(pageNum)}
+                        isActive={currentPage === pageNum}
+                        className="cursor-pointer"
+                      >
+                        {pageNum}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                })}
+                
+                <PaginationItem>
+                  <PaginationNext 
+                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          )}
+          
+          <div className="text-sm text-muted-foreground text-center">
+            Página {currentPage} de {totalPages} ({data?.totalCount || 0} productos en total)
+          </div>
         </div>
       )}
+
+      {/* Product Editor */}
       <ProductEditor
-        open={editorOpen}
-        onClose={() => setEditorOpen(false)}
-        onSaved={() => { setEditorOpen(false); qc.invalidateQueries({ queryKey: ["admin", "products"] }); }}
-        product={selected as any}
+        open={showEditor}
+        onClose={() => setShowEditor(false)}
+        onSaved={() => {
+          refetch();
+          // Don't close the editor after saving
+        }}
+        product={editingProduct}
       />
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={!!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Confirmar eliminación?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción no se puede deshacer. El producto "{deleteConfirm?.name}" será eliminado permanentemente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={() => deleteConfirm && deleteProduct(deleteConfirm)}>
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 };

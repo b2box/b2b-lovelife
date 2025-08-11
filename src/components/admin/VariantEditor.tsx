@@ -191,6 +191,7 @@ export const VariantEditor: React.FC<VariantEditorProps> = ({
       });
 
       onSave();
+      // Don't close the editor after saving
     } catch (error) {
       console.error("Error saving variant:", error);
       toast({
