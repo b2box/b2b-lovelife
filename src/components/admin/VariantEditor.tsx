@@ -62,6 +62,9 @@ export const VariantEditor: React.FC<VariantEditorProps> = ({
     individual_packaging_required: false,
   });
 
+  const [initialForm, setInitialForm] = useState(form);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
   // Supplier pricing (base tiers in CNY)
   const [supplierTiers, setSupplierTiers] = useState<SupplierTier[]>([
     { tier: "inicial", min_qty: 1, unit_price: 0 },
@@ -71,7 +74,7 @@ export const VariantEditor: React.FC<VariantEditorProps> = ({
 
   useEffect(() => {
     if (variant) {
-      setForm({
+      const currentForm = {
         name: variant.name || "",
         sku: variant.sku || "",
         active: variant.active,
@@ -90,10 +93,33 @@ export const VariantEditor: React.FC<VariantEditorProps> = ({
         has_individual_packaging: variant.has_individual_packaging ?? true,
         individual_packaging_price_cny: variant.individual_packaging_price_cny || null,
         individual_packaging_required: variant.individual_packaging_required || false,
-      });
+      };
+      
+      setForm(currentForm);
+      setInitialForm(currentForm);
+      setHasUnsavedChanges(false);
       loadSupplierPricing();
     }
   }, [variant]);
+
+  // Track changes for unsaved warning
+  useEffect(() => {
+    if (!variant) return;
+    
+    const hasChanges = JSON.stringify(form) !== JSON.stringify(initialForm);
+    setHasUnsavedChanges(hasChanges);
+  }, [form, initialForm, variant]);
+
+  // Handle close with unsaved changes warning
+  const handleClose = () => {
+    if (hasUnsavedChanges) {
+      const confirmed = window.confirm(
+        "Tienes cambios sin guardar. ¿Estás seguro de que quieres cerrar sin guardar?"
+      );
+      if (!confirmed) return;
+    }
+    onClose();
+  };
 
   const loadSupplierPricing = async () => {
     if (!variant?.id) return;
@@ -213,7 +239,7 @@ export const VariantEditor: React.FC<VariantEditorProps> = ({
   if (!variant) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Editar Variante: {variant.name}</DialogTitle>
@@ -526,7 +552,7 @@ export const VariantEditor: React.FC<VariantEditorProps> = ({
         </Tabs>
 
         <div className="flex justify-end gap-2 mt-6">
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={handleClose}>
             Cancelar
           </Button>
           <Button onClick={saveVariant} disabled={saving}>

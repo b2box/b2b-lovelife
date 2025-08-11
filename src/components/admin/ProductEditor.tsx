@@ -80,9 +80,12 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
     video_url: "",
   });
 
+  const [initialForm, setInitialForm] = useState<AdminProduct>(form);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [saving, setSaving] = useState(false);
   const [edit, setEdit] = useState<AdminVariant | null>(null);
   const [productImages, setProductImages] = useState<ImageItem[]>([]);
+  const [verifiedImages, setVerifiedImages] = useState<ImageItem[]>([]);
   const [selectedCollectionIds, setSelectedCollectionIds] = useState<string[]>([]);
   const [selectedParentIds, setSelectedParentIds] = useState<string[]>([]);
   const [selectedSubcategoryIds, setSelectedSubcategoryIds] = useState<string[]>([]);
@@ -127,7 +130,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
 
   useEffect(() => {
     if (!open) return;
-    setForm({
+    const currentForm = {
       id: product?.id || "",
       name: product?.name || "",
       slug: product?.slug || "",
@@ -147,7 +150,11 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
       collection: product?.collection || "",
       active: product?.active ?? true,
       video_url: product?.video_url || "",
-    });
+    };
+    
+    setForm(currentForm);
+    setInitialForm(currentForm);
+    setHasUnsavedChanges(false);
 
     (async () => {
       const { data: profs } = await supabase
@@ -207,6 +214,39 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
       }
     })();
   }, [open, product?.id]);
+
+  // Track changes for unsaved warning
+  useEffect(() => {
+    if (!open) return;
+    
+    const hasChanges = JSON.stringify(form) !== JSON.stringify(initialForm) ||
+                      JSON.stringify(selectedCollectionIds) !== JSON.stringify([]) ||
+                      JSON.stringify(selectedParentIds) !== JSON.stringify([]) ||
+                      JSON.stringify(selectedSubcategoryIds) !== JSON.stringify([]);
+    
+    setHasUnsavedChanges(hasChanges);
+  }, [form, initialForm, selectedCollectionIds, selectedParentIds, selectedSubcategoryIds, open]);
+
+  // Auto-generate slug when name changes
+  const handleNameChange = (name: string) => {
+    const newSlug = slugify(name);
+    setForm(prev => ({ 
+      ...prev, 
+      name, 
+      slug: newSlug 
+    }));
+  };
+
+  // Handle close with unsaved changes warning
+  const handleClose = () => {
+    if (hasUnsavedChanges) {
+      const confirmed = window.confirm(
+        "Tienes cambios sin guardar. ¿Estás seguro de que quieres cerrar sin guardar?"
+      );
+      if (!confirmed) return;
+    }
+    onClose();
+  };
 
   const syncRelations = async (productId: string) => {
     try {
@@ -310,6 +350,11 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
         if (newId) await syncRelations(newId);
       }
       toast({ title: "Guardado", description: "Producto guardado correctamente." });
+      
+      // Update initial form state to reflect saved state
+      setInitialForm({ ...form });
+      setHasUnsavedChanges(false);
+      
       onSaved?.();
     } catch (e: any) {
       console.error("[ProductEditor] saveProduct", e);
@@ -344,7 +389,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
 
   return (
     <>
-      <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+      <Dialog open={open} onOpenChange={(v) => !v && handleClose()}>
         <DialogContent className="w-[95vw] max-w-5xl max-h-[85vh] overflow-y-auto bg-background border border-border shadow-lg">
           <DialogHeader>
             <DialogTitle>{isEdit ? "Editar producto" : "Nuevo producto"}</DialogTitle>
@@ -367,17 +412,18 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
                   <Input
                     id="name"
                     value={form.name}
-                    onChange={(e) => {
-                      setForm({ ...form, name: e.target.value });
-                      if (!form.slug || form.slug === slugify(form.name)) {
-                        setForm((f) => ({ ...f, slug: slugify(e.target.value), name: e.target.value }));
-                      }
-                    }}
+                    onChange={(e) => handleNameChange(e.target.value)}
                   />
                 </div>
                 <div>
                   <Label htmlFor="slug">Slug (generado automáticamente)</Label>
-                  <Input id="slug" value={form.slug ?? ""} readOnly className="bg-muted" />
+                  <Input 
+                    id="slug" 
+                    value={form.slug ?? ""} 
+                    readOnly 
+                    className="bg-muted text-muted-foreground" 
+                    placeholder="Se genera automáticamente del título..."
+                  />
                 </div>
                 <div>
                   <Label htmlFor="bx_code">BX Code</Label>
@@ -456,7 +502,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
               </div>
 
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={onClose}>Cerrar</Button>
+                <Button variant="outline" onClick={handleClose}>Cerrar</Button>
                 <Button onClick={saveProduct} disabled={saving}>{saving ? "Guardando…" : "Guardar"}</Button>
               </div>
             </TabsContent>
@@ -516,7 +562,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
               </div>
 
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={onClose}>Cerrar</Button>
+                <Button variant="outline" onClick={handleClose}>Cerrar</Button>
                 <Button onClick={saveTranslations}>Guardar traducciones</Button>
               </div>
             </TabsContent>
@@ -533,7 +579,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
                 </div>
               </div>
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={onClose}>Cerrar</Button>
+                <Button variant="outline" onClick={handleClose}>Cerrar</Button>
                 <Button onClick={saveProduct} disabled={saving}>{saving ? "Guardando…" : "Guardar"}</Button>
               </div>
             </TabsContent>
@@ -554,15 +600,42 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
               )}
             </TabsContent>
 
-            <TabsContent value="media" className="space-y-4">
-              <VideoManager
-                productId={form.id || 'temp'}
-                currentVideoUrl={form.video_url}
-                onVideoUpdate={(videoUrl) => setForm({ ...form, video_url: videoUrl })}
-              />
+            <TabsContent value="media" className="space-y-6">
+              {/* Video Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Video del producto</h3>
+                <VideoManager
+                  productId={form.id || 'temp'}
+                  currentVideoUrl={form.video_url}
+                  onVideoUpdate={(videoUrl) => setForm({ ...form, video_url: videoUrl })}
+                />
+              </div>
+
+              {/* Regular Images Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Imágenes del producto</h3>
+                <ImageManager
+                  productId={form.id || 'temp'}
+                  images={productImages}
+                  onImagesUpdate={setProductImages}
+                />
+              </div>
+
+              {/* Verified Images Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Imágenes verificadas</h3>
+                <p className="text-sm text-muted-foreground">
+                  Estas imágenes han sido verificadas y aprobadas para mostrar en el producto
+                </p>
+                <ImageManager
+                  productId={form.id || 'temp'}
+                  images={verifiedImages}
+                  onImagesUpdate={setVerifiedImages}
+                />
+              </div>
               
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={onClose}>Cerrar</Button>
+                <Button variant="outline" onClick={handleClose}>Cerrar</Button>
                 <Button onClick={saveProduct} disabled={saving}>{saving ? "Guardando…" : "Guardar producto"}</Button>
               </div>
             </TabsContent>
@@ -621,7 +694,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
                   </div>
                 </div>
                 <div className="flex justify-end gap-2">
-                  <Button variant="outline" onClick={onClose}>Cerrar</Button>
+                  <Button variant="outline" onClick={handleClose}>Cerrar</Button>
                   <Button onClick={saveProduct} disabled={saving}>{saving ? "Guardando…" : "Guardar"}</Button>
                 </div>
               </TabsContent>
@@ -660,7 +733,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ open, onClose, onSaved, p
                   </div>
                 </div>
                 <div className="flex justify-end gap-2">
-                  <Button variant="outline" onClick={onClose}>Cerrar</Button>
+                  <Button variant="outline" onClick={handleClose}>Cerrar</Button>
                   <Button onClick={saveProduct} disabled={saving}>{saving ? "Guardando…" : "Guardar"}</Button>
                 </div>
               </TabsContent>
