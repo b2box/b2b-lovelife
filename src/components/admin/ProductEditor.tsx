@@ -776,6 +776,30 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
   const [v, setV] = useState<AdminVariant>(variant);
   const [saving, setSaving] = useState(false);
   const [imgVersion, setImgVersion] = useState(0);
+  const [tierPrices, setTierPrices] = useState<number[]>([0, 0, 0]);
+
+  // Load CNY base prices per tier for calculations in markets
+  useEffect(() => {
+    const loadTierPrices = async () => {
+      const orderEs = ["inicial", "mayorista", "distribuidor"] as const;
+      const orderEn = ["initial", "wholesale", "distributor"] as const;
+      const idx = (t: string) => {
+        const i1 = orderEs.indexOf(t as any); if (i1 !== -1) return i1;
+        const i2 = orderEn.indexOf(t as any); if (i2 !== -1) return i2;
+        return 99;
+      };
+      const { data } = await (supabase as any)
+        .from("variant_price_tiers")
+        .select("tier, unit_price")
+        .eq("product_variant_id", variant.id);
+      const arr = [0, 0, 0];
+      (data || []).sort((a: any, b: any) => idx(a.tier) - idx(b.tier)).slice(0, 3).forEach((r: any, i: number) => {
+        arr[i] = Number(r.unit_price) || 0;
+      });
+      setTierPrices(arr);
+    };
+    loadTierPrices();
+  }, [variant.id]);
 
   const onImageFiles = async (files: FileList | null) => {
     if (!files) return;
@@ -842,12 +866,19 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
 
   const attrs: any = v.attributes ?? {};
   const pkg = attrs.packaging ?? { packed: true, cny_price: 0, required: false };
-  const ensureMarkets = (m?: any) => ({
-    AR: Array.from({ length: 3 }, (_, i) => (m?.AR?.[i] ?? { percent: 0, price: 0 })),
-    COL: Array.from({ length: 3 }, (_, i) => (m?.COL?.[i] ?? { percent: 0, price: 0 })),
+  const ensureMarkets = (m?: any, base?: number[]) => ({
+    AR: Array.from({ length: 3 }, (_, i) => {
+      const percent = m?.AR?.[i]?.percent ?? 300;
+      const price = m?.AR?.[i]?.price ?? Number(((base?.[i] ?? 0) * (1 + percent / 100)).toFixed(2));
+      return { percent, price };
+    }),
+    COL: Array.from({ length: 3 }, (_, i) => {
+      const percent = m?.COL?.[i]?.percent ?? 200;
+      const price = m?.COL?.[i]?.price ?? Number(((base?.[i] ?? 0) * (1 + percent / 100)).toFixed(2));
+      return { percent, price };
+    }),
   });
-  const markets = ensureMarkets(attrs.markets);
-
+  const markets = ensureMarkets(attrs.markets, tierPrices);
   const onVideoFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -1033,8 +1064,11 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
                           type="number"
                           value={t.percent}
                           onChange={(e) => {
-                            const next = ensureMarkets(v.attributes?.markets);
-                            next[mk][i].percent = Number(e.target.value);
+                            const val = Number(e.target.value);
+                            const base = tierPrices[i] ?? 0;
+                            const price = Number((base * (1 + (val || 0) / 100)).toFixed(2));
+                            const next = ensureMarkets(v.attributes?.markets, tierPrices);
+                            next[mk][i] = { percent: val, price };
                             setV({ ...v, attributes: { ...attrs, markets: next } });
                           }}
                         />
@@ -1045,8 +1079,11 @@ const VariantCard: React.FC<{ variant: AdminVariant; onChanged: () => void }> = 
                           type="number"
                           value={t.price}
                           onChange={(e) => {
-                            const next = ensureMarkets(v.attributes?.markets);
-                            next[mk][i].price = Number(e.target.value);
+                            const priceVal = Number(e.target.value);
+                            const base = tierPrices[i] ?? 0;
+                            const percent = base > 0 ? Number((((priceVal || 0) / base - 1) * 100).toFixed(2)) : 0;
+                            const next = ensureMarkets(v.attributes?.markets, tierPrices);
+                            next[mk][i] = { percent, price: priceVal };
                             setV({ ...v, attributes: { ...attrs, markets: next } });
                           }}
                         />
@@ -1097,58 +1134,84 @@ const VariantTiers: React.FC<{ variantId: string }> = ({ variantId }) => {
   const [rows, setRows] = useState<VariantPriceTier[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const ORDER_ES = ["inicial", "mayorista", "distribuidor"] as const;
+  const ORDER_EN = ["initial", "wholesale", "distributor"] as const;
+  const LABELS: Record<string, string> = {
+    inicial: "Inicial",
+    mayorista: "Mayorista",
+    distribuidor: "Distribuidor",
+    initial: "Inicial",
+    wholesale: "Mayorista",
+    distributor: "Distribuidor",
+  };
+
+  const orderIndex = (tier: string) => {
+    const idxEs = ORDER_ES.indexOf(tier as any);
+    if (idxEs !== -1) return idxEs;
+    const idxEn = ORDER_EN.indexOf(tier as any);
+    return idxEn !== -1 ? idxEn : 99;
+  };
+
+  const sortRows = (data: any[]) => [...data].sort((a, b) => orderIndex(a.tier) - orderIndex(b.tier));
+
+  const createDefaults = async () => {
+    // Try Spanish enum values first, then fallback to English
+    const payloadEs = ORDER_ES.map((t) => ({ product_variant_id: variantId, tier: t as any, min_qty: 1, currency: "CNY", unit_price: 0 }));
+    let inserted = false;
+    let lastErr: any = null;
+    const tryInsert = async (payload: any[]) => {
+      const { error } = await (supabase as any).from("variant_price_tiers").insert(payload);
+      if (error) throw error;
+    };
+    try {
+      await tryInsert(payloadEs);
+      inserted = true;
+    } catch (e: any) {
+      lastErr = e;
+      const payloadEn = ORDER_EN.map((t) => ({ product_variant_id: variantId, tier: t as any, min_qty: 1, currency: "CNY", unit_price: 0 }));
+      try {
+        await tryInsert(payloadEn);
+        inserted = true;
+      } catch (e2: any) {
+        lastErr = e2;
+      }
+    }
+    if (!inserted) {
+      console.error(lastErr);
+      toast({ title: "Error", description: "No se pudieron crear los tiers por defecto.", variant: "destructive" });
+    }
+  };
+
   const load = async () => {
     setLoading(true);
     const { data, error } = await (supabase as any)
       .from("variant_price_tiers")
       .select("*")
-      .eq("product_variant_id", variantId)
-      .order("min_qty", { ascending: true });
+      .eq("product_variant_id", variantId);
     if (error) {
       setLoading(false);
       console.error(error);
       toast({ title: "Error", description: "No se pudieron cargar precios.", variant: "destructive" });
       return;
     }
-    let rowsData = (data || []) as any[];
-    if (rowsData.length < 3) {
-      const needed = 3 - rowsData.length;
-      const payload = Array.from({ length: needed }, () => ({ product_variant_id: variantId, tier: 'tier', min_qty: 1, currency: 'CNY', unit_price: 0 }));
-      const { error: insErr } = await (supabase as any)
+    const list = (data || []) as any[];
+    if (!list.length) {
+      await createDefaults();
+      const { data: data2 } = await (supabase as any)
         .from("variant_price_tiers")
-        .insert(payload);
-      if (!insErr) {
-        const { data: data2 } = await (supabase as any)
-          .from("variant_price_tiers")
-          .select("*")
-          .eq("product_variant_id", variantId)
-          .order("min_qty", { ascending: true });
-        rowsData = (data2 || []) as any[];
-      }
+        .select("*")
+        .eq("product_variant_id", variantId);
+      setRows(sortRows(data2 || []));
+      setLoading(false);
+      return;
     }
-    setRows(rowsData as any);
+    setRows(sortRows(list));
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, [variantId]);
-
-  const addRow = async () => {
-    if (rows.length >= 3) {
-      toast({ title: "Límite alcanzado", description: "Solo 3 tiers de proveedor.", variant: "default" });
-      return;
-    }
-    const { data, error } = await (supabase as any)
-      .from("variant_price_tiers")
-      .insert({ product_variant_id: variantId, tier: 'tier', min_qty: 1, currency: 'CNY', unit_price: 0 })
-      .select("*")
-      .maybeSingle();
-    if (error) {
-      console.error(error);
-      toast({ title: "Error", description: "No se pudo agregar el precio.", variant: "destructive" });
-      return;
-    }
-    if (data) setRows((r) => [...r, data as any]);
-  };
+  useEffect(() => {
+    load();
+  }, [variantId]);
 
   const updateRow = async (row: VariantPriceTier) => {
     const { error } = await (supabase as any)
@@ -1161,35 +1224,35 @@ const VariantTiers: React.FC<{ variantId: string }> = ({ variantId }) => {
     }
   };
 
-  const removeRow = async (id: string) => {
-    const { error } = await (supabase as any).from("variant_price_tiers").delete().eq("id", id);
-    if (error) {
-      console.error(error);
-      toast({ title: "Error", description: "No se pudo eliminar.", variant: "destructive" });
-      return;
-    }
-    setRows((r) => r.filter((x) => x.id !== id));
-  };
-
   return (
     <div className="space-y-2">
-      <div className="flex items-center">
-        <h4 className="font-medium">Precios proveedor (CNY)</h4>
+      <div className="flex items-center justify-between">
+        <h4 className="font-medium">Proveedor (CNY) — 3 tiers</h4>
       </div>
       {loading && <p>Cargando precios…</p>}
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {rows.slice(0, 3).map((row, idx) => (
           <Card key={row.id} className="p-3">
-            <div className="text-sm font-medium mb-2">Tier {idx + 1}</div>
+            <div className="text-sm font-medium mb-2">{LABELS[row.tier] || `Tier ${idx + 1}`}</div>
             <div className="space-y-2">
               <div>
-                <Label>{`Precio ${idx + 1} (CNY)`}</Label>
-                <Input type="number" value={row.unit_price} onChange={(e) => setRows((rs) => rs.map(r => r.id === row.id ? { ...r, unit_price: Number(e.target.value) } : r))} onBlur={() => updateRow(rows.find(r=>r.id===row.id)!)} />
+                <Label>Precio (CNY)</Label>
+                <Input
+                  type="number"
+                  value={row.unit_price}
+                  onChange={(e) => setRows((rs) => rs.map((r) => r.id === row.id ? { ...r, unit_price: Number(e.target.value) } : r))}
+                  onBlur={() => updateRow(rows.find((r) => r.id === row.id)!)}
+                />
               </div>
               <div>
-                <Label>{`Cantidad ${idx + 1}`}</Label>
-                <Input type="number" value={row.min_qty} onChange={(e) => setRows((rs) => rs.map(r => r.id === row.id ? { ...r, min_qty: Number(e.target.value) } : r))} onBlur={() => updateRow(rows.find(r=>r.id===row.id)!)} />
+                <Label>Mínimo unidades</Label>
+                <Input
+                  type="number"
+                  value={row.min_qty}
+                  onChange={(e) => setRows((rs) => rs.map((r) => r.id === row.id ? { ...r, min_qty: Number(e.target.value) } : r))}
+                  onBlur={() => updateRow(rows.find((r) => r.id === row.id)!)}
+                />
               </div>
             </div>
           </Card>
