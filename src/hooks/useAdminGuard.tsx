@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,66 +21,59 @@ export function useAdminGuard(): AdminGuardResult {
     let active = true;
 
     const check = async () => {
-      console.log("[AdminGuard] Checking session and role...");
-      
       try {
-        const { data: userData, error: userErr } = await supabase.auth.getUser();
-        if (userErr) {
-          console.error("[AdminGuard] getUser error:", userErr);
+        console.log("[AdminGuard] Starting auth check...");
+        
+        // Get current user session
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        console.log("[AdminGuard] Session:", !!session, "Error:", sessionError);
+        
+        if (sessionError) {
+          console.error("[AdminGuard] Session error:", sessionError);
           if (active) {
             setLoading(false);
             setAllowed(false);
           }
           return;
         }
-        
-        const user = userData?.user ?? null;
-        console.log("[AdminGuard] User found:", !!user, user?.id);
-        
-        if (!user) {
-          console.warn("[AdminGuard] No session, redirecting to /auth");
+
+        if (!session?.user) {
+          console.log("[AdminGuard] No session, redirecting to auth");
           if (active) {
             navigate("/auth", { replace: true, state: { from: location.pathname } });
           }
           return;
         }
 
-        setUserId(user.id);
+        const userId = session.user.id;
+        console.log("[AdminGuard] User ID:", userId);
+        setUserId(userId);
 
-        // Verificar si es admin o agente (ambos pueden acceder al admin)
-        console.log("[AdminGuard] Calling is_admin_or_agent RPC...");
-        const { data: hasAccess, error: accessErr } = await supabase.rpc("is_admin_or_agent", {
-          _user_id: user.id,
+        // Check if user has admin or agent role
+        console.log("[AdminGuard] Checking roles...");
+        const { data: hasAccess, error: accessError } = await supabase.rpc("is_admin_or_agent", {
+          _user_id: userId,
         });
 
-        console.log("[AdminGuard] is_admin_or_agent result:", hasAccess, "error:", accessErr);
+        console.log("[AdminGuard] Access check result:", hasAccess, "Error:", accessError);
 
-        if (accessErr) {
-          console.error("[AdminGuard] is_admin_or_agent RPC error:", accessErr);
-          // Fallar silenciosamente y continuar sin acceso
-        }
-
-        // Obtener el rol específico del usuario
-        console.log("[AdminGuard] Calling get_user_role RPC...");
-        const { data: role, error: roleErr } = await supabase.rpc("get_user_role", {
-          _user_id: user.id,
+        // Get specific user role
+        const { data: userRole, error: roleError } = await supabase.rpc("get_user_role", {
+          _user_id: userId,
         });
 
-        console.log("[AdminGuard] get_user_role result:", role, "error:", roleErr);
-
-        if (roleErr) {
-          console.error("[AdminGuard] get_user_role RPC error:", roleErr);
-          // Fallar silenciosamente y continuar sin rol
-        }
+        console.log("[AdminGuard] Role check result:", userRole, "Error:", roleError);
 
         if (active) {
-          console.log("[AdminGuard] Setting final state - hasAccess:", Boolean(hasAccess), "role:", role);
-          setAllowed(Boolean(hasAccess));
-          setUserRole(role || null);
+          const hasAccess_bool = Boolean(hasAccess);
+          console.log("[AdminGuard] Final state - Access:", hasAccess_bool, "Role:", userRole);
+          setAllowed(hasAccess_bool);
+          setUserRole(userRole || null);
           setLoading(false);
         }
+
       } catch (error) {
-        console.error("[AdminGuard] Unexpected error:", error);
+        console.error("[AdminGuard] Unexpected error in check():", error);
         if (active) {
           setAllowed(false);
           setLoading(false);
@@ -98,4 +90,3 @@ export function useAdminGuard(): AdminGuardResult {
 
   return { loading, allowed, userId, userRole };
 }
-
