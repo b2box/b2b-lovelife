@@ -73,7 +73,7 @@ const SortableVariantRow: React.FC<SortableVariantRowProps> = ({
 }) => {
   const [thumbnail, setThumbnail] = useState<string | null>(null);
   const [deleteText, setDeleteText] = useState("");
-  const randomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+  const [randomCode] = useState(() => Math.random().toString(36).substring(2, 8).toUpperCase());
   const {
     attributes,
     listeners,
