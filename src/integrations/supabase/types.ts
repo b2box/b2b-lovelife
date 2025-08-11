@@ -345,7 +345,7 @@ export type Database = {
           ar_tier1_pct: number
           ar_tier2_pct: number
           ar_tier3_pct: number
-          cn_cny_to_cny: number
+          cn_cny_to_usd: number
           cn_tier1_pct: number
           cn_tier2_pct: number
           cn_tier3_pct: number
@@ -362,7 +362,7 @@ export type Database = {
           ar_tier1_pct?: number
           ar_tier2_pct?: number
           ar_tier3_pct?: number
-          cn_cny_to_cny?: number
+          cn_cny_to_usd?: number
           cn_tier1_pct?: number
           cn_tier2_pct?: number
           cn_tier3_pct?: number
@@ -379,7 +379,7 @@ export type Database = {
           ar_tier1_pct?: number
           ar_tier2_pct?: number
           ar_tier3_pct?: number
-          cn_cny_to_cny?: number
+          cn_cny_to_usd?: number
           cn_tier1_pct?: number
           cn_tier2_pct?: number
           cn_tier3_pct?: number
@@ -646,8 +646,11 @@ export type Database = {
           created_at: string
           currency: string
           has_battery: boolean
+          has_individual_packaging: boolean
           height_cm: number | null
           id: string
+          individual_packaging_price_cny: number | null
+          individual_packaging_required: boolean
           is_clothing: boolean
           length_cm: number | null
           name: string | null
@@ -673,8 +676,11 @@ export type Database = {
           created_at?: string
           currency?: string
           has_battery?: boolean
+          has_individual_packaging?: boolean
           height_cm?: number | null
           id?: string
+          individual_packaging_price_cny?: number | null
+          individual_packaging_required?: boolean
           is_clothing?: boolean
           length_cm?: number | null
           name?: string | null
@@ -700,8 +706,11 @@ export type Database = {
           created_at?: string
           currency?: string
           has_battery?: boolean
+          has_individual_packaging?: boolean
           height_cm?: number | null
           id?: string
+          individual_packaging_price_cny?: number | null
+          individual_packaging_required?: boolean
           is_clothing?: boolean
           length_cm?: number | null
           name?: string | null

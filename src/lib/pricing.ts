@@ -15,7 +15,7 @@ export type Markets = {
 export interface PricingSettingsData {
   arRate: number; // CNY -> USD for AR
   coRate: number; // CNY -> COP for COL
-  cnRate: number; // CNY -> CNY for CN (usually 1, but configurable)
+  cnRate: number; // CNY -> USD for CN (global buyers)
   arPercents: [number, number, number];
   coPercents: [number, number, number];
   cnPercents: [number, number, number];

@@ -16,7 +16,7 @@ export function usePricingSettings() {
         return {
           arRate: Number(data.ar_cny_to_usd) || 1,
           coRate: Number(data.co_cny_to_cop) || 1,
-          cnRate: Number(data.cn_cny_to_cny) || 1,
+          cnRate: Number(data.cn_cny_to_usd) || 1,
           arPercents: [
             Number(data.ar_tier1_pct) || 300,
             Number(data.ar_tier2_pct) || 300,

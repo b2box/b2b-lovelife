@@ -10,7 +10,7 @@ export type PricingSettings = {
   id?: string;
   ar_cny_to_usd: number; // Argentina prices use USD conversion from CNY
   co_cny_to_cop: number; // Colombia prices use COP conversion from CNY
-  cn_cny_to_cny: number; // China prices use CNY (usually 1, but configurable)
+  cn_cny_to_usd: number; // China prices use USD conversion from CNY (for global buyers)
   ar_tier1_pct: number;
   ar_tier2_pct: number;
   ar_tier3_pct: number;
@@ -25,7 +25,7 @@ export type PricingSettings = {
 const defaults: PricingSettings = {
   ar_cny_to_usd: 1,
   co_cny_to_cop: 1,
-  cn_cny_to_cny: 1,
+  cn_cny_to_usd: 1,
   ar_tier1_pct: 300,
   ar_tier2_pct: 300,
   ar_tier3_pct: 300,
@@ -122,12 +122,12 @@ const SettingsPanel: React.FC = () => {
                   />
                   </div>
                   <div>
-                    <Label>CNY → CNY (China)</Label>
+                    <Label>CNY → USD (China - Global Buyers)</Label>
                     <Input
                       type="number"
                       step="0.01"
-                      value={settings.cn_cny_to_cny}
-                      onChange={(e) => setSettings({ ...settings, cn_cny_to_cny: Number(e.target.value) })}
+                      value={settings.cn_cny_to_usd}
+                      onChange={(e) => setSettings({ ...settings, cn_cny_to_usd: Number(e.target.value) })}
                     />
                   </div>
               </div>

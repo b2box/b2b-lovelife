@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { usePricingSettings } from "@/hooks/usePricingSettings";
 import { Package, Copy, GripVertical, Trash2 } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
@@ -192,6 +193,7 @@ export const DraggableVariantsEditor: React.FC<DraggableVariantsEditorProps> = (
   onVariantEdit,
 }) => {
   const { toast } = useToast();
+  const { data: pricingSettings } = usePricingSettings();
   const [loading, setLoading] = useState(true);
   const [variants, setVariants] = useState<AdminVariant[]>([]);
 
@@ -226,6 +228,64 @@ export const DraggableVariantsEditor: React.FC<DraggableVariantsEditorProps> = (
     load();
   }, [productId]);
 
+  const createDefaultPricingStructure = async (variantId: string) => {
+    if (!pricingSettings) return;
+    
+    const tierNames = ["inicial", "mayorista", "distribuidor"];
+    const tiersToInsert: any[] = [];
+    
+    // Create base CNY tiers (with 0 price initially, but with the structure)
+    tierNames.forEach((tierName, index) => {
+      tiersToInsert.push({
+        product_variant_id: variantId,
+        tier: tierName,
+        min_qty: index === 0 ? 1 : index === 1 ? 50 : 100,
+        unit_price: 0,
+        currency: "CNY",
+      });
+    });
+    
+    // Create market tiers with configured markup percentages (but 0 price since base is 0)
+    // Argentina (USD)
+    tierNames.forEach((tierName, index) => {
+      tiersToInsert.push({
+        product_variant_id: variantId,
+        tier: tierName,
+        min_qty: index === 0 ? 1 : index === 1 ? 50 : 100,
+        unit_price: 0,
+        currency: "USD",
+      });
+    });
+    
+    // Colombia (COP)
+    tierNames.forEach((tierName, index) => {
+      tiersToInsert.push({
+        product_variant_id: variantId,
+        tier: tierName,
+        min_qty: index === 0 ? 1 : index === 1 ? 50 : 100,
+        unit_price: 0,
+        currency: "COP",
+      });
+    });
+    
+    // China USD (for global buyers)
+    tierNames.forEach((tierName, index) => {
+      tiersToInsert.push({
+        product_variant_id: variantId,
+        tier: tierName,
+        min_qty: index === 0 ? 1 : index === 1 ? 50 : 100,
+        unit_price: 0,
+        currency: "USD",
+      });
+    });
+    
+    try {
+      await supabase.from("variant_price_tiers").insert(tiersToInsert);
+    } catch (error) {
+      console.error("Error creating default pricing structure:", error);
+    }
+  };
+
   const createVariant = async () => {
     // Get the next sort_order value
     const maxOrder = Math.max(...variants.map(v => v.sort_order), -1);
@@ -246,6 +306,8 @@ export const DraggableVariantsEditor: React.FC<DraggableVariantsEditorProps> = (
       return;
     }
     if (data) {
+      // Auto-apply pricing structure with configured markup percentages
+      await createDefaultPricingStructure(data.id);
       setVariants((v) => [...v, data as AdminVariant]);
       onVariantEdit(data as AdminVariant);
     }

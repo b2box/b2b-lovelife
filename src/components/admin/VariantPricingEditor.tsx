@@ -93,19 +93,15 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
         }
 
         // Second pass: Load market-specific pricing and calculate percentages
+        // We need to differentiate between AR and CN USD prices
+        // Strategy: Load all USD prices first, then try to match based on expected percentages
+        const usdTiers: PriceTier[] = tiers.filter(tier => tier.currency === "USD");
+        
         tiers.forEach((tier) => {
           const tierIndex = tierNames.indexOf(tier.tier as any);
           if (tierIndex >= 0 && newBaseTiers[tierIndex] > 0) {
-            if (tier.currency === "USD") {
-              // AR market data
-              newMarkets.AR[tierIndex].price = Number(tier.unit_price);
-              if (pricingSettings) {
-                const baseCny = newBaseTiers[tierIndex];
-                const percent = (((tier.unit_price / (baseCny * pricingSettings.arRate)) - 1) * 100);
-                newMarkets.AR[tierIndex].percent = Number(percent.toFixed(2));
-              }
-            } else if (tier.currency === "COP") {
-              // COL market data
+            if (tier.currency === "COP") {
+              // COL market data (easy to identify)
               newMarkets.COL[tierIndex].price = Number(tier.unit_price);
               if (pricingSettings) {
                 const baseCny = newBaseTiers[tierIndex];
@@ -113,8 +109,37 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
                 newMarkets.COL[tierIndex].percent = Number(percent.toFixed(2));
               }
             }
-            // Note: CN market uses same currency as base (CNY), so we need to differentiate
-            // We'll identify CN market tiers by having the same currency but different logic
+          }
+        });
+
+        // Handle USD prices - try to distinguish AR vs CN based on expected percentages
+        usdTiers.forEach((tier) => {
+          const tierIndex = tierNames.indexOf(tier.tier as any);
+          if (tierIndex >= 0 && newBaseTiers[tierIndex] > 0 && pricingSettings) {
+            const baseCny = newBaseTiers[tierIndex];
+            
+            // Calculate what the percent would be for AR
+            const arPercent = (((tier.unit_price / (baseCny * pricingSettings.arRate)) - 1) * 100);
+            
+            // Calculate what the percent would be for CN
+            const cnPercent = (((tier.unit_price / (baseCny * pricingSettings.cnRate)) - 1) * 100);
+            
+            // Determine which market this belongs to based on which expected percentage is closer
+            const arExpected = pricingSettings.arPercents[tierIndex];
+            const cnExpected = pricingSettings.cnPercents[tierIndex];
+            
+            const arDiff = Math.abs(arPercent - arExpected);
+            const cnDiff = Math.abs(cnPercent - cnExpected);
+            
+            if (arDiff < cnDiff) {
+              // Closer to AR expected percentage
+              newMarkets.AR[tierIndex].price = Number(tier.unit_price);
+              newMarkets.AR[tierIndex].percent = Number(arPercent.toFixed(2));
+            } else {
+              // Closer to CN expected percentage
+              newMarkets.CN[tierIndex].price = Number(tier.unit_price);
+              newMarkets.CN[tierIndex].percent = Number(cnPercent.toFixed(2));
+            }
           }
         });
 
@@ -239,7 +264,7 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
             tier: tierNames[index],
             min_qty: index === 0 ? 1 : index === 1 ? 50 : 100,
             unit_price: marketTier.price,
-            currency: "CNY", // Note: This is market CNY, different from base CNY
+            currency: "USD", // China market now uses USD for global buyers
           });
         }
       });
@@ -371,7 +396,7 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
       <Card className="p-4">
         <div className="flex items-center gap-2 mb-3">
           <span className="inline-flex h-4 w-6 items-center justify-center rounded bg-red-600 text-white text-xs font-bold">CN</span>
-          <h4 className="font-medium">China (CNY)</h4>
+          <h4 className="font-medium">China (USD)</h4>
         </div>
         <div className="space-y-3">
           {tierLabels.map((label, index) => (
@@ -388,7 +413,7 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
                 />
               </div>
               <div>
-                <Label className="text-xs">Precio CNY</Label>
+                <Label className="text-xs">Precio USD</Label>
                 <NumericInput
                   value={markets.CN[index].price}
                   onValueChange={(value) => updateMarketPrice("CN", index, value)}
