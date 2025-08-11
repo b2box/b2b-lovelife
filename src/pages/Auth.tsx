@@ -22,14 +22,14 @@ const Auth = () => {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
-        // Redirect to app once authenticated
-        navigate("/app/admin", { replace: true });
+        // Redirect to main app once authenticated
+        navigate("/app", { replace: true });
       }
     });
 
     // Check existing session
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session?.user) navigate("/app/admin", { replace: true });
+      if (data.session?.user) navigate("/app", { replace: true });
     });
 
     return () => {
