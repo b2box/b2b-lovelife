@@ -105,9 +105,7 @@ const ProductView = () => {
 
   // Initialize rows when variants change - stabilized to prevent reloads
   useEffect(() => {
-    console.log("ProductView: Setting up rows, variants count:", variants.length);
-    
-    if (variants.length > 0) {
+    if (variants.length > 0 && rows.length === 0) {
       const newRows = variants.map(variant => {
         // Get the minimum quantity for mayorista tier (default)
         const mayoristaTier = (variant as any).variant_price_tiers?.find((tier: any) => tier.tier === "mayorista");
@@ -130,7 +128,7 @@ const ProductView = () => {
         setSelectedVariantId(newRows[0].id);
       }
     }
-  }, [variants.length, selectedVariantId]); // Only depend on length, not the array itself
+  }, [variants, rows.length, selectedVariantId]); // More stable dependencies
 
   const perUnitLabeling = 0.15;
   const perUnitPackaging = 0.04;
@@ -299,8 +297,6 @@ const ProductView = () => {
                 <div className="space-y-2">
                   <div className="relative overflow-hidden rounded-xl bg-muted aspect-square p-4">{/* Galería cuadrada con padding para el halo */}
                     {(() => {
-                      console.log("ProductView render - variants:", variants.length, "product:", !!product);
-                      
                       // Collect all images from all variants
                       const allImages = variants.flatMap(variant => 
                         (variant as any).product_variant_images?.map((img: any) => ({
@@ -511,7 +507,7 @@ const ProductView = () => {
           </section>
 
           {/* Columna derecha (20%): Resumen sticky */}
-          <aside className="hidden md:block sticky top-6 self-start h-max rounded-2xl bg-card text-card-foreground border p-4 z-20 shadow-lg">{/* Improved sticky positioning with better top offset and z-index */}
+          <aside className="hidden md:block sticky top-20 self-start h-max rounded-2xl bg-card text-card-foreground border p-6 z-10 shadow-md">{/* Fixed sticky positioning */}
             <div className="flex items-center justify-between text-sm text-muted-foreground">
               <span>{content.minOrderText}</span>
               <CheckCircle2 className="opacity-60" />
