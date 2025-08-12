@@ -22,29 +22,42 @@ const Auth = () => {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
-        // Get market from localStorage to redirect to correct app
-        const market = localStorage.getItem("market") || "CN";
-        if (market === "AR") {
-          navigate("/app/ar", { replace: true });
-        } else if (market === "CO") {
-          navigate("/app/co", { replace: true });
-        } else {
-          navigate("/app", { replace: true });
-        }
+        // Check if user is admin first
+        supabase.rpc('is_admin_or_agent', { _user_id: session.user.id }).then(({ data: isAdmin }) => {
+          if (isAdmin) {
+            navigate("/app/admin", { replace: true });
+          } else {
+            // Get market from localStorage to redirect to correct app
+            const market = localStorage.getItem("market") || "CN";
+            if (market === "AR") {
+              navigate("/app/ar", { replace: true });
+            } else if (market === "CO") {
+              navigate("/app/co", { replace: true });
+            } else {
+              navigate("/app", { replace: true });
+            }
+          }
+        });
       }
     });
 
     // Check existing session
     supabase.auth.getSession().then(({ data }) => {
       if (data.session?.user) {
-        const market = localStorage.getItem("market") || "CN";
-        if (market === "AR") {
-          navigate("/app/ar", { replace: true });
-        } else if (market === "CO") {
-          navigate("/app/co", { replace: true });
-        } else {
-          navigate("/app", { replace: true });
-        }
+        supabase.rpc('is_admin_or_agent', { _user_id: data.session.user.id }).then(({ data: isAdmin }) => {
+          if (isAdmin) {
+            navigate("/app/admin", { replace: true });
+          } else {
+            const market = localStorage.getItem("market") || "CN";
+            if (market === "AR") {
+              navigate("/app/ar", { replace: true });
+            } else if (market === "CO") {
+              navigate("/app/co", { replace: true });
+            } else {
+              navigate("/app", { replace: true });
+            }
+          }
+        });
       }
     });
 

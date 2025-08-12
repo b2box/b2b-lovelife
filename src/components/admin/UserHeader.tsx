@@ -75,15 +75,8 @@ export const UserHeader: React.FC = () => {
         description: "Has cerrado sesión correctamente",
       });
       
-      // Redirect to appropriate landing based on stored market
-      const market = localStorage.getItem("market") || "CN";
-      if (market === "AR") {
-        navigate("/ar");
-      } else if (market === "CO") {
-        navigate("/co");
-      } else {
-        navigate("/");
-      }
+      // Always redirect to default landing for admin logout
+      navigate("/");
     } catch (error: any) {
       toast({
         title: "Error",
