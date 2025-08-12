@@ -71,6 +71,38 @@ const ProductView = () => {
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
+  // Handler for variant selection - changes prices, quantities and image
+  const handleVariantSelection = (variantId: string) => {
+    setSelectedVariantId(variantId);
+    
+    // Update quantities for all rows based on selected variant
+    setRows(prev => prev.map(row => {
+      if (row.id === variantId) {
+        // Get min quantity for this variant in current tier
+        const tierMap = { inicial: "tier1", mayorista: "tier2", distribuidor: "tier3" } as const;
+        const dbTier = tierMap[selectedTier];
+        const priceTier = (row.variant as any).variant_price_tiers?.find((tier: any) => tier.tier === dbTier);
+        const minQty = priceTier?.min_qty || 1;
+        
+        return { ...row, qty: minQty };
+      }
+      return row;
+    }));
+    
+    // Jump to first image of selected variant
+    const allImages = variants.flatMap(variant => 
+      (variant as any).product_variant_images?.map((img: any) => ({
+        ...img,
+        variantId: variant.id
+      })) || []
+    ).sort((a, b) => a.sort_order - b.sort_order);
+    
+    const variantImageIndex = allImages.findIndex(img => img.variantId === variantId);
+    if (variantImageIndex !== -1) {
+      setSelectedImageIndex(variantImageIndex);
+    }
+  };
+
   // Initialize rows when variants change - stabilized to prevent reloads
   useEffect(() => {
     console.log("ProductView: Setting up rows, variants count:", variants.length);
@@ -265,7 +297,7 @@ const ProductView = () => {
               {/* Galería - compacta */}
               <div className="rounded-2xl bg-card p-2 md:p-3 h-fit">
                 <div className="space-y-2">
-                  <div className="relative overflow-hidden rounded-xl bg-muted aspect-square">{/* Galería cuadrada sin restricción de altura */}
+                  <div className="relative overflow-hidden rounded-xl bg-muted aspect-square p-4">{/* Galería cuadrada con padding para el halo */}
                     {(() => {
                       console.log("ProductView render - variants:", variants.length, "product:", !!product);
                       
@@ -287,7 +319,7 @@ const ProductView = () => {
                           <img
                             src={displayImage}
                             alt={currentImage?.alt || product.name}
-                            className="absolute inset-0 h-full w-full object-cover"
+                            className="absolute inset-4 h-[calc(100%-2rem)] w-[calc(100%-2rem)] object-contain"
                             loading="lazy"
                           />
                           {/* Viral badge */}
@@ -568,17 +600,17 @@ const ProductView = () => {
         <section className="mt-8 w-full md:w-3/5">
           <h2 className="text-xl font-semibold mb-3">Variantes</h2>
           <div className="overflow-x-auto rounded-2xl border bg-card">
-            <table className="min-w-[960px] w-full text-sm">
+            <table className="w-full text-sm">
               <thead className="bg-secondary/40 text-muted-foreground">
                 <tr>
-                  <th className="text-left px-4 py-3 font-medium">{content.tableHeaders.product}</th>
-                  <th className="text-left px-4 py-3 font-medium">{content.tableHeaders.units}</th>
-                  <th className="text-left px-4 py-3 font-medium">{content.tableHeaders.unitPrice}</th>
-                  <th className="px-4 py-3 font-medium">{content.tableHeaders.labeling}</th>
-                  <th className="px-4 py-3 font-medium">{content.tableHeaders.barcode}</th>
-                  <th className="px-4 py-3 font-medium">{content.tableHeaders.photos}</th>
-                  <th className="px-4 py-3 font-medium">{content.tableHeaders.packaging}</th>
-                  <th className="text-right px-4 py-3 font-medium">{content.tableHeaders.total}</th>
+                  <th className="text-left px-3 py-3 font-medium w-[200px]">{content.tableHeaders.product}</th>
+                  <th className="text-center px-2 py-3 font-medium w-[80px]">{content.tableHeaders.units}</th>
+                  <th className="text-center px-2 py-3 font-medium w-[90px]">Precio Unitario</th>
+                  <th className="text-center px-2 py-3 font-medium w-[120px]">Etiquetado para Marketplaces</th>
+                  <th className="text-center px-2 py-3 font-medium w-[100px]">Registro de Código de Barras</th>
+                  <th className="text-center px-2 py-3 font-medium w-[90px]">Fotografías Comerciales</th>
+                  <th className="text-center px-2 py-3 font-medium w-[100px]">Empaque Optimizado</th>
+                  <th className="text-center px-2 py-3 font-medium w-[80px]">Total</th>
                 </tr>
               </thead>
               <tbody>
@@ -588,90 +620,92 @@ const ProductView = () => {
                   const variantName = r.variant.name || product.name;
                   const variantOption = r.variant.option_name || r.variant.attributes?.color || "Estándar";
                   
+                  // Get units from price tier data
+                  const tierMap = { inicial: "tier1", mayorista: "tier2", distribuidor: "tier3" } as const;
+                  const dbTier = tierMap[selectedTier];
+                  const priceTier = (r.variant as any).variant_price_tiers?.find((tier: any) => tier.tier === dbTier);
+                  const minQty = priceTier?.min_qty || 1;
+                  
+                  const isSelected = selectedVariantId === r.id;
+                  
                   return (
                     <tr 
                       key={r.id} 
                       className={`border-t cursor-pointer hover:bg-muted/30 transition-colors ${
-                        selectedVariantId === r.id ? 'bg-muted/50' : ''
+                        isSelected ? 'bg-primary/5 border-l-4 border-l-primary' : ''
                       }`}
-                      onClick={() => {
-                        setSelectedVariantId(r.id);
-                        setSelectedImageIndex(0); // Reset image index when changing variants
-                      }}
+                      onClick={() => handleVariantSelection(r.id)}
                     >
-                      <td className="px-4 py-4">
-                        <div className="flex items-center gap-3">
-                          <img src={variantImage} alt={variantName} className="w-12 h-12 rounded-md object-cover" loading="lazy" />
-                          <div>
-                            <div className="font-medium leading-tight">{variantName}</div>
+                      <td className="px-3 py-3">
+                        <div className="flex items-center gap-2">
+                          <img src={variantImage} alt={variantName} className="w-10 h-10 rounded object-cover flex-shrink-0" loading="lazy" />
+                          <div className="min-w-0">
+                            <div className="font-medium leading-tight text-sm truncate">{variantName}</div>
                             {variantOption !== "Estándar" && (
-                              <div className="text-xs text-muted-foreground">{variantOption}</div>
+                              <div className="text-xs text-muted-foreground truncate">{variantOption}</div>
                             )}
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-4">
-                        <div className="inline-flex items-center rounded-full border">
-                          <button className="px-3 py-1" onClick={() => changeQty(r.id, -1)} aria-label="Disminuir">-</button>
-                          <span className="px-3 py-1 min-w-8 text-center">{r.qty}</span>
-                          <button className="px-3 py-1" onClick={() => changeQty(r.id, 1)} aria-label="Aumentar">+</button>
-                        </div>
-                        <div className="text-[10px] text-muted-foreground mt-1 text-center">
-                          {(() => {
-                            // Get units from price tier data
-                            const targetCurrency = market === "CO" ? "COP" : "USD";
-                            const priceTier = (r.variant as any).variant_price_tiers?.find(
-                              (tier: any) => tier.tier === selectedTier && tier.currency === targetCurrency
-                            );
-                            const minQty = priceTier?.min_qty || 1;
-                            return `${minQty}+ ${content.complementPricing.unitsText}`;
-                          })()}
+                      <td className="px-2 py-3" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center justify-center">
+                          <div className="inline-flex items-center border rounded">
+                            <button className="px-2 py-1 text-xs" onClick={() => changeQty(r.id, -minQty)} aria-label="Disminuir">-</button>
+                            <span className="px-2 py-1 min-w-[40px] text-center text-xs">{r.qty}</span>
+                            <button className="px-2 py-1 text-xs" onClick={() => changeQty(r.id, minQty)} aria-label="Aumentar">+</button>
+                          </div>
                         </div>
                       </td>
-                      <td className="px-4 py-4">{content.currencySymbol}{variantPrice.toFixed(2)}</td>
+                      <td className="px-2 py-3 text-center">
+                        <div className="text-sm font-medium">{content.currencySymbol}{variantPrice.toFixed(2)}</div>
+                        <div className="text-xs text-muted-foreground">{content.currencySymbol}0.15 PU</div>
+                      </td>
 
                       {/* Etiquetado */}
-                      <td className="px-4 py-4 text-center">
-                        <button
-                          className={`px-3 py-1 rounded-full text-xs border ${r.comps.labeling ? "bg-green-500/15 text-green-700" : "bg-transparent"}`}
-                          onClick={() => toggleComp(r.id, "labeling")}
-                        >
-                          {content.currencySymbol}{perUnitLabeling.toFixed(2)} {content.complementPricing.labelingUnit}
-                        </button>
-                        <div className="text-[10px] text-muted-foreground mt-1">{r.variant.stock.toLocaleString()} {content.complementPricing.unitsText}</div>
+                      <td className="px-2 py-3 text-center" onClick={(e) => e.stopPropagation()}>
+                        <div className={`inline-block w-6 h-6 rounded border-2 cursor-pointer transition-all ${
+                          r.comps.labeling ? 'bg-green-500 border-green-500' : 'border-gray-300 hover:border-green-400'
+                        }`} onClick={() => toggleComp(r.id, "labeling")}>
+                          {r.comps.labeling && <div className="text-white text-xs leading-none mt-0.5">✓</div>}
+                        </div>
+                        <div className="text-xs text-green-600 mt-1">4.000 artículos</div>
+                        <div className="text-xs text-muted-foreground">TOTAL $1.863</div>
                       </td>
 
-                    {/* Código de barras */}
-                    <td className="px-4 py-4 text-center">
-                      <button
-                        className={`px-3 py-1 rounded-full text-xs border ${r.comps.barcode ? "bg-green-500/15 text-green-700" : "bg-transparent"}`}
-                        onClick={() => toggleComp(r.id, "barcode")}
-                        >
-                          {content.currencySymbol}{fixedBarcode.toFixed(0)}
-                      </button>
-                    </td>
+                      {/* Código de barras */}
+                      <td className="px-2 py-3 text-center" onClick={(e) => e.stopPropagation()}>
+                        <div className={`inline-block w-6 h-6 rounded border-2 cursor-pointer transition-all ${
+                          r.comps.barcode ? 'bg-green-500 border-green-500' : 'border-gray-300 hover:border-green-400'
+                        }`} onClick={() => toggleComp(r.id, "barcode")}>
+                          {r.comps.barcode && <div className="text-white text-xs leading-none mt-0.5">✓</div>}
+                        </div>
+                        <div className="text-xs text-green-600 mt-1">$40</div>
+                      </td>
 
-                    {/* Fotos */}
-                    <td className="px-4 py-4 text-center">
-                      <button
-                        className={`px-3 py-1 rounded-full text-xs border ${r.comps.photos ? "bg-green-500/15 text-green-700" : "bg-transparent"}`}
-                        onClick={() => toggleComp(r.id, "photos")}
-                        >
-                          {content.currencySymbol}{fixedPhotos.toLocaleString()}
-                      </button>
-                    </td>
+                      {/* Fotos */}
+                      <td className="px-2 py-3 text-center" onClick={(e) => e.stopPropagation()}>
+                        <div className={`inline-block w-6 h-6 rounded border-2 cursor-pointer transition-all ${
+                          r.comps.photos ? 'bg-green-500 border-green-500' : 'border-gray-300 hover:border-green-400'
+                        }`} onClick={() => toggleComp(r.id, "photos")}>
+                          {r.comps.photos && <div className="text-white text-xs leading-none mt-0.5">✓</div>}
+                        </div>
+                        <div className="text-xs text-green-600 mt-1">$1.863</div>
+                      </td>
 
-                    {/* Empaque */}
-                    <td className="px-4 py-4 text-center">
-                      <button
-                        className={`px-3 py-1 rounded-full text-xs border ${r.comps.packaging ? "bg-green-500/15 text-green-700" : "bg-transparent"}`}
-                        onClick={() => toggleComp(r.id, "packaging")}
-                        >
-                          {content.currencySymbol}{perUnitPackaging.toFixed(2)} {content.complementPricing.packagingUnit}
-                      </button>
-                    </td>
+                      {/* Empaque */}
+                      <td className="px-2 py-3 text-center" onClick={(e) => e.stopPropagation()}>
+                        <div className={`inline-block w-6 h-6 rounded border-2 cursor-pointer transition-all ${
+                          r.comps.packaging ? 'bg-green-500 border-green-500' : 'border-gray-300 hover:border-green-400'
+                        }`} onClick={() => toggleComp(r.id, "packaging")}>
+                          {r.comps.packaging && <div className="text-white text-xs leading-none mt-0.5">✓</div>}
+                        </div>
+                        <div className="text-xs text-green-600 mt-1">4.000 artículos</div>
+                        <div className="text-xs text-muted-foreground">TOTAL $1.863</div>
+                      </td>
 
-                      <td className="px-4 py-4 text-right font-medium">{content.currencySymbol}{rowTotal(r).toFixed(2)}</td>
+                      <td className="px-2 py-3 text-center">
+                        <div className="text-sm font-semibold">{content.currencySymbol}{rowTotal(r).toFixed(2)}</div>
+                      </td>
                     </tr>
                   );
                 })}
