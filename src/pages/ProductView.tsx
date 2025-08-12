@@ -11,6 +11,7 @@ import { useProductMarketContent } from "@/hooks/useProductMarketContent";
 import { MarketSpecificBanners } from "@/components/product/MarketSpecificBanners";
 import { useProductVariants, type ProductVariant } from "@/hooks/useProductVariants";
 import { useVariantPricing } from "@/hooks/useVariantPricing";
+import { usePricingSettings } from "@/hooks/usePricingSettings";
 
 const ProductView = () => {
   const { id } = useParams();
@@ -69,21 +70,69 @@ const ProductView = () => {
   const minOrder = 100;
   const [selectedTier, setSelectedTier] = useState<"inicial" | "mayorista" | "distribuidor">("mayorista");
 
-  // Calculate pricing for all variants at once
-  const variantPricings = useMemo(() => {
-    return rows.map(r => ({
-      id: r.id,
-      pricing: useVariantPricing(r.variant, selectedTier)
-    }));
-  }, [rows, selectedTier]);
+  // Get pricing settings and market content for calculations
+  const { data: pricingSettings } = usePricingSettings();
 
-  const getVariantPricing = (variantId: string) => {
-    return variantPricings.find(vp => vp.id === variantId)?.pricing || { price: 0, currency: "USD", currencySymbol: "$", minQuantity: 0 };
+  // Calculate variant pricing directly without hook violations
+  const getVariantPrice = (variant: ProductVariant, tier: "inicial" | "mayorista" | "distribuidor") => {
+    if (!pricingSettings) return 0;
+
+    // Map tier names to database tier values
+    const tierMap = {
+      inicial: "tier1",
+      mayorista: "tier2", 
+      distribuidor: "tier3"
+    } as const;
+
+    const dbTier = tierMap[tier];
+
+    // Find the price tier for this variant and tier
+    const priceTier = variant.price_tiers?.find(
+      (priceTier: any) => priceTier.tier === dbTier
+    );
+
+    if (!priceTier) {
+      return variant.price || 0;
+    }
+
+    // Get the base CNY price
+    const cnyPrice = priceTier.unit_price;
+
+    // Apply market-specific conversion and markup
+    let finalPrice = cnyPrice;
+
+    switch (market) {
+      case "AR":
+        const arsExchangeRate = pricingSettings.arRate || 1;
+        const arsMarkup = tier === "inicial" ? pricingSettings.arPercents[0] :
+                         tier === "mayorista" ? pricingSettings.arPercents[1] :
+                         pricingSettings.arPercents[2];
+        finalPrice = cnyPrice * arsExchangeRate * (arsMarkup / 100);
+        break;
+        
+      case "CO":
+        const copExchangeRate = pricingSettings.coRate || 1;
+        const copMarkup = tier === "inicial" ? pricingSettings.coPercents[0] :
+                         tier === "mayorista" ? pricingSettings.coPercents[1] :
+                         pricingSettings.coPercents[2];
+        finalPrice = cnyPrice * copExchangeRate * (copMarkup / 100);
+        break;
+        
+      case "CN":
+        const usdExchangeRate = pricingSettings.cnRate || 1;
+        const usdMarkup = tier === "inicial" ? pricingSettings.cnPercents[0] :
+                         tier === "mayorista" ? pricingSettings.cnPercents[1] :
+                         pricingSettings.cnPercents[2];
+        finalPrice = cnyPrice * usdExchangeRate * (usdMarkup / 100);
+        break;
+    }
+
+    return Math.round(finalPrice * 100) / 100; // Round to 2 decimal places
   };
 
   const rowTotal = (r: VariantRow) => {
-    const pricing = getVariantPricing(r.id);
-    const base = r.qty * pricing.price;
+    const variantPrice = getVariantPrice(r.variant, selectedTier);
+    const base = r.qty * variantPrice;
     const comps =
       (r.comps.labeling ? r.qty * perUnitLabeling : 0) +
       (r.comps.packaging ? r.qty * perUnitPackaging : 0) +
@@ -94,8 +143,8 @@ const ProductView = () => {
 
   const totals = rows.reduce(
     (acc, r) => {
-      const pricing = getVariantPricing(r.id);
-      const base = r.qty * pricing.price;
+      const variantPrice = getVariantPrice(r.variant, selectedTier);
+      const base = r.qty * variantPrice;
       const comps = rowTotal(r) - base;
       acc.items += r.qty;
       acc.products += base;
@@ -410,7 +459,7 @@ const ProductView = () => {
               </thead>
               <tbody>
                 {rows.map((r) => {
-                  const pricing = getVariantPricing(r.id);
+                  const variantPrice = getVariantPrice(r.variant, selectedTier);
                   const variantImage = r.variant.images?.[0]?.url || product.image;
                   const variantName = r.variant.name || product.name;
                   const variantOption = r.variant.option_name || r.variant.attributes?.color || "Estándar";
@@ -433,7 +482,7 @@ const ProductView = () => {
                           <button className="px-3 py-1" onClick={() => changeQty(r.id, 1)} aria-label="Aumentar">+</button>
                         </div>
                       </td>
-                      <td className="px-4 py-4">{content.currencySymbol}{pricing.price.toFixed(2)}</td>
+                      <td className="px-4 py-4">{content.currencySymbol}{variantPrice.toFixed(2)}</td>
 
                       {/* Etiquetado */}
                       <td className="px-4 py-4 text-center">
