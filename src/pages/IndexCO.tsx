@@ -25,14 +25,14 @@ const IndexCO = () => {
     // Check if user is already authenticated
     supabase.auth.getSession().then(({ data }) => {
       if (data.session?.user) {
-        navigate("/app", { replace: true });
+        navigate("/app/co", { replace: true });
       }
     });
 
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
-        navigate("/app", { replace: true });
+        navigate("/app/co", { replace: true });
       }
     });
 

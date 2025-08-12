@@ -22,14 +22,30 @@ const Auth = () => {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
-        // Redirect to main app once authenticated
-        navigate("/app", { replace: true });
+        // Get market from localStorage to redirect to correct app
+        const market = localStorage.getItem("market") || "CN";
+        if (market === "AR") {
+          navigate("/app/ar", { replace: true });
+        } else if (market === "CO") {
+          navigate("/app/co", { replace: true });
+        } else {
+          navigate("/app", { replace: true });
+        }
       }
     });
 
     // Check existing session
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session?.user) navigate("/app", { replace: true });
+      if (data.session?.user) {
+        const market = localStorage.getItem("market") || "CN";
+        if (market === "AR") {
+          navigate("/app/ar", { replace: true });
+        } else if (market === "CO") {
+          navigate("/app/co", { replace: true });
+        } else {
+          navigate("/app", { replace: true });
+        }
+      }
     });
 
     return () => {

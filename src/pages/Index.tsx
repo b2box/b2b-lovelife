@@ -27,7 +27,16 @@ const jsonLd = () => ({
 const Index = () => {
   const location = useLocation();
   const isApp = location.pathname.startsWith("/app");
-  useSEOByMarket("CN");
+  
+  // Determine market based on app route
+  let market: "AR" | "CO" | "CN" = "CN";
+  if (location.pathname.includes("/app/ar")) {
+    market = "AR";
+  } else if (location.pathname.includes("/app/co")) {
+    market = "CO";
+  }
+  
+  useSEOByMarket(market);
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
