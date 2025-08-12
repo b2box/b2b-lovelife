@@ -47,9 +47,14 @@ const Index = () => {
           </>
         )}
         {isApp && (
-          <section className="mt-6">
-            <InfiniteProducts publicMode={false} />
-          </section>
+          <>
+            <section className="mt-4">
+              <CategoryTabs />
+            </section>
+            <section className="mt-6">
+              <InfiniteProducts publicMode={false} />
+            </section>
+          </>
         )}
         <section className="mt-16">
           <TestimonialsBanner />
