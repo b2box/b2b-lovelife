@@ -116,67 +116,24 @@ const ProductView = () => {
   // Get pricing settings and market content for calculations
   const { data: pricingSettings } = usePricingSettings();
 
-  // Calculate variant pricing using the exact values from editor
+  // Use pre-calculated prices directly from variant pricing editor
   const getVariantPrice = (variant: ProductVariant, tier: "inicial" | "mayorista" | "distribuidor") => {
-    if (!pricingSettings) return 0;
-
-    // Map tier names to database tier values  
-    const tierMap = {
-      inicial: "tier1",
-      mayorista: "tier2", 
-      distribuidor: "tier3"
-    } as const;
-
-    const dbTier = tierMap[tier];
-
-    // Find the price tier for this variant and tier
+    // Get the currency based on current market
+    const targetCurrency = market === "CO" ? "COP" : "USD";
+    
+    // Find the price tier for this variant, tier, and currency
     const priceTier = (variant as any).variant_price_tiers?.find(
-      (priceTier: any) => priceTier.tier === dbTier
+      (priceTier: any) => 
+        priceTier.tier === tier && 
+        priceTier.currency === targetCurrency
     );
 
     if (!priceTier) {
       return variant.price || 0;
     }
 
-    // Get the base CNY price from the tier data
-    const cnyPrice = priceTier.unit_price;
-
-    // Apply market-specific conversion using the exact formulas from the editor
-    let finalPrice = cnyPrice;
-
-    switch (market) {
-      case "AR":
-        // CNY -> USD conversion then markup
-        const arsExchangeRate = pricingSettings.arRate || 1;
-        const arsMarkup = tier === "inicial" ? pricingSettings.arPercents[0] :
-                         tier === "mayorista" ? pricingSettings.arPercents[1] :
-                         pricingSettings.arPercents[2];
-        // Convert CNY to USD first, then apply markup percentage
-        finalPrice = (cnyPrice * arsExchangeRate) * (1 + arsMarkup / 100);
-        break;
-        
-      case "CO":
-        // CNY -> COP conversion then markup
-        const copExchangeRate = pricingSettings.coRate || 1;
-        const copMarkup = tier === "inicial" ? pricingSettings.coPercents[0] :
-                         tier === "mayorista" ? pricingSettings.coPercents[1] :
-                         pricingSettings.coPercents[2];
-        // Convert CNY to COP first, then apply markup percentage
-        finalPrice = (cnyPrice * copExchangeRate) * (1 + copMarkup / 100);
-        break;
-        
-      case "CN":
-        // CNY -> USD conversion then markup
-        const usdExchangeRate = pricingSettings.cnRate || 1;
-        const usdMarkup = tier === "inicial" ? pricingSettings.cnPercents[0] :
-                         tier === "mayorista" ? pricingSettings.cnPercents[1] :
-                         pricingSettings.cnPercents[2];
-        // Convert CNY to USD first, then apply markup percentage
-        finalPrice = (cnyPrice * usdExchangeRate) * (1 + usdMarkup / 100);
-        break;
-    }
-
-    return Math.round(finalPrice * 100) / 100;
+    // Return the pre-calculated price directly from the database
+    return Number(priceTier.unit_price) || 0;
   };
 
   const rowTotal = (r: VariantRow) => {
