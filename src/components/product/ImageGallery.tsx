@@ -26,7 +26,7 @@ const ImageGallery = memo(({ variants, product, selectedImageIndex, onImageIndex
       <img
         src={displayImage}
         alt={currentImage?.alt || product.name}
-        className="absolute inset-4 h-[calc(100%-2rem)] w-[calc(100%-2rem)] object-contain"
+        className="absolute inset-0 h-full w-full object-contain"
         loading="lazy"
       />
       {/* Viral badge */}

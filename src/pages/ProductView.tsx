@@ -297,7 +297,7 @@ const ProductView = () => {
               {/* Galería - compacta */}
               <div className="rounded-2xl bg-card p-2 md:p-3 h-fit">
                 <div className="space-y-2">
-                  <div className="relative overflow-hidden rounded-xl bg-muted aspect-square p-4">
+                  <div className="relative overflow-hidden rounded-xl bg-muted aspect-square">
                     <ImageGallery 
                       variants={variants}
                       product={product}
