@@ -452,8 +452,8 @@ const ProductView = () => {
                 Añadir al carrito
               </button>
 
-              {/* Bloque de totales con fondo gris */}
-              <div className="bg-[#F3F4F6] rounded-[20px] px-5 py-5 mb-5">
+              {/* Bloque de totales sin fondo */}
+              <div className="px-0 py-5 mb-5">
                 <div className="space-y-3">
                   <div className="flex justify-between text-[18px] text-[#0A0A0A]">
                     <span>Productos ({totals.items})</span>
