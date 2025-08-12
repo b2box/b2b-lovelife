@@ -389,49 +389,81 @@ const ProductView = () => {
                 </header>
 
                 {/* Barra de precios por tiers */}
-                <article className="rounded-[28px] bg-card text-card-foreground border overflow-hidden">
-                  <div className="px-4 pt-4">
-                    <div className="grid grid-cols-3 gap-4 bg-muted rounded-[24px] p-4">
+                <article className="rounded-[32px] bg-card text-card-foreground border overflow-hidden shadow-sm">
+                  <div className="p-6 pb-0">
+                    <div className="grid grid-cols-3 gap-6">
                       {/* Inicial */}
                       <button
                         type="button"
                         onClick={() => setSelectedTier("inicial")}
-                        className="text-center"
+                        className="text-center group transition-all duration-200"
                         aria-pressed={selectedTier === "inicial"}
                       >
-                        <div className="text-lg md:text-xl font-semibold">{content.pricingTiers.inicial.name}</div>
-                        <div className={`mt-2 rounded-2xl border px-6 py-5 ${selectedTier === "inicial" ? "border-foreground text-foreground" : "border-border text-muted-foreground"}`}>
-                          <div className={`text-3xl font-bold ${selectedTier === "inicial" ? "" : "opacity-60"}`}>{content.currencySymbol}{content.pricingTiers.inicial.price}</div>
-                          <div className="text-xs opacity-70">{content.pricingTiers.inicial.range}</div>
+                        <div className="text-xl font-bold mb-4 text-foreground">{content.pricingTiers.inicial.name}</div>
+                        <div className={`
+                          rounded-[24px] border-2 px-8 py-8 transition-all duration-200 bg-white/50
+                          ${selectedTier === "inicial" 
+                            ? "border-foreground shadow-lg scale-105 bg-white" 
+                            : "border-border/50 hover:border-border group-hover:scale-102"
+                          }
+                        `}>
+                          <div className={`
+                            text-4xl font-black mb-2 transition-opacity duration-200
+                            ${selectedTier === "inicial" ? "text-foreground" : "text-muted-foreground"}
+                          `}>
+                            {content.currencySymbol}{content.pricingTiers.inicial.price}
+                          </div>
+                          <div className="text-sm text-muted-foreground font-medium">{content.pricingTiers.inicial.range}</div>
                         </div>
                       </button>
+
                       {/* Mayorista destacado */}
                       <button
                         type="button"
                         onClick={() => setSelectedTier("mayorista")}
-                        className="text-center"
+                        className="text-center group transition-all duration-200"
                         aria-pressed={selectedTier === "mayorista"}
                       >
-                        <div className="text-lg md:text-xl font-semibold">{content.pricingTiers.mayorista.name}</div>
-                        <div className={`relative mt-2 rounded-2xl border px-6 py-5 ${selectedTier === "mayorista" ? "border-foreground" : "border-border"}`}>
-                          {selectedTier === "mayorista" && (
-                            <span className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-foreground text-background text-xs px-3 py-1">{content.pricingTiers.mayorista.badge}</span>
-                          )}
-                          <div className="text-3xl font-bold">{content.currencySymbol}{content.pricingTiers.mayorista.price}</div>
-                          <div className="text-xs text-muted-foreground">{content.pricingTiers.mayorista.range}</div>
+                        <div className="text-xl font-bold mb-4 text-foreground">{content.pricingTiers.mayorista.name}</div>
+                        <div className={`
+                          relative rounded-[24px] border-2 px-8 py-8 transition-all duration-200 bg-white/50
+                          ${selectedTier === "mayorista" 
+                            ? "border-foreground shadow-xl scale-105 bg-white" 
+                            : "border-border/50 hover:border-border group-hover:scale-102"
+                          }
+                        `}>
+                          <span className="absolute -top-5 left-1/2 -translate-x-1/2 rounded-full bg-foreground text-background text-sm font-bold px-6 py-2 shadow-lg">
+                            {content.pricingTiers.mayorista.badge}
+                          </span>
+                          <div className="text-4xl font-black mb-2 text-foreground">
+                            {content.currencySymbol}{content.pricingTiers.mayorista.price}
+                          </div>
+                          <div className="text-sm text-muted-foreground font-medium">{content.pricingTiers.mayorista.range}</div>
                         </div>
                       </button>
+
                       {/* Distribuidor */}
                       <button
                         type="button"
                         onClick={() => setSelectedTier("distribuidor")}
-                        className="text-center"
+                        className="text-center group transition-all duration-200"
                         aria-pressed={selectedTier === "distribuidor"}
                       >
-                        <div className="text-lg md:text-xl font-semibold">{content.pricingTiers.distribuidor.name}</div>
-                        <div className={`mt-2 rounded-2xl border px-6 py-5 ${selectedTier === "distribuidor" ? "border-foreground text-foreground" : "border-border text-muted-foreground"}`}>
-                          <div className={`text-3xl font-bold ${selectedTier === "distribuidor" ? "" : "opacity-60"}`}>{content.currencySymbol}{content.pricingTiers.distribuidor.price}</div>
-                          <div className="text-xs opacity-70">{content.pricingTiers.distribuidor.range}</div>
+                        <div className="text-xl font-bold mb-4 text-foreground">{content.pricingTiers.distribuidor.name}</div>
+                        <div className={`
+                          rounded-[24px] border-2 px-8 py-8 transition-all duration-200 bg-white/50
+                          ${selectedTier === "distribuidor" 
+                            ? "border-foreground shadow-lg scale-105 bg-white" 
+                            : "border-border/50 hover:border-border group-hover:scale-102"
+                          }
+                        `}>
+                          <div className={`
+                            text-4xl font-black mb-2 transition-opacity duration-200
+                            ${selectedTier === "distribuidor" ? "text-foreground" : "text-muted-foreground"}
+                          `}>
+                            {content.currencySymbol}{content.pricingTiers.distribuidor.price}
+                          </div>
+                          <div className="text-sm text-muted-foreground font-medium">{content.pricingTiers.distribuidor.range}</div>
                         </div>
                       </button>
                     </div>
