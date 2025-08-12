@@ -444,10 +444,10 @@ const ProductView = () => {
                   <h1 className="text-2xl md:text-3xl font-semibold leading-tight">{product.name}</h1>
                 </header>
 
-                {/* Barra de precios por tiers */}
-                <article className="rounded-[32px] bg-card text-card-foreground border overflow-hidden shadow-sm">
-                  <div className="p-6 pb-0">
-                    <div className="grid grid-cols-3 gap-6">
+                {/* Barra de precios por tiers - 30% smaller */}
+                <article className="rounded-[24px] bg-card text-card-foreground border overflow-hidden shadow-sm">
+                  <div className="p-4 pb-0">
+                    <div className="grid grid-cols-3 gap-4">
                       {/* Inicial */}
                       <button
                         type="button"
@@ -455,16 +455,16 @@ const ProductView = () => {
                         className="text-center group transition-all duration-200"
                         aria-pressed={selectedTier === "inicial"}
                       >
-                        <div className="text-xl font-bold mb-4 text-foreground">{content.pricingTiers.inicial.name}</div>
+                        <div className="text-lg font-bold mb-2 text-foreground">{content.pricingTiers.inicial.name}</div>
                         <div className={`
-                          rounded-[24px] border-2 px-8 py-8 transition-all duration-200 bg-white/50
+                          rounded-[18px] border-2 px-6 py-6 transition-all duration-200 bg-white/50
                           ${selectedTier === "inicial" 
                             ? "border-foreground shadow-lg scale-105 bg-white" 
                             : "border-border/50 hover:border-border group-hover:scale-102"
                           }
                         `}>
                           <div className={`
-                            text-4xl font-black mb-2 transition-opacity duration-200
+                            text-3xl font-black mb-1 transition-opacity duration-200
                             ${selectedTier === "inicial" ? "text-foreground" : "text-muted-foreground"}
                           `}>
                             {content.currencySymbol}{(() => {
@@ -472,7 +472,7 @@ const ProductView = () => {
                               if (variants.length > 0) {
                                 return getVariantPrice(variants[0], "inicial").toFixed(2);
                               }
-                              return content.pricingTiers.inicial.price;
+                              return "0.00";
                             })()}
                           </div>
                           <div className="text-sm text-muted-foreground font-medium">{content.pricingTiers.inicial.range}</div>
@@ -486,24 +486,24 @@ const ProductView = () => {
                         className="text-center group transition-all duration-200"
                         aria-pressed={selectedTier === "mayorista"}
                       >
-                        <div className="text-xl font-bold mb-4 text-foreground">{content.pricingTiers.mayorista.name}</div>
+                        <div className="text-lg font-bold mb-2 text-foreground">{content.pricingTiers.mayorista.name}</div>
                         <div className={`
-                          relative rounded-[24px] border-2 px-8 py-8 transition-all duration-200 bg-white/50
+                          relative rounded-[18px] border-2 px-6 py-6 transition-all duration-200 bg-white/50
                           ${selectedTier === "mayorista" 
                             ? "border-foreground shadow-xl scale-105 bg-white" 
                             : "border-border/50 hover:border-border group-hover:scale-102"
                           }
                         `}>
-                          <span className="absolute -top-5 left-1/2 -translate-x-1/2 rounded-full bg-foreground text-background text-sm font-bold px-6 py-2 shadow-lg">
+                          <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-foreground text-background text-xs font-bold px-4 py-1 shadow-lg">
                             {content.pricingTiers.mayorista.badge}
                           </span>
-                          <div className="text-4xl font-black mb-2 text-foreground">
+                          <div className="text-3xl font-black mb-1 text-foreground">
                             {content.currencySymbol}{(() => {
                               // Calculate dynamic price for mayorista tier using first variant
                               if (variants.length > 0) {
                                 return getVariantPrice(variants[0], "mayorista").toFixed(2);
                               }
-                              return content.pricingTiers.mayorista.price;
+                              return "0.00";
                             })()}
                           </div>
                           <div className="text-sm text-muted-foreground font-medium">{content.pricingTiers.mayorista.range}</div>
@@ -517,16 +517,16 @@ const ProductView = () => {
                         className="text-center group transition-all duration-200"
                         aria-pressed={selectedTier === "distribuidor"}
                       >
-                        <div className="text-xl font-bold mb-4 text-foreground">{content.pricingTiers.distribuidor.name}</div>
+                        <div className="text-lg font-bold mb-2 text-foreground">{content.pricingTiers.distribuidor.name}</div>
                         <div className={`
-                          rounded-[24px] border-2 px-8 py-8 transition-all duration-200 bg-white/50
+                          rounded-[18px] border-2 px-6 py-6 transition-all duration-200 bg-white/50
                           ${selectedTier === "distribuidor" 
                             ? "border-foreground shadow-lg scale-105 bg-white" 
                             : "border-border/50 hover:border-border group-hover:scale-102"
                           }
                         `}>
                           <div className={`
-                            text-4xl font-black mb-2 transition-opacity duration-200
+                            text-3xl font-black mb-1 transition-opacity duration-200
                             ${selectedTier === "distribuidor" ? "text-foreground" : "text-muted-foreground"}
                           `}>
                             {content.currencySymbol}{(() => {
@@ -534,7 +534,7 @@ const ProductView = () => {
                               if (variants.length > 0) {
                                 return getVariantPrice(variants[0], "distribuidor").toFixed(2);
                               }
-                              return content.pricingTiers.distribuidor.price;
+                              return "0.00";
                             })()}
                           </div>
                           <div className="text-sm text-muted-foreground font-medium">{content.pricingTiers.distribuidor.range}</div>
