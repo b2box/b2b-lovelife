@@ -97,7 +97,7 @@ export const useProducts = () => {
 
       if (productsError) throw productsError;
 
-      console.log("Raw products data from DB:", productsData?.length, productsData);
+      // console.log("Raw products data from DB:", productsData?.length, productsData);
 
       // Fetch price tiers for all variants
       const variantIds = productsData?.flatMap(p => p.product_variants?.map(v => v.id)) || [];
@@ -124,7 +124,7 @@ export const useProducts = () => {
         )
       })) || [];
 
-      console.log("Transformed products:", transformedProducts.length, transformedProducts);
+      // console.log("Transformed products:", transformedProducts.length, transformedProducts);
       setProducts(transformedProducts);
     } catch (err) {
       console.error('Error fetching products:', err);

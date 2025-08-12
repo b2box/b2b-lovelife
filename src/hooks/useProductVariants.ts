@@ -85,7 +85,7 @@ export function useProductVariants(productId: string | undefined) {
           throw variantsError;
         }
 
-        console.log("Fetched variants for product:", productId, variantsData);
+        // console.log("Fetched variants for product:", productId, variantsData);
         setVariants(variantsData || []);
       } catch (err) {
         console.error("Error fetching product variants:", err);

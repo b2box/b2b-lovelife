@@ -103,7 +103,7 @@ const ProductView = () => {
     if (variantImageIndex !== -1) {
       setSelectedImageIndex(variantImageIndex);
     }
-  }, [selectedTier, variants]);
+  }, [selectedTier, variants.length]); // Only depend on variants.length to prevent re-renders
 
   // Initialize rows when variants change - stabilized to prevent reloads
   useEffect(() => {
@@ -130,7 +130,7 @@ const ProductView = () => {
         setSelectedVariantId(newRows[0].id);
       }
     }
-  }, [variants, rows.length, selectedVariantId]); // More stable dependencies
+  }, [variants.length]); // Only depend on variants.length, not the full array or other state
 
   const perUnitLabeling = 0.15;
   const perUnitPackaging = 0.04;
