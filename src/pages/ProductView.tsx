@@ -83,11 +83,14 @@ const ProductView = () => {
   useEffect(() => {
     console.log("Updating rows. Variants length:", variants.length, "Initial variants:", initialVariants);
     setRows(initialVariants);
-    // Set the first variant as selected by default
+  }, [initialVariants]);
+
+  // Set the first variant as selected by default (separate effect to avoid loop)
+  useEffect(() => {
     if (initialVariants.length > 0 && !selectedVariantId) {
       setSelectedVariantId(initialVariants[0].id);
     }
-  }, [initialVariants, selectedVariantId]);
+  }, [initialVariants.length]); // Only depend on length, not the actual array or selectedVariantId
 
   const perUnitLabeling = 0.15;
   const perUnitPackaging = 0.04;
