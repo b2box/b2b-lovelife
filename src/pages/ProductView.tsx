@@ -324,7 +324,7 @@ const ProductView = () => {
 
                 {/* Barra de precios por tiers - Optimizada */}
                 <article className="rounded-xl bg-card text-card-foreground border overflow-hidden shadow-sm">
-                  <div className="p-3 pb-0">
+                  <div className="p-2 pb-0">
                     <div className="grid grid-cols-3 gap-3">
                       {/* Inicial */}
                       <button
@@ -345,13 +345,14 @@ const ProductView = () => {
                             text-2xl font-black mb-1 transition-opacity duration-200
                             ${selectedTier === "inicial" ? "text-foreground" : "text-muted-foreground"}
                           `}>
-                            {content.currencySymbol}{(() => {
-                              // Calculate dynamic price for inicial tier using first variant
-                              if (variants.length > 0) {
-                                return getVariantPrice(variants[0], "inicial").toFixed(2);
-                              }
-                              return "0.00";
-                            })()}
+                             {content.currencySymbol}{(() => {
+                               // Calculate dynamic price for inicial tier using selected variant
+                               const selectedVariant = variants.find(v => v.id === selectedVariantId) || variants[0];
+                               if (selectedVariant) {
+                                 return getVariantPrice(selectedVariant, "inicial").toFixed(2);
+                               }
+                               return "0.00";
+                             })()}
                           </div>
                           <div className="text-sm text-muted-foreground font-medium">{content.pricingTiers.inicial.range}</div>
                         </div>
@@ -376,13 +377,14 @@ const ProductView = () => {
                             {content.pricingTiers.mayorista.badge}
                           </span>
                           <div className="text-3xl font-black mb-1 text-foreground">
-                            {content.currencySymbol}{(() => {
-                              // Calculate dynamic price for mayorista tier using first variant
-                              if (variants.length > 0) {
-                                return getVariantPrice(variants[0], "mayorista").toFixed(2);
-                              }
-                              return "0.00";
-                            })()}
+                             {content.currencySymbol}{(() => {
+                               // Calculate dynamic price for mayorista tier using selected variant
+                               const selectedVariant = variants.find(v => v.id === selectedVariantId) || variants[0];
+                               if (selectedVariant) {
+                                 return getVariantPrice(selectedVariant, "mayorista").toFixed(2);
+                               }
+                               return "0.00";
+                             })()}
                           </div>
                           <div className="text-sm text-muted-foreground font-medium">{content.pricingTiers.mayorista.range}</div>
                         </div>
@@ -407,13 +409,14 @@ const ProductView = () => {
                             text-3xl font-black mb-1 transition-opacity duration-200
                             ${selectedTier === "distribuidor" ? "text-foreground" : "text-muted-foreground"}
                           `}>
-                            {content.currencySymbol}{(() => {
-                              // Calculate dynamic price for distribuidor tier using first variant
-                              if (variants.length > 0) {
-                                return getVariantPrice(variants[0], "distribuidor").toFixed(2);
-                              }
-                              return "0.00";
-                            })()}
+                             {content.currencySymbol}{(() => {
+                               // Calculate dynamic price for distribuidor tier using selected variant
+                               const selectedVariant = variants.find(v => v.id === selectedVariantId) || variants[0];
+                               if (selectedVariant) {
+                                 return getVariantPrice(selectedVariant, "distribuidor").toFixed(2);
+                               }
+                               return "0.00";
+                             })()}
                           </div>
                           <div className="text-sm text-muted-foreground font-medium">{content.pricingTiers.distribuidor.range}</div>
                         </div>
