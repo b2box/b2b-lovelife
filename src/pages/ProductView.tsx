@@ -9,11 +9,14 @@ import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/h
 import { useProducts } from "@/hooks/useProducts";
 import { useProductMarketContent } from "@/hooks/useProductMarketContent";
 import { MarketSpecificBanners } from "@/components/product/MarketSpecificBanners";
+import { useProductVariants, type ProductVariant } from "@/hooks/useProductVariants";
+import { useVariantPricing } from "@/hooks/useVariantPricing";
 
 const ProductView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { products } = useProducts();
+  const { variants, loading: variantsLoading } = useProductVariants(id);
   const { toast } = useToast();
   const { market, content } = useProductMarketContent();
 
@@ -38,23 +41,26 @@ const ProductView = () => {
 
   type VariantRow = {
     id: string;
-    name: string;
-    color: string;
-    unitPrice: number;
-    stock: number;
+    variant: ProductVariant;
     qty: number;
     comps: { labeling: boolean; barcode: boolean; photos: boolean; packaging: boolean };
   };
 
-  const initialVariants: VariantRow[] = [
-    { id: "var-rosa", name: product?.name || "", color: "Rosa Estándar", unitPrice: 5, stock: 4000, qty: 0, comps: { labeling: false, barcode: false, photos: false, packaging: false } },
-    { id: "var-gris", name: product?.name || "", color: "Gris Estándar", unitPrice: 5, stock: 4000, qty: 0, comps: { labeling: false, barcode: false, photos: false, packaging: false } },
-    { id: "var-lila", name: product?.name || "", color: "Lila Estándar", unitPrice: 5, stock: 4000, qty: 0, comps: { labeling: false, barcode: false, photos: false, packaging: false } },
-    { id: "var-crema", name: product?.name || "", color: "Crema Estándar", unitPrice: 5, stock: 4000, qty: 0, comps: { labeling: false, barcode: false, photos: false, packaging: false } },
-    { id: "var-azul", name: product?.name || "", color: "Azul Estándar", unitPrice: 5, stock: 4000, qty: 0, comps: { labeling: false, barcode: false, photos: false, packaging: false } },
-  ];
+  const initialVariants: VariantRow[] = useMemo(() => {
+    return variants.map(variant => ({
+      id: variant.id,
+      variant,
+      qty: 0,
+      comps: { labeling: false, barcode: false, photos: false, packaging: false }
+    }));
+  }, [variants]);
 
-  const [rows, setRows] = useState<VariantRow[]>(initialVariants);
+  const [rows, setRows] = useState<VariantRow[]>([]);
+
+  // Update rows when variants change
+  useEffect(() => {
+    setRows(initialVariants);
+  }, [initialVariants]);
 
   const perUnitLabeling = 0.15;
   const perUnitPackaging = 0.04;
@@ -63,8 +69,21 @@ const ProductView = () => {
   const minOrder = 100;
   const [selectedTier, setSelectedTier] = useState<"inicial" | "mayorista" | "distribuidor">("mayorista");
 
+  // Calculate pricing for all variants at once
+  const variantPricings = useMemo(() => {
+    return rows.map(r => ({
+      id: r.id,
+      pricing: useVariantPricing(r.variant, selectedTier)
+    }));
+  }, [rows, selectedTier]);
+
+  const getVariantPricing = (variantId: string) => {
+    return variantPricings.find(vp => vp.id === variantId)?.pricing || { price: 0, currency: "USD", currencySymbol: "$", minQuantity: 0 };
+  };
+
   const rowTotal = (r: VariantRow) => {
-    const base = r.qty * r.unitPrice;
+    const pricing = getVariantPricing(r.id);
+    const base = r.qty * pricing.price;
     const comps =
       (r.comps.labeling ? r.qty * perUnitLabeling : 0) +
       (r.comps.packaging ? r.qty * perUnitPackaging : 0) +
@@ -75,7 +94,8 @@ const ProductView = () => {
 
   const totals = rows.reduce(
     (acc, r) => {
-      const base = r.qty * r.unitPrice;
+      const pricing = getVariantPricing(r.id);
+      const base = r.qty * pricing.price;
       const comps = rowTotal(r) - base;
       acc.items += r.qty;
       acc.products += base;
@@ -153,12 +173,14 @@ const ProductView = () => {
     script.text = JSON.stringify(jsonLd);
   }, [product]);
 
-  if (!product) {
+  if (!product || variantsLoading) {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
         <main className="container mx-auto py-8">
-          <p className="text-muted-foreground">Producto no encontrado.</p>
+          <p className="text-muted-foreground">
+            {variantsLoading ? "Cargando producto..." : "Producto no encontrado."}
+          </p>
           <button className="mt-4 underline" onClick={() => navigate(-1)} aria-label="Volver">
             Volver
           </button>
@@ -387,36 +409,42 @@ const ProductView = () => {
                 </tr>
               </thead>
               <tbody>
-                {rows.map((r) => (
-                  <tr key={r.id} className="border-t">
-                    <td className="px-4 py-4">
-                      <div className="flex items-center gap-3">
-                        <img src={product.image} alt={r.name} className="size-12 rounded-md object-cover" loading="lazy" />
-                        <div>
-                          <div className="font-medium leading-tight">{r.name}</div>
-                          <div className="text-xs text-muted-foreground">{r.color}</div>
+                {rows.map((r) => {
+                  const pricing = getVariantPricing(r.id);
+                  const variantImage = r.variant.images?.[0]?.url || product.image;
+                  const variantName = r.variant.name || product.name;
+                  const variantOption = r.variant.option_name || r.variant.attributes?.color || "Estándar";
+                  
+                  return (
+                    <tr key={r.id} className="border-t">
+                      <td className="px-4 py-4">
+                        <div className="flex items-center gap-3">
+                          <img src={variantImage} alt={variantName} className="size-12 rounded-md object-cover" loading="lazy" />
+                          <div>
+                            <div className="font-medium leading-tight">{variantName}</div>
+                            <div className="text-xs text-muted-foreground">{variantOption}</div>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className="inline-flex items-center rounded-full border">
-                        <button className="px-3 py-1" onClick={() => changeQty(r.id, -1)} aria-label="Disminuir">-</button>
-                        <span className="px-3 py-1 min-w-8 text-center">{r.qty}</span>
-                        <button className="px-3 py-1" onClick={() => changeQty(r.id, 1)} aria-label="Aumentar">+</button>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4">{content.currencySymbol}{r.unitPrice.toFixed(2)}</td>
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="inline-flex items-center rounded-full border">
+                          <button className="px-3 py-1" onClick={() => changeQty(r.id, -1)} aria-label="Disminuir">-</button>
+                          <span className="px-3 py-1 min-w-8 text-center">{r.qty}</span>
+                          <button className="px-3 py-1" onClick={() => changeQty(r.id, 1)} aria-label="Aumentar">+</button>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4">{content.currencySymbol}{pricing.price.toFixed(2)}</td>
 
-                    {/* Etiquetado */}
-                    <td className="px-4 py-4 text-center">
-                      <button
-                        className={`px-3 py-1 rounded-full text-xs border ${r.comps.labeling ? "bg-green-500/15 text-green-700" : "bg-transparent"}`}
-                        onClick={() => toggleComp(r.id, "labeling")}
+                      {/* Etiquetado */}
+                      <td className="px-4 py-4 text-center">
+                        <button
+                          className={`px-3 py-1 rounded-full text-xs border ${r.comps.labeling ? "bg-green-500/15 text-green-700" : "bg-transparent"}`}
+                          onClick={() => toggleComp(r.id, "labeling")}
                         >
                           {content.currencySymbol}{perUnitLabeling.toFixed(2)} {content.complementPricing.labelingUnit}
                         </button>
-                        <div className="text-[10px] text-muted-foreground mt-1">{r.stock.toLocaleString()} {content.complementPricing.unitsText}</div>
-                    </td>
+                        <div className="text-[10px] text-muted-foreground mt-1">{r.variant.stock.toLocaleString()} {content.complementPricing.unitsText}</div>
+                      </td>
 
                     {/* Código de barras */}
                     <td className="px-4 py-4 text-center">
@@ -448,9 +476,10 @@ const ProductView = () => {
                       </button>
                     </td>
 
-                    <td className="px-4 py-4 text-right font-medium">{content.currencySymbol}{rowTotal(r).toFixed(2)}</td>
-                  </tr>
-                ))}
+                      <td className="px-4 py-4 text-right font-medium">{content.currencySymbol}{rowTotal(r).toFixed(2)}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
