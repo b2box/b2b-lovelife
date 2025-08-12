@@ -1,6 +1,6 @@
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import type { Product } from "@/components/landing/ProductCard";
 import { ArrowUpRight, CheckCircle2, Cog, Hash, Box, Package, Battery, Ruler, Scale } from "lucide-react";
@@ -12,6 +12,8 @@ import { MarketSpecificBanners } from "@/components/product/MarketSpecificBanner
 import { useProductVariants, type ProductVariant } from "@/hooks/useProductVariants";
 import { useVariantPricing } from "@/hooks/useVariantPricing";
 import { usePricingSettings } from "@/hooks/usePricingSettings";
+import ImageGallery from "@/components/product/ImageGallery";
+import ImageThumbnails from "@/components/product/ImageThumbnails";
 
 const ProductView = () => {
   const { slug, id } = useParams();
@@ -72,7 +74,7 @@ const ProductView = () => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   // Handler for variant selection - changes prices, quantities and image
-  const handleVariantSelection = (variantId: string) => {
+  const handleVariantSelection = useCallback((variantId: string) => {
     setSelectedVariantId(variantId);
     
     // Update quantities for all rows based on selected variant
@@ -101,7 +103,7 @@ const ProductView = () => {
     if (variantImageIndex !== -1) {
       setSelectedImageIndex(variantImageIndex);
     }
-  };
+  }, [selectedTier, variants]);
 
   // Initialize rows when variants change - stabilized to prevent reloads
   useEffect(() => {
@@ -295,102 +297,22 @@ const ProductView = () => {
               {/* Galería - compacta */}
               <div className="rounded-2xl bg-card p-2 md:p-3 h-fit">
                 <div className="space-y-2">
-                  <div className="relative overflow-hidden rounded-xl bg-muted aspect-square p-4">{/* Galería cuadrada con padding para el halo */}
-                    {(() => {
-                      // Collect all images from all variants
-                      const allImages = variants.flatMap(variant => 
-                        (variant as any).product_variant_images?.map((img: any) => ({
-                          ...img,
-                          variantName: variant.name || product.name,
-                          variantId: variant.id
-                        })) || []
-                      ).sort((a, b) => a.sort_order - b.sort_order);
-                      
-                      const currentImage = allImages[selectedImageIndex];
-                      const displayImage = currentImage?.url || product.image;
-                      const imageCount = allImages.length;
-
-                      return (
-                        <>
-                          <img
-                            src={displayImage}
-                            alt={currentImage?.alt || product.name}
-                            className="absolute inset-4 h-[calc(100%-2rem)] w-[calc(100%-2rem)] object-contain"
-                            loading="lazy"
-                          />
-                          {/* Viral badge */}
-                          {product.viral && (
-                            <img
-                              src="/lovable-uploads/984b614e-1f6b-484a-8b88-5c741374625b.png"
-                              alt="Viral ahora"
-                              className="absolute left-3 top-3 h-8 w-auto select-none"
-                              loading="lazy"
-                            />
-                          )}
-                          {/* Contador y flecha */}
-                          <span className="absolute top-3 right-3 rounded-full bg-black/50 text-white text-xs px-2 py-1">
-                            {selectedImageIndex + 1} de {imageCount || 1}
-                          </span>
-                          {/* Variant indicator */}
-                          {currentImage && (
-                            <span className="absolute bottom-3 left-3 rounded-full bg-black/70 text-white text-xs px-3 py-1">
-                              {currentImage.variantName}
-                            </span>
-                          )}
-                          {imageCount > 1 && (
-                            <button 
-                              className="absolute right-3 top-1/2 -translate-y-1/2 grid size-10 place-items-center rounded-full bg-black/40 text-white hover:bg-black/60" 
-                              aria-label="Siguiente imagen"
-                              onClick={() => setSelectedImageIndex((prev) => (prev + 1) % imageCount)}
-                            >
-                              ›
-                            </button>
-                          )}
-                        </>
-                      );
-                    })()}
+                  <div className="relative overflow-hidden rounded-xl bg-muted aspect-square p-4">
+                    <ImageGallery 
+                      variants={variants}
+                      product={product}
+                      selectedImageIndex={selectedImageIndex}
+                      onImageIndexChange={setSelectedImageIndex}
+                    />
                   </div>
 
-                  {/* Thumbnails - Maximum 5 like reference image */}
-                  <div className="flex items-center gap-2 overflow-hidden">
-                    {(() => {
-                      // Collect all images from all variants with variant info
-                      const allImages = variants.flatMap(variant => 
-                        (variant as any).product_variant_images?.map((img: any) => ({
-                          ...img,
-                          variantName: variant.name || product.name,
-                          variantId: variant.id
-                        })) || []
-                      ).sort((a, b) => a.sort_order - b.sort_order);
-                      
-                      const displayImages = allImages.slice(0, 5); // Limit to 5 thumbnails max
-                      const remainingCount = Math.max(0, allImages.length - 5);
-
-                      return displayImages.map((image, i) => (
-                        <button
-                          key={`${image.variantId}-${image.id}`}
-                          className={`relative w-12 h-12 flex-shrink-0 overflow-hidden rounded-lg ring-1 bg-muted transition-all ${
-                            selectedImageIndex === i ? 'ring-primary ring-2 scale-105' : 'ring-border hover:ring-primary/50'
-                          }`}
-                          onClick={() => setSelectedImageIndex(i)}
-                          aria-label={`Ver imagen ${i + 1} de ${image.variantName}`}
-                        >
-                          <img 
-                            src={image.url} 
-                            alt={image.alt || `${image.variantName} imagen ${i + 1}`} 
-                            className="w-full h-full object-cover" 
-                            loading="lazy" 
-                          />
-                          {/* +X indicator for extra images on the last thumbnail */}
-                          {i === 4 && remainingCount > 0 && (
-                            <div className="absolute inset-0 grid place-items-center bg-black/60 text-white text-sm font-bold rounded-lg">
-                              +{remainingCount}
-                            </div>
-                          )}
-                        </button>
-                      ));
-                    })()}
-                  </div>
+                  {/* Thumbnails */}
+                  <ImageThumbnails 
+                    variants={variants}
+                    product={product}
+                    selectedImageIndex={selectedImageIndex}
+                    onImageIndexChange={setSelectedImageIndex}
+                  />
                 </div>
               </div>
 
