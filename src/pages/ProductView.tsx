@@ -330,11 +330,11 @@ const ProductView = () => {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-[4fr_1fr]">
           {/* Columna izquierda (80%): Galería 40% + Detalles 60% */}
           <section>
-            <div className="grid grid-cols-1 md:grid-cols-[2fr_3fr] gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-4">{/* Reduced gallery from 2fr to 1fr (50% reduction) */}
               {/* Galería 40% */}
-              <div className="rounded-[28px] bg-card p-3 md:p-4">
-                <div className="space-y-3">
-                  <div className="relative overflow-hidden rounded-[28px] bg-muted aspect-square">
+              <div className="rounded-[24px] bg-card p-2 md:p-3">{/* Reduced padding and border radius for smaller gallery */}
+                <div className="space-y-2">{/* Reduced spacing */}
+                  <div className="relative overflow-hidden rounded-[20px] bg-muted aspect-square">{/* Reduced border radius */}
                     {(() => {
                       // Collect all images from all variants
                       const allImages = variants.flatMap(variant => 
@@ -391,7 +391,7 @@ const ProductView = () => {
                   </div>
 
                   {/* Thumbnails - All variant images */}
-                  <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide">
+                  <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">{/* Reduced gap from 3 to 2 */}
                     {(() => {
                       // Collect all images from all variants with variant info
                       const allImages = variants.flatMap(variant => 
@@ -408,7 +408,7 @@ const ProductView = () => {
                       return displayImages.map((image, i) => (
                         <button
                           key={`${image.variantId}-${image.id}`}
-                          className={`relative h-16 w-16 md:h-18 md:w-18 flex-shrink-0 overflow-hidden rounded-xl ring-1 bg-muted transition-all ${
+                          className={`relative h-12 w-12 md:h-14 md:w-14 flex-shrink-0 overflow-hidden rounded-lg ring-1 bg-muted transition-all ${
                             selectedImageIndex === i ? 'ring-primary ring-2 scale-110' : 'ring-border hover:ring-primary/50'
                           } ${image.variantId === selectedVariantId ? 'ring-blue-500' : ''}`}
                           onClick={() => setSelectedImageIndex(i)}
