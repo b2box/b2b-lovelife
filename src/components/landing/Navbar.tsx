@@ -8,6 +8,7 @@ import { useCountryPricing } from "@/hooks/useCountryPricing";
 const TEXTS = {
   AR: { cart: "Carrito", orders: "Pedidos", profile: "Perfil", us: "Nosotros", search: "Buscar productos, categorías, marcas…", login: "Iniciar sesión", register: "Registrarse" },
   CO: { cart: "Carrito", orders: "Pedidos", profile: "Perfil", us: "Nosotros", search: "Buscar productos, categorías, marcas…", login: "Iniciar sesión", register: "Registrarse" },
+  CN: { cart: "Cart", orders: "Orders", profile: "Profile", us: "About", search: "Search products, categories, brands…", login: "Login", register: "Register" },
 } as const;
 
 type Country = keyof typeof TEXTS;
@@ -64,7 +65,15 @@ const Navbar = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-2 rounded-full border px-2 py-1" aria-label="Seleccionar país">
-                  <img src={country === "AR" ? "/images/flags/ar.svg" : "/images/flags/co.svg"} alt={`Bandera de ${country === "AR" ? "Argentina" : "Colombia"}`} className="h-8 w-8 rounded-full object-cover" loading="lazy" />
+                  <img src={
+                    country === "AR" ? "/images/flags/ar.svg" : 
+                    country === "CO" ? "/images/flags/co.svg" : 
+                    "/images/flags/cn.svg"
+                  } alt={`Bandera de ${
+                    country === "AR" ? "Argentina" : 
+                    country === "CO" ? "Colombia" : 
+                    "China"
+                  }`} className="h-8 w-8 rounded-full object-cover" loading="lazy" />
                   <ChevronDown className="opacity-70" />
                 </button>
               </DropdownMenuTrigger>
@@ -74,6 +83,9 @@ const Navbar = () => {
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setCountryAndNotify("CO")} className="gap-2">
                   <img src="/images/flags/co.svg" alt="Colombia" className="h-5 w-5 rounded-full" /> Colombia
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setCountryAndNotify("CN")} className="gap-2">
+                  <img src="/images/flags/cn.svg" alt="China" className="h-5 w-5 rounded-full" /> Global
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

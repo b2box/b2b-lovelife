@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { usePricingSettings } from "./usePricingSettings";
 
-export type Country = "AR" | "CO";
+export type Country = "AR" | "CO" | "CN";
 
 export function useCountryPricing() {
   const { data: pricingSettings } = usePricingSettings();
@@ -57,6 +57,11 @@ export function useCountryPricing() {
       const rate = pricingSettings.coRate;
       const percentage = pricingSettings.coPercents[2]; // tier 3 (más alto)
       return (basePrice * rate * percentage) / 100;
+    } else if (targetCountry === "CN") {
+      // Para China/Global, usar el tier más alto (tier 3)
+      const rate = pricingSettings.cnRate;
+      const percentage = pricingSettings.cnPercents[2]; // tier 3 (más alto)
+      return (basePrice * rate * percentage) / 100;
     }
 
     return basePrice;
@@ -69,6 +74,8 @@ export function useCountryPricing() {
       return `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
     } else if (targetCountry === "CO") {
       return `$${Math.round(price).toLocaleString('es-CO', { useGrouping: true })} COP`;
+    } else if (targetCountry === "CN") {
+      return `¥${price.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} CNY`;
     }
     
     return `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;

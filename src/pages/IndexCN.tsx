@@ -12,22 +12,11 @@ import NewArrivals from "@/components/landing/NewArrivals";
 import TestimonialsBanner from "@/components/landing/TestimonialsBanner";
 import { useSEOByMarket } from "@/hooks/useSEOByMarket";
 
-const jsonLd = () => ({
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: "B2BOX - Mayorista",
-  url: typeof window !== "undefined" ? window.location.origin : "",
-  potentialAction: {
-    "@type": "SearchAction",
-    target: `${typeof window !== "undefined" ? window.location.origin : ""}/?q={search_term_string}`,
-    "query-input": "required name=search_term_string",
-  },
-});
-
-const Index = () => {
+const IndexCN = () => {
   const location = useLocation();
   const isApp = location.pathname.startsWith("/app");
   useSEOByMarket("CN");
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -56,10 +45,8 @@ const Index = () => {
         </section>
       </main>
       <Footer />
-
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd()) }} />
     </div>
   );
 };
 
-export default Index;
+export default IndexCN;
