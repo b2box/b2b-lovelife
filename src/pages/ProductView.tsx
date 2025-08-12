@@ -338,7 +338,7 @@ const ProductView = () => {
                     {(() => {
                       // Collect all images from all variants
                       const allImages = variants.flatMap(variant => 
-                        variant.images?.map(img => ({
+                        (variant as any).product_variant_images?.map((img: any) => ({
                           ...img,
                           variantName: variant.name || product.name,
                           variantId: variant.id
@@ -395,7 +395,7 @@ const ProductView = () => {
                     {(() => {
                       // Collect all images from all variants with variant info
                       const allImages = variants.flatMap(variant => 
-                        variant.images?.map(img => ({
+                        (variant as any).product_variant_images?.map((img: any) => ({
                           ...img,
                           variantName: variant.name || product.name,
                           variantId: variant.id
@@ -638,7 +638,7 @@ const ProductView = () => {
               <tbody>
                 {rows.map((r) => {
                   const variantPrice = getVariantPrice(r.variant, selectedTier);
-                  const variantImage = r.variant.images?.[0]?.url || product.image;
+                  const variantImage = (r.variant as any).product_variant_images?.[0]?.url || product.image;
                   const variantName = r.variant.name || product.name;
                   const variantOption = r.variant.option_name || r.variant.attributes?.color || "Estándar";
                   
