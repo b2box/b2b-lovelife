@@ -66,7 +66,7 @@ const fetchProducts = async (page: number, search: string, statusFilter: string,
       collection,
       created_at,
       updated_at,
-      product_variants!inner(
+      product_variants!left(
         id,
         name,
         sku,
