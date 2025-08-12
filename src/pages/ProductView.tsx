@@ -266,14 +266,16 @@ const ProductView = () => {
         </nav>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-[3fr_1fr]">
-          {/* Columna izquierda (75%): Galería 25% + Detalles 75% */}
+          {/* Columna izquierda (75%): Galería + Detalles */}
           <section>
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-4">
-              {/* Galería 25% */}
-              <div className="rounded-2xl bg-card p-2 md:p-3">
-                <div className="space-y-2">
-                  <div className="relative overflow-hidden rounded-xl bg-muted aspect-square">
+            <div className="grid grid-cols-1 md:grid-cols-[2fr_5fr] gap-4">{/* Reducir aún más la galería a 2fr vs 5fr */}
+              {/* Galería - miniaturizada */}
+              <div className="rounded-2xl bg-card p-2 md:p-3 h-fit">
+                <div className="space-y-2 max-h-[350px] overflow-hidden">{/* Reducir altura máxima */}
+                  <div className="relative overflow-hidden rounded-xl bg-muted aspect-square max-h-[200px]">{/* Limitar altura del main image */}
                     {(() => {
+                      console.log("ProductView render - variants:", variants.length, "product:", !!product);
+                      
                       // Collect all images from all variants
                       const allImages = variants.flatMap(variant => 
                         (variant as any).product_variant_images?.map((img: any) => ({
