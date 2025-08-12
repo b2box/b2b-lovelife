@@ -34,7 +34,7 @@ const ProductView = () => {
       if (uuidRegex.test(slug)) return slug;
     }
     return undefined;
-  }, [slug, id, products.length]); // Only depend on length, not the array
+  }, [slug, id, products]);
 
   const { variants, loading: variantsLoading } = useProductVariants(productId);
   const { toast } = useToast();
@@ -58,7 +58,7 @@ const ProductView = () => {
       badge: dbProduct.verified_product ? "B2BOX verified" : undefined,
       viral: false
     } as Product & { slug: string };
-  }, [productId, products.length]); // Only depend on length, not the array
+  }, [productId, products]);
 
   type VariantRow = {
     id: string;
@@ -103,7 +103,7 @@ const ProductView = () => {
     if (variantImageIndex !== -1) {
       setSelectedImageIndex(variantImageIndex);
     }
-  }, [selectedTier, variants.length]); // Only depend on variants.length to prevent re-renders
+  }, [selectedTier, variants]);
 
   // Initialize rows when variants change - stabilized to prevent reloads
   useEffect(() => {
@@ -130,7 +130,7 @@ const ProductView = () => {
         setSelectedVariantId(newRows[0].id);
       }
     }
-  }, [variants.length]); // Only depend on variants.length, not the full array or other state
+  }, [variants, selectedVariantId, rows.length]);
 
   const perUnitLabeling = 0.15;
   const perUnitPackaging = 0.04;
