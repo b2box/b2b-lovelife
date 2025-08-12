@@ -625,6 +625,7 @@ export type Database = {
           alt: string | null
           created_at: string
           id: string
+          is_verified: boolean
           product_variant_id: string
           sort_order: number
           url: string
@@ -633,6 +634,7 @@ export type Database = {
           alt?: string | null
           created_at?: string
           id?: string
+          is_verified?: boolean
           product_variant_id: string
           sort_order?: number
           url: string
@@ -641,6 +643,7 @@ export type Database = {
           alt?: string | null
           created_at?: string
           id?: string
+          is_verified?: boolean
           product_variant_id?: string
           sort_order?: number
           url?: string

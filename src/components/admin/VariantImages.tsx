@@ -11,6 +11,7 @@ interface VariantImage {
   url: string;
   alt: string | null;
   sort_order: number;
+  is_verified: boolean;
 }
 
 interface VariantImagesProps {
@@ -34,6 +35,7 @@ export const VariantImages: React.FC<VariantImagesProps> = ({
         .from("product_variant_images")
         .select("*")
         .eq("product_variant_id", variantId)
+        .order("is_verified", { ascending: true })
         .order("sort_order", { ascending: true });
 
       if (error) throw error;
@@ -54,13 +56,18 @@ export const VariantImages: React.FC<VariantImagesProps> = ({
     loadImages();
   }, [variantId]);
 
-  const handleFileUpload = async (files: FileList | null) => {
+  const handleFileUpload = async (files: FileList | null, isVerified: boolean = false) => {
     if (!files || files.length === 0) return;
 
-    if (images.length + files.length > 8) {
+    const regularImages = images.filter(img => !img.is_verified);
+    const verifiedImages = images.filter(img => img.is_verified);
+    const targetSection = isVerified ? verifiedImages : regularImages;
+    const sectionName = isVerified ? "verificadas" : "regulares";
+
+    if (targetSection.length + files.length > 8) {
       toast({
         title: "Error",
-        description: "No puedes subir más de 8 imágenes por variante.",
+        description: `No puedes subir más de 8 imágenes ${sectionName} por variante.`,
         variant: "destructive",
       });
       return;
@@ -80,7 +87,7 @@ export const VariantImages: React.FC<VariantImagesProps> = ({
           continue;
         }
 
-        const fileName = `variants/${variantId}/image_${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${file.name.split('.').pop()}`;
+        const fileName = `variants/${variantId}/${isVerified ? 'verified' : 'regular'}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${file.name.split('.').pop()}`;
         
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from("product-images")
@@ -98,7 +105,8 @@ export const VariantImages: React.FC<VariantImagesProps> = ({
             product_variant_id: variantId,
             url: publicUrl,
             alt: file.name.split('.')[0],
-            sort_order: images.length + newImages.length,
+            sort_order: targetSection.length + newImages.length,
+            is_verified: isVerified,
           })
           .select()
           .single();
@@ -112,7 +120,7 @@ export const VariantImages: React.FC<VariantImagesProps> = ({
       onImagesChange?.();
       toast({
         title: "Imágenes subidas",
-        description: `Se subieron ${newImages.length} imagen(es) correctamente.`,
+        description: `Se subieron ${newImages.length} imagen(es) ${sectionName} correctamente.`,
       });
     } catch (error) {
       console.error("Error uploading images:", error);
@@ -157,8 +165,10 @@ export const VariantImages: React.FC<VariantImagesProps> = ({
 
   const handleSetThumbnail = async (imageId: string) => {
     try {
-      // Set all images to their current order + 1, then set selected to 0
-      const updates = images.map((img, index) => ({
+      const regularImages = images.filter(img => !img.is_verified);
+      
+      // Only regular images can be thumbnails
+      const updates = regularImages.map((img, index) => ({
         id: img.id,
         sort_order: img.id === imageId ? 0 : index + 1,
       }));
@@ -189,20 +199,24 @@ export const VariantImages: React.FC<VariantImagesProps> = ({
   };
 
   const handleMoveImage = async (imageId: string, direction: 'up' | 'down') => {
-    const currentIndex = images.findIndex(img => img.id === imageId);
+    const image = images.find(img => img.id === imageId);
+    if (!image) return;
+
+    const sectionImages = images.filter(img => img.is_verified === image.is_verified);
+    const currentIndex = sectionImages.findIndex(img => img.id === imageId);
     if (currentIndex === -1) return;
 
     const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-    if (newIndex < 0 || newIndex >= images.length) return;
+    if (newIndex < 0 || newIndex >= sectionImages.length) return;
 
     try {
-      const newImages = [...images];
-      [newImages[currentIndex], newImages[newIndex]] = [newImages[newIndex], newImages[currentIndex]];
+      const newSectionImages = [...sectionImages];
+      [newSectionImages[currentIndex], newSectionImages[newIndex]] = [newSectionImages[newIndex], newSectionImages[currentIndex]];
       
       // Update sort_order for both images
       const updates = [
-        { id: newImages[currentIndex].id, sort_order: currentIndex },
-        { id: newImages[newIndex].id, sort_order: newIndex },
+        { id: newSectionImages[currentIndex].id, sort_order: currentIndex },
+        { id: newSectionImages[newIndex].id, sort_order: newIndex },
       ];
 
       for (const update of updates) {
@@ -243,129 +257,179 @@ export const VariantImages: React.FC<VariantImagesProps> = ({
     }
   };
 
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.currentTarget.classList.add('border-primary');
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.currentTarget.classList.remove('border-primary');
+  };
+
+  const handleDrop = (e: React.DragEvent, isVerified: boolean) => {
+    e.preventDefault();
+    e.currentTarget.classList.remove('border-primary');
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      handleFileUpload(files, isVerified);
+    }
+  };
+
+  const renderImageSection = (sectionImages: VariantImage[], isVerified: boolean, title: string) => {
+    const sectionId = isVerified ? 'verified' : 'regular';
+    
+    return (
+      <Card className="p-4">
+        <div className="flex items-center justify-between mb-4">
+          <h4 className="font-medium">{title} ({sectionImages.length}/8)</h4>
+          {sectionImages.length < 8 && (
+            <>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => handleFileUpload(e.target.files, isVerified)}
+                className="hidden"
+                id={`variant-upload-${variantId}-${sectionId}`}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={uploading}
+                onClick={() => document.getElementById(`variant-upload-${variantId}-${sectionId}`)?.click()}
+              >
+                <Upload className="h-4 w-4 mr-1" />
+                Subir
+              </Button>
+            </>
+          )}
+        </div>
+
+        {sectionImages.length === 0 && !uploading && (
+          <div 
+            className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center transition-colors"
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => handleDrop(e, isVerified)}
+          >
+            <ImageIcon className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground mb-2">
+              No hay imágenes {isVerified ? 'verificadas' : 'regulares'}.
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Arrastra imágenes aquí o usa el botón "Subir"
+            </p>
+          </div>
+        )}
+
+        {sectionImages.length > 0 && (
+          <div 
+            className="grid grid-cols-2 md:grid-cols-4 gap-3 min-h-[100px] border-2 border-dashed border-transparent rounded-lg p-2 transition-colors"
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => handleDrop(e, isVerified)}
+          >
+            {sectionImages.map((image, index) => (
+              <Card key={image.id} className="card-glass overflow-hidden">
+                <CardContent className="p-0">
+                  <div className="relative aspect-square">
+                    <img
+                      src={image.url}
+                      alt={image.alt || `Imagen ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                    
+                    {/* Verified badge */}
+                    {isVerified && (
+                      <div className="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                        Verificado
+                      </div>
+                    )}
+                    
+                    {/* Thumbnail indicator for regular images only */}
+                    {!isVerified && index === 0 && (
+                      <div className="absolute top-2 right-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
+                        <Star className="h-3 w-3" />
+                      </div>
+                    )}
+
+                    {/* Actions overlay */}
+                    <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                      {!isVerified && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => handleSetThumbnail(image.id)}
+                          disabled={index === 0}
+                        >
+                          <Star className="h-3 w-3" />
+                        </Button>
+                      )}
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => handleMoveImage(image.id, 'up')}
+                        disabled={index === 0}
+                      >
+                        <ArrowUp className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => handleMoveImage(image.id, 'down')}
+                        disabled={index === sectionImages.length - 1}
+                      >
+                        <ArrowDown className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => handleRemoveImage(image.id, image.url)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Alt text input */}
+                  <div className="p-2">
+                    <Input
+                      placeholder="Texto alternativo..."
+                      value={image.alt || ""}
+                      onChange={(e) => handleUpdateAlt(image.id, e.target.value)}
+                      className="text-xs"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </Card>
+    );
+  };
+
   if (loading) {
     return <div className="p-4 text-center">Cargando imágenes...</div>;
   }
 
+  const regularImages = images.filter(img => !img.is_verified);
+  const verifiedImages = images.filter(img => img.is_verified);
+
   return (
-    <div className="space-y-4">
-      {/* Upload section */}
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium">
-          Imágenes ({images.length}/8)
-        </span>
-        {images.length < 8 && (
-          <>
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={(e) => handleFileUpload(e.target.files)}
-              className="hidden"
-              id={`variant-upload-${variantId}`}
-            />
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={uploading}
-              onClick={() => document.getElementById(`variant-upload-${variantId}`)?.click()}
-            >
-              <Upload className="h-4 w-4 mr-1" />
-              Subir
-            </Button>
-          </>
-        )}
-      </div>
-
-      {images.length === 0 && !uploading && (
-        <Card className="card-glass border-dashed">
-          <CardContent className="p-8 text-center">
-            <ImageIcon className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">
-              No hay imágenes para esta variante.
-            </p>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Images grid */}
-      {images.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {images.map((image, index) => (
-            <Card key={image.id} className="card-glass overflow-hidden">
-              <CardContent className="p-0">
-                <div className="relative aspect-square">
-                  <img
-                    src={image.url}
-                    alt={image.alt || `Imagen ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                  
-                  {/* Thumbnail indicator */}
-                  {index === 0 && (
-                    <div className="absolute top-2 left-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
-                      <Star className="h-3 w-3" />
-                    </div>
-                  )}
-
-                  {/* Actions overlay */}
-                  <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => handleSetThumbnail(image.id)}
-                      disabled={index === 0}
-                    >
-                      <Star className="h-3 w-3" />
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => handleMoveImage(image.id, 'up')}
-                      disabled={index === 0}
-                    >
-                      <ArrowUp className="h-3 w-3" />
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => handleMoveImage(image.id, 'down')}
-                      disabled={index === images.length - 1}
-                    >
-                      <ArrowDown className="h-3 w-3" />
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => handleRemoveImage(image.id, image.url)}
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Alt text input */}
-                <div className="p-2">
-                  <Input
-                    placeholder="Texto alternativo..."
-                    value={image.alt || ""}
-                    onChange={(e) => handleUpdateAlt(image.id, e.target.value)}
-                    className="text-xs"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-
+    <div className="space-y-6">
+      {renderImageSection(regularImages, false, "Imágenes")}
+      {renderImageSection(verifiedImages, true, "Verificado")}
+      
       {uploading && (
-        <p className="text-sm text-muted-foreground">Subiendo imágenes...</p>
+        <p className="text-sm text-muted-foreground text-center">Subiendo imágenes...</p>
       )}
     </div>
   );
