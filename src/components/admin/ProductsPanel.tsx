@@ -23,7 +23,6 @@ type Product = {
   collection: string;
   created_at: string;
   updated_at: string;
-  active: boolean;
   product_variants: Array<{
     id: string;
     name: string;
@@ -67,7 +66,6 @@ const fetchProducts = async (page: number, search: string, statusFilter: string,
       collection,
       created_at,
       updated_at,
-      active,
       product_variants!inner(
         id,
         name,
@@ -227,8 +225,7 @@ const ProductsPanel: React.FC = () => {
         video_url: fullProduct.video_url,
         agent_profile_id: fullProduct.agent_profile_id,
         discountable: fullProduct.discountable,
-        status: fullProduct.status,
-        active: fullProduct.active
+        status: fullProduct.status
       };
 
       const { data: newProduct, error: productError } = await supabase
