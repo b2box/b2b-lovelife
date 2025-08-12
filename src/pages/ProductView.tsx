@@ -261,11 +261,11 @@ const ProductView = () => {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-[3fr_1fr]">
           {/* Columna izquierda (75%): Galería + Detalles */}
           <section>
-            <div className="grid grid-cols-1 md:grid-cols-[2fr_5fr] gap-4">{/* Reducir aún más la galería a 2fr vs 5fr */}
-              {/* Galería - miniaturizada */}
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-4">{/* Optimizar proporción galería/detalles */}
+              {/* Galería - compacta */}
               <div className="rounded-2xl bg-card p-2 md:p-3 h-fit">
-                <div className="space-y-2 max-h-[350px] overflow-hidden">{/* Reducir altura máxima */}
-                  <div className="relative overflow-hidden rounded-xl bg-muted aspect-square max-h-[200px]">{/* Limitar altura del main image */}
+                <div className="space-y-2">
+                  <div className="relative overflow-hidden rounded-xl bg-muted aspect-square">{/* Galería cuadrada sin restricción de altura */}
                     {(() => {
                       console.log("ProductView render - variants:", variants.length, "product:", !!product);
                       
@@ -341,7 +341,7 @@ const ProductView = () => {
                       return displayImages.map((image, i) => (
                         <button
                           key={`${image.variantId}-${image.id}`}
-                          className={`relative h-12 w-12 md:h-14 md:w-14 flex-shrink-0 overflow-hidden rounded-lg ring-1 bg-muted transition-all ${
+                          className={`relative w-12 h-12 flex-shrink-0 overflow-hidden rounded-lg ring-1 bg-muted transition-all ${
                             selectedImageIndex === i ? 'ring-primary ring-2 scale-105' : 'ring-border hover:ring-primary/50'
                           }`}
                           onClick={() => setSelectedImageIndex(i)}
@@ -350,7 +350,7 @@ const ProductView = () => {
                           <img 
                             src={image.url} 
                             alt={image.alt || `${image.variantName} imagen ${i + 1}`} 
-                            className="h-full w-full object-cover" 
+                            className="w-full h-full object-cover" 
                             loading="lazy" 
                           />
                           {/* +X indicator for extra images on the last thumbnail */}
@@ -546,9 +546,9 @@ const ProductView = () => {
           </aside>
         </div>
 
-        {/* Descripción y características */}
-        <section className="mt-6 md:mt-8">
-          <article className="prose prose-sm md:prose-base max-w-none w-full md:w-4/5">
+        {/* Descripción y características - Solo columna izquierda */}
+        <section className="mt-6 md:mt-8 md:w-3/5">
+          <article className="prose prose-sm md:prose-base max-w-none">
             <p>
               ¡Aprovecha cada rincón con la Estantería de Dos Niveles para Almacenamiento que lo transforma todo! Este diseño práctico de dos niveles organiza cosméticos, productos de higiene y más, con una estructura ventilada y colores vibrantes que revitalizan tu espacio. ¡Perfecto para tu baño o tocador!
             </p>
@@ -565,7 +565,7 @@ const ProductView = () => {
         </section>
 
         {/* Variantes */}
-        <section className="mt-8 w-full md:w-4/5">
+        <section className="mt-8 w-full md:w-3/5">
           <h2 className="text-xl font-semibold mb-3">Variantes</h2>
           <div className="overflow-x-auto rounded-2xl border bg-card">
             <table className="min-w-[960px] w-full text-sm">
@@ -601,10 +601,12 @@ const ProductView = () => {
                     >
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-3">
-                          <img src={variantImage} alt={variantName} className="size-12 rounded-md object-cover" loading="lazy" />
+                          <img src={variantImage} alt={variantName} className="w-12 h-12 rounded-md object-cover" loading="lazy" />
                           <div>
                             <div className="font-medium leading-tight">{variantName}</div>
-                            <div className="text-xs text-muted-foreground">{variantOption}</div>
+                            {variantOption !== "Estándar" && (
+                              <div className="text-xs text-muted-foreground">{variantOption}</div>
+                            )}
                           </div>
                         </div>
                       </td>
@@ -613,6 +615,17 @@ const ProductView = () => {
                           <button className="px-3 py-1" onClick={() => changeQty(r.id, -1)} aria-label="Disminuir">-</button>
                           <span className="px-3 py-1 min-w-8 text-center">{r.qty}</span>
                           <button className="px-3 py-1" onClick={() => changeQty(r.id, 1)} aria-label="Aumentar">+</button>
+                        </div>
+                        <div className="text-[10px] text-muted-foreground mt-1 text-center">
+                          {(() => {
+                            // Get units from price tier data
+                            const targetCurrency = market === "CO" ? "COP" : "USD";
+                            const priceTier = (r.variant as any).variant_price_tiers?.find(
+                              (tier: any) => tier.tier === selectedTier && tier.currency === targetCurrency
+                            );
+                            const minQty = priceTier?.min_qty || 1;
+                            return `${minQty}+ ${content.complementPricing.unitsText}`;
+                          })()}
                         </div>
                       </td>
                       <td className="px-4 py-4">{content.currencySymbol}{variantPrice.toFixed(2)}</td>
@@ -706,7 +719,7 @@ const ProductView = () => {
         </section>
 
         {/* Detalles técnicos */}
-        <section className="mt-8 w-full md:w-4/5">
+        <section className="mt-8 w-full md:w-3/5">
           <h2 className="text-xl font-semibold mb-3">Detalles técnicos</h2>
           <div className="rounded-2xl border bg-card overflow-hidden">
             <table className="w-full text-sm">
@@ -794,7 +807,7 @@ const ProductView = () => {
         </section>
 
         {/* Imágenes */}
-        <section className="mt-8 w-full md:w-4/5">
+        <section className="mt-8 w-full md:w-3/5">
           <h2 className="text-xl font-semibold mb-3">Imágenes</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {Array.from({ length: 2 }).map((_, i) => (
