@@ -71,9 +71,9 @@ const ProductView = () => {
     console.log("Creating initial variants from:", variants);
     return variants.map(variant => {
       // Get the minimum quantity from the default selected tier (mayorista = tier2)
-      const mayoristaTier = variant.price_tiers?.find(tier => tier.tier === "tier2");
-      const fallbackTier = variant.price_tiers?.find(tier => tier.tier === "tier1") || 
-                          variant.price_tiers?.[0];
+      const mayoristaTier = (variant as any).variant_price_tiers?.find((tier: any) => tier.tier === "tier2");
+      const fallbackTier = (variant as any).variant_price_tiers?.find((tier: any) => tier.tier === "tier1") || 
+                          (variant as any).variant_price_tiers?.[0];
       const selectedTierData = mayoristaTier || fallbackTier;
       const minQty = selectedTierData?.min_qty || 1;
       
@@ -108,9 +108,9 @@ const ProductView = () => {
       const dbTier = tierMap[selectedTier];
 
       const updatedRows = rows.map(row => {
-        // Find the price tier for the selected tier
-        const selectedTierData = row.variant.price_tiers?.find(tier => tier.tier === dbTier);
-        const fallbackTier = row.variant.price_tiers?.[0];
+        // Find the price tier for the selected tier  
+        const selectedTierData = (row.variant as any).variant_price_tiers?.find((tier: any) => tier.tier === dbTier);
+        const fallbackTier = (row.variant as any).variant_price_tiers?.[0];
         const tierData = selectedTierData || fallbackTier;
         const minQty = tierData?.min_qty || 1;
 
@@ -155,7 +155,7 @@ const ProductView = () => {
     const dbTier = tierMap[tier];
 
     // Find the price tier for this variant and tier
-    const priceTier = variant.price_tiers?.find(
+    const priceTier = (variant as any).variant_price_tiers?.find(
       (priceTier: any) => priceTier.tier === dbTier
     );
 
@@ -467,7 +467,13 @@ const ProductView = () => {
                             text-4xl font-black mb-2 transition-opacity duration-200
                             ${selectedTier === "inicial" ? "text-foreground" : "text-muted-foreground"}
                           `}>
-                            {content.currencySymbol}{content.pricingTiers.inicial.price}
+                            {content.currencySymbol}{(() => {
+                              // Calculate dynamic price for inicial tier using first variant
+                              if (variants.length > 0) {
+                                return getVariantPrice(variants[0], "inicial").toFixed(2);
+                              }
+                              return content.pricingTiers.inicial.price;
+                            })()}
                           </div>
                           <div className="text-sm text-muted-foreground font-medium">{content.pricingTiers.inicial.range}</div>
                         </div>
@@ -492,7 +498,13 @@ const ProductView = () => {
                             {content.pricingTiers.mayorista.badge}
                           </span>
                           <div className="text-4xl font-black mb-2 text-foreground">
-                            {content.currencySymbol}{content.pricingTiers.mayorista.price}
+                            {content.currencySymbol}{(() => {
+                              // Calculate dynamic price for mayorista tier using first variant
+                              if (variants.length > 0) {
+                                return getVariantPrice(variants[0], "mayorista").toFixed(2);
+                              }
+                              return content.pricingTiers.mayorista.price;
+                            })()}
                           </div>
                           <div className="text-sm text-muted-foreground font-medium">{content.pricingTiers.mayorista.range}</div>
                         </div>
@@ -517,7 +529,13 @@ const ProductView = () => {
                             text-4xl font-black mb-2 transition-opacity duration-200
                             ${selectedTier === "distribuidor" ? "text-foreground" : "text-muted-foreground"}
                           `}>
-                            {content.currencySymbol}{content.pricingTiers.distribuidor.price}
+                            {content.currencySymbol}{(() => {
+                              // Calculate dynamic price for distribuidor tier using first variant
+                              if (variants.length > 0) {
+                                return getVariantPrice(variants[0], "distribuidor").toFixed(2);
+                              }
+                              return content.pricingTiers.distribuidor.price;
+                            })()}
                           </div>
                           <div className="text-sm text-muted-foreground font-medium">{content.pricingTiers.distribuidor.range}</div>
                         </div>
