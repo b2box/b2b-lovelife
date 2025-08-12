@@ -429,69 +429,91 @@ const ProductView = () => {
           </section>
 
           {/* Columna derecha (20%): Resumen sticky */}
-          <aside className="hidden md:block sticky top-20 self-start h-max rounded-2xl bg-card text-card-foreground border p-6 z-10 shadow-md">{/* Fixed sticky positioning */}
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <span>{content.minOrderText}</span>
-              <CheckCircle2 className="opacity-60" />
-            </div>
+          <aside className="hidden md:block sticky top-20 self-start h-max w-full max-w-[460px] mx-auto z-10">
+            <div className="bg-white border border-[#E5E7EB] rounded-[24px] p-6 shadow-sm">
+              {/* Encabezado con check verde */}
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-[22px] font-semibold text-[#0A0A0A]">Orden mínima $100</span>
+                <div className="w-6 h-6 bg-[#22C55E] rounded-full flex items-center justify-center">
+                  <CheckCircle2 className="w-4 h-4 text-white" />
+                </div>
+              </div>
 
-            <button
-              onClick={addToCart}
-              className="mt-4 w-full rounded-xl bg-green-500 text-white py-3 font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
-              aria-label={content.cartButtonText}
-              disabled={totals.total < minOrder}
-            >
-              {content.cartButtonText}
-            </button>
+              {/* Barra de progreso verde */}
+              <div className="h-[6px] bg-[#22C55E] rounded-full mb-4"></div>
 
-            <div className="mt-4 space-y-1 text-sm">
-              <div className="flex justify-between"><span>{content.tableHeaders.product} ({totals.items})</span><span>{content.currencySymbol}{totals.products.toFixed(2)}</span></div>
-              <div className="flex justify-between"><span>Complementos</span><span>{content.currencySymbol}{totals.complements.toFixed(2)}</span></div>
-              <div className="flex justify-between font-semibold text-base pt-1 border-t"><span>Total</span><span>{content.currencySymbol}{totals.total.toFixed(2)}</span></div>
-            </div>
+              {/* Botón CTA */}
+              <button
+                onClick={addToCart}
+                className="w-full h-16 rounded-[24px] bg-[#BBF7D0] text-[#0A0A0A] text-[20px] font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 mb-5"
+                aria-label={content.cartButtonText}
+                disabled={totals.total < minOrder}
+              >
+                Añadir al carrito
+              </button>
 
-            <div className="mt-4 grid grid-cols-3 gap-2 text-xs text-muted-foreground">
-              {/* Método de envío */}
-              <HoverCard>
-                <HoverCardTrigger asChild>
-                  <div className="relative rounded-2xl border p-3 bg-background cursor-default aspect-square flex flex-col items-center justify-center text-center">
-                    <img src="/lovable-uploads/bcaad47c-1390-4a6e-a192-4c5279337cf3.png" alt="Método de envío" className="h-6 w-auto opacity-60" loading="lazy" />
-                    <span className="mt-2 block">Método de envío</span>
-                    <img src="/lovable-uploads/b649a871-c178-4c15-bd9b-de67f426d03e.png" alt="Ayuda" className="absolute top-2 right-2 h-4 w-4 opacity-60" loading="lazy" />
+              {/* Bloque de totales con fondo gris */}
+              <div className="bg-[#F3F4F6] rounded-[20px] px-5 py-5 mb-5">
+                <div className="space-y-3">
+                  <div className="flex justify-between text-[18px] text-[#0A0A0A]">
+                    <span>Productos ({totals.items})</span>
+                    <span>{content.currencySymbol}{totals.products.toFixed(0)}</span>
                   </div>
-                </HoverCardTrigger>
-                <HoverCardContent side="top" align="end" className="w-64 p-3 text-xs">
-                  {content.features.shipping.description}
-                </HoverCardContent>
-              </HoverCard>
-
-              {/* Personalizar producto */}
-              <HoverCard>
-                <HoverCardTrigger asChild>
-                  <div className="relative rounded-2xl border p-3 bg-background cursor-default aspect-square flex flex-col items-center justify-center text-center">
-                    <img src="/lovable-uploads/e176248e-ec33-4374-8df2-39c6d1d81194.png" alt="Personalizar producto" className="h-6 w-auto opacity-60" loading="lazy" />
-                    <span className="mt-2 block">Personalizar producto</span>
-                    <img src="/lovable-uploads/b649a871-c178-4c15-bd9b-de67f426d03e.png" alt="Ayuda" className="absolute top-2 right-2 h-4 w-4 opacity-60" loading="lazy" />
+                  <div className="flex justify-between text-[18px] text-[#0A0A0A]">
+                    <span>Complementos</span>
+                    <span>{content.currencySymbol}{totals.complements.toFixed(0)}</span>
                   </div>
-                </HoverCardTrigger>
-                <HoverCardContent side="top" align="center" className="w-64 p-3 text-xs">
-                  {content.features.customization.description}
-                </HoverCardContent>
-              </HoverCard>
-
-              {/* Precios sin sorpresas */}
-              <HoverCard>
-                <HoverCardTrigger asChild>
-                  <div className="relative rounded-2xl border p-3 bg-background cursor-default aspect-square flex flex-col items-center justify-center text-center">
-                    <img src="/lovable-uploads/6a45e477-73d7-45a9-9eda-470e2c37a6cb.png" alt="Precios sin sorpresas" className="h-6 w-auto opacity-60" loading="lazy" />
-                    <span className="mt-2 block">Precios sin sorpresas</span>
-                    <img src="/lovable-uploads/b649a871-c178-4c15-bd9b-de67f426d03e.png" alt="Ayuda" className="absolute top-2 right-2 h-4 w-4 opacity-60" loading="lazy" />
+                  <div className="flex justify-between text-[22px] font-bold text-[#0A0A0A] pt-2">
+                    <span>Total</span>
+                    <span>{content.currencySymbol}{totals.total.toFixed(0)}</span>
                   </div>
-                </HoverCardTrigger>
-                <HoverCardContent side="top" align="start" className="w-64 p-3 text-xs">
-                  Transparencia total: desglose de costos, sin cargos ocultos al confirmar tu orden.
-                </HoverCardContent>
-              </HoverCard>
+                </div>
+              </div>
+
+              {/* Tarjetas de features */}
+              <div className="grid grid-cols-3 gap-4">
+                {/* Método de envío */}
+                <HoverCard>
+                  <HoverCardTrigger asChild>
+                    <div className="relative w-[120px] h-[120px] rounded-[20px] border border-[#E5E7EB] bg-white p-3 cursor-default flex flex-col items-center justify-center text-center opacity-60">
+                      <img src="/lovable-uploads/bcaad47c-1390-4a6e-a192-4c5279337cf3.png" alt="Método de envío" className="h-6 w-auto mb-2" loading="lazy" />
+                      <span className="text-[14px] text-[#6B7280] leading-tight">Método de envío</span>
+                      <div className="absolute top-2 right-2 w-4 h-4 bg-[#6B7280] text-white rounded-full flex items-center justify-center text-[10px] font-bold">?</div>
+                    </div>
+                  </HoverCardTrigger>
+                  <HoverCardContent side="top" align="end" className="w-64 p-3 text-xs">
+                    {content.features.shipping.description}
+                  </HoverCardContent>
+                </HoverCard>
+
+                {/* Personalizar producto */}
+                <HoverCard>
+                  <HoverCardTrigger asChild>
+                    <div className="relative w-[120px] h-[120px] rounded-[20px] border border-[#E5E7EB] bg-white p-3 cursor-default flex flex-col items-center justify-center text-center opacity-60">
+                      <img src="/lovable-uploads/e176248e-ec33-4374-8df2-39c6d1d81194.png" alt="Personalizar producto" className="h-6 w-auto mb-2" loading="lazy" />
+                      <span className="text-[14px] text-[#6B7280] leading-tight">Personalizar producto</span>
+                      <div className="absolute top-2 right-2 w-4 h-4 bg-[#6B7280] text-white rounded-full flex items-center justify-center text-[10px] font-bold">?</div>
+                    </div>
+                  </HoverCardTrigger>
+                  <HoverCardContent side="top" align="center" className="w-64 p-3 text-xs">
+                    {content.features.customization.description}
+                  </HoverCardContent>
+                </HoverCard>
+
+                {/* Precios sin sorpresas */}
+                <HoverCard>
+                  <HoverCardTrigger asChild>
+                    <div className="relative w-[120px] h-[120px] rounded-[20px] border border-[#E5E7EB] bg-white p-3 cursor-default flex flex-col items-center justify-center text-center opacity-60">
+                      <img src="/lovable-uploads/6a45e477-73d7-45a9-9eda-470e2c37a6cb.png" alt="Precios sin sorpresas" className="h-6 w-auto mb-2" loading="lazy" />
+                      <span className="text-[14px] text-[#6B7280] leading-tight">Precios sin sorpresas</span>
+                      <div className="absolute top-2 right-2 w-4 h-4 bg-[#6B7280] text-white rounded-full flex items-center justify-center text-[10px] font-bold">?</div>
+                    </div>
+                  </HoverCardTrigger>
+                  <HoverCardContent side="top" align="start" className="w-64 p-3 text-xs">
+                    Transparencia total: desglose de costos, sin cargos ocultos al confirmar tu orden.
+                  </HoverCardContent>
+                </HoverCard>
+              </div>
             </div>
           </aside>
         </div>
