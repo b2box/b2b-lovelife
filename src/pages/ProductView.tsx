@@ -322,107 +322,88 @@ const ProductView = () => {
                   <h1 className="text-2xl md:text-3xl font-semibold leading-tight">{product.name}</h1>
                 </header>
 
-                {/* Barra de precios por tiers - Optimizada */}
-                <article className="rounded-xl bg-card text-card-foreground border overflow-hidden shadow-sm">
-                  <div className="p-3 pb-0">
-                    <div className="grid grid-cols-3 gap-3">
-                      {/* Inicial */}
-                      <button
-                        type="button"
-                        onClick={() => setSelectedTier("inicial")}
-                        className="text-center group transition-all duration-200"
-                        aria-pressed={selectedTier === "inicial"}
-                      >
-                        <div className="text-base font-bold mb-1 text-foreground">{content.pricingTiers.inicial.name}</div>
-                        <div className={`
-                          rounded-xl border-2 px-4 py-4 transition-all duration-200 bg-white/50
-                          ${selectedTier === "inicial" 
-                            ? "border-foreground shadow-lg scale-105 bg-white" 
-                            : "border-border/50 hover:border-border group-hover:scale-102"
-                          }
-                        `}>
-                          <div className={`
-                            text-2xl font-black mb-1 transition-opacity duration-200
-                            ${selectedTier === "inicial" ? "text-foreground" : "text-muted-foreground"}
-                          `}>
+                {/* Barra de precios por tiers - Rediseñada según referencia */}
+                <article className="max-w-[1140px] mx-auto bg-white border border-[#E5E7EB] rounded-3xl overflow-hidden shadow-sm">
+                  <div className="p-6 md:p-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-6">
+                      {/* Inicial - Lateral izquierdo */}
+                      <div className="text-center order-2 md:order-1">
+                        <h3 className="text-[28px] md:text-[32px] font-semibold text-[#0A0A0A] mb-6">{content.pricingTiers.inicial.name}</h3>
+                        <div className="bg-[#F6F6F6] border border-[#E5E7EB] rounded-3xl p-8 md:p-10">
+                          <div className="text-[48px] md:text-[64px] font-extrabold text-[#9CA3AF] tracking-tight leading-none mb-4">
                             {content.currencySymbol}{(() => {
-                              // Calculate dynamic price for inicial tier using first variant
                               if (variants.length > 0) {
-                                return getVariantPrice(variants[0], "inicial").toFixed(2);
+                                return Math.round(getVariantPrice(variants[0], "inicial"));
                               }
-                              return "0.00";
+                              return "35";
                             })()}
                           </div>
-                          <div className="text-sm text-muted-foreground font-medium">{content.pricingTiers.inicial.range}</div>
+                          <div className="text-[20px] md:text-[22px] text-[#9CA3AF]">{content.pricingTiers.inicial.range}</div>
                         </div>
-                      </button>
+                      </div>
 
-                      {/* Mayorista destacado */}
-                      <button
-                        type="button"
-                        onClick={() => setSelectedTier("mayorista")}
-                        className="text-center group transition-all duration-200"
-                        aria-pressed={selectedTier === "mayorista"}
-                      >
-                        <div className="text-lg font-bold mb-2 text-foreground">{content.pricingTiers.mayorista.name}</div>
-                        <div className={`
-                          relative rounded-[18px] border-2 px-6 py-6 transition-all duration-200 bg-white/50
-                          ${selectedTier === "mayorista" 
-                            ? "border-foreground shadow-xl scale-105 bg-white" 
-                            : "border-border/50 hover:border-border group-hover:scale-102"
-                          }
-                        `}>
-                          <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-foreground text-background text-xs font-bold px-4 py-1 shadow-lg">
+                      {/* Mayorista - Central destacado */}
+                      <div className="text-center relative order-1 md:order-2">
+                        {/* Badge "Recomendado" flotante */}
+                        <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 z-10">
+                          <div className="bg-[#0A0A0A] text-white text-[14px] md:text-[16px] font-medium px-4 py-2 rounded-full">
                             {content.pricingTiers.mayorista.badge}
-                          </span>
-                          <div className="text-3xl font-black mb-1 text-foreground">
+                          </div>
+                        </div>
+                        
+                        <h3 className="text-[28px] md:text-[32px] font-semibold text-[#0A0A0A] mb-6">{content.pricingTiers.mayorista.name}</h3>
+                        <div className="bg-white border-[3px] border-[#0A0A0A] rounded-3xl p-8 md:p-10 shadow-[0_10px_30px_rgba(0,0,0,0.10)]">
+                          <div className="text-[48px] md:text-[64px] font-extrabold text-[#0A0A0A] tracking-tight leading-none mb-4">
                             {content.currencySymbol}{(() => {
-                              // Calculate dynamic price for mayorista tier using first variant
                               if (variants.length > 0) {
-                                return getVariantPrice(variants[0], "mayorista").toFixed(2);
+                                return Math.round(getVariantPrice(variants[0], "mayorista"));
                               }
-                              return "0.00";
+                              return "300";
                             })()}
                           </div>
-                          <div className="text-sm text-muted-foreground font-medium">{content.pricingTiers.mayorista.range}</div>
+                          <div className="text-[20px] md:text-[22px] text-[#6B7280]">{content.pricingTiers.mayorista.range}</div>
                         </div>
-                      </button>
+                      </div>
 
-                      {/* Distribuidor */}
-                      <button
-                        type="button"
-                        onClick={() => setSelectedTier("distribuidor")}
-                        className="text-center group transition-all duration-200"
-                        aria-pressed={selectedTier === "distribuidor"}
-                      >
-                        <div className="text-lg font-bold mb-2 text-foreground">{content.pricingTiers.distribuidor.name}</div>
-                        <div className={`
-                          rounded-[18px] border-2 px-6 py-6 transition-all duration-200 bg-white/50
-                          ${selectedTier === "distribuidor" 
-                            ? "border-foreground shadow-lg scale-105 bg-white" 
-                            : "border-border/50 hover:border-border group-hover:scale-102"
-                          }
-                        `}>
-                          <div className={`
-                            text-3xl font-black mb-1 transition-opacity duration-200
-                            ${selectedTier === "distribuidor" ? "text-foreground" : "text-muted-foreground"}
-                          `}>
+                      {/* Distribuidor - Lateral derecho */}
+                      <div className="text-center order-3">
+                        <h3 className="text-[28px] md:text-[32px] font-semibold text-[#0A0A0A] mb-6">{content.pricingTiers.distribuidor.name}</h3>
+                        <div className="bg-[#F6F6F6] border border-[#E5E7EB] rounded-3xl p-8 md:p-10">
+                          <div className="text-[48px] md:text-[64px] font-extrabold text-[#9CA3AF] tracking-tight leading-none mb-4">
                             {content.currencySymbol}{(() => {
-                              // Calculate dynamic price for distribuidor tier using first variant
                               if (variants.length > 0) {
-                                return getVariantPrice(variants[0], "distribuidor").toFixed(2);
+                                return Math.round(getVariantPrice(variants[0], "distribuidor"));
                               }
-                              return "0.00";
+                              return "725";
                             })()}
                           </div>
-                          <div className="text-sm text-muted-foreground font-medium">{content.pricingTiers.distribuidor.range}</div>
+                          <div className="text-[20px] md:text-[22px] text-[#9CA3AF]">{content.pricingTiers.distribuidor.range}</div>
                         </div>
-                      </button>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Faja inferior: tendencia + Trends con flecha */}
-                  <MarketSpecificBanners />
+                  {/* Banner inferior amarillo */}
+                  <div className="bg-[#FFE65A] min-h-[96px] rounded-b-3xl px-6 md:px-8 py-6 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-[#0A0A0A] font-medium">Producto en tendencia en</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
+                          <span className="text-blue-600 font-bold text-sm">ML</span>
+                        </div>
+                        <span className="text-[#0A0A0A] font-semibold">mercado libre</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className="text-[#0A0A0A] font-medium">Ver más en 🔥TRENDS</span>
+                      <button 
+                        className="w-12 h-12 bg-white border border-[#0A0A0A] rounded-full flex items-center justify-center hover:shadow-md transition-shadow"
+                        aria-label="Ver tendencias"
+                      >
+                        <ArrowUpRight className="w-5 h-5 text-[#0A0A0A]" />
+                      </button>
+                    </div>
+                  </div>
                 </article>
               </div>
             </div>
