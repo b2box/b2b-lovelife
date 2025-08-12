@@ -65,22 +65,26 @@ const ProductView = () => {
     comps: { labeling: boolean; barcode: boolean; photos: boolean; packaging: boolean };
   };
 
+  const [selectedTier, setSelectedTier] = useState<"inicial" | "mayorista" | "distribuidor">("mayorista");
+
   const initialVariants: VariantRow[] = useMemo(() => {
     console.log("Creating initial variants from:", variants);
     return variants.map(variant => {
-      // Get the minimum quantity from the first price tier
-      const firstTier = variant.price_tiers?.find(tier => tier.tier === "tier1") || 
-                       variant.price_tiers?.[0];
-      const minQty = firstTier?.min_qty || 1;
+      // Get the minimum quantity from the default selected tier (mayorista = tier2)
+      const mayoristaTier = variant.price_tiers?.find(tier => tier.tier === "tier2");
+      const fallbackTier = variant.price_tiers?.find(tier => tier.tier === "tier1") || 
+                          variant.price_tiers?.[0];
+      const selectedTierData = mayoristaTier || fallbackTier;
+      const minQty = selectedTierData?.min_qty || 1;
       
       return {
         id: variant.id,
         variant,
-        qty: minQty, // Set initial quantity to minimum required
+        qty: minQty, // Set initial quantity to minimum required for mayorista tier
         comps: { labeling: false, barcode: false, photos: false, packaging: false }
       };
     });
-  }, [variants]);
+  }, [variants]); // selectedTier is now a constant default, no need to depend on it
 
   const [rows, setRows] = useState<VariantRow[]>([]);
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
@@ -104,7 +108,6 @@ const ProductView = () => {
   const fixedBarcode = 40;
   const fixedPhotos = 1863;
   const minOrder = 100;
-  const [selectedTier, setSelectedTier] = useState<"inicial" | "mayorista" | "distribuidor">("mayorista");
 
   // Get pricing settings and market content for calculations
   const { data: pricingSettings } = usePricingSettings();
