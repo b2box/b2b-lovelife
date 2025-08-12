@@ -308,14 +308,14 @@ const ProductView = () => {
           <span className="text-foreground">{product.name}</span>
         </nav>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-[4fr_1fr]">
-          {/* Columna izquierda (80%): Galería 40% + Detalles 60% */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-[3fr_1fr]">
+          {/* Columna izquierda (75%): Galería 25% + Detalles 75% */}
           <section>
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-4">{/* Reduced gallery from 2fr to 1fr (50% reduction) */}
-              {/* Galería 40% */}
-              <div className="rounded-[24px] bg-card p-2 md:p-3">{/* Reduced padding and border radius for smaller gallery */}
-                <div className="space-y-2">{/* Reduced spacing */}
-                  <div className="relative overflow-hidden rounded-[20px] bg-muted aspect-square">{/* Reduced border radius */}
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-4">
+              {/* Galería 25% */}
+              <div className="rounded-2xl bg-card p-2 md:p-3">
+                <div className="space-y-2">
+                  <div className="relative overflow-hidden rounded-xl bg-muted aspect-square">
                     {(() => {
                       // Collect all images from all variants
                       const allImages = variants.flatMap(variant => 
@@ -419,16 +419,16 @@ const ProductView = () => {
                 </div>
               </div>
 
-              {/* Detalles + Tramos 60% */}
+              {/* Detalles + Tramos 75% */}
               <div className="space-y-4">
                 <header>
                   <h1 className="text-2xl md:text-3xl font-semibold leading-tight">{product.name}</h1>
                 </header>
 
-                {/* Barra de precios por tiers - 30% smaller */}
-                <article className="rounded-[24px] bg-card text-card-foreground border overflow-hidden shadow-sm">
-                  <div className="p-4 pb-0">
-                    <div className="grid grid-cols-3 gap-4">
+                {/* Barra de precios por tiers - Optimizada */}
+                <article className="rounded-xl bg-card text-card-foreground border overflow-hidden shadow-sm">
+                  <div className="p-3 pb-0">
+                    <div className="grid grid-cols-3 gap-3">
                       {/* Inicial */}
                       <button
                         type="button"
@@ -436,16 +436,16 @@ const ProductView = () => {
                         className="text-center group transition-all duration-200"
                         aria-pressed={selectedTier === "inicial"}
                       >
-                        <div className="text-lg font-bold mb-2 text-foreground">{content.pricingTiers.inicial.name}</div>
+                        <div className="text-base font-bold mb-1 text-foreground">{content.pricingTiers.inicial.name}</div>
                         <div className={`
-                          rounded-[18px] border-2 px-6 py-6 transition-all duration-200 bg-white/50
+                          rounded-xl border-2 px-4 py-4 transition-all duration-200 bg-white/50
                           ${selectedTier === "inicial" 
                             ? "border-foreground shadow-lg scale-105 bg-white" 
                             : "border-border/50 hover:border-border group-hover:scale-102"
                           }
                         `}>
                           <div className={`
-                            text-3xl font-black mb-1 transition-opacity duration-200
+                            text-2xl font-black mb-1 transition-opacity duration-200
                             ${selectedTier === "inicial" ? "text-foreground" : "text-muted-foreground"}
                           `}>
                             {content.currencySymbol}{(() => {
