@@ -1,0 +1,20 @@
+# Netlify redirects file for server-side redirects
+# Geolocation-based redirects with 302 status (temporary redirects)
+
+# Redirect root based on country (302 temporary redirects)
+/  /ar  302  Country=ar
+/  /co  302  Country=co
+
+# Handle trailing slashes consistently
+/ar/  /ar  301
+/co/  /co  301
+/app/  /app  301
+
+# Fallback redirects for old URLs or typos
+/argentina  /ar  301
+/colombia  /co  301
+/global  /  301
+
+# Ensure app routes stay within their market context
+/app  /app  200
+/app/*  /app/:splat  200
