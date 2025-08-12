@@ -1,7 +1,7 @@
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import { useEffect, useMemo, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import type { Product } from "@/components/landing/ProductCard";
 import { ArrowUpRight, CheckCircle2, Cog, Hash, Box, Package, Battery, Ruler, Scale } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -14,16 +14,33 @@ import { useVariantPricing } from "@/hooks/useVariantPricing";
 import { usePricingSettings } from "@/hooks/usePricingSettings";
 
 const ProductView = () => {
-  const { id } = useParams();
+  const { slug, id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { products } = useProducts();
-  const { variants, loading: variantsLoading } = useProductVariants(id);
+  
+  // Determine the actual product ID (could be from slug or direct ID)
+  const productId = useMemo(() => {
+    if (id) return id; // Direct ID access from fallback routes
+    if (slug && products.length > 0) {
+      // Find product by slug first, then fallback to ID if slug looks like a UUID
+      const productBySlug = products.find(p => p.slug === slug);
+      if (productBySlug) return productBySlug.id;
+      
+      // If slug looks like a UUID, treat it as an ID
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+      if (uuidRegex.test(slug)) return slug;
+    }
+    return undefined;
+  }, [slug, id, products]);
+
+  const { variants, loading: variantsLoading } = useProductVariants(productId);
   const { toast } = useToast();
   const { market, content } = useProductMarketContent();
 
   const product = useMemo(() => {
-    if (!id) return undefined;
-    const dbProduct = products.find(p => p.id === id);
+    if (!productId) return undefined;
+    const dbProduct = products.find(p => p.id === productId);
     if (!dbProduct) return undefined;
     
     // Get the CNY base price (supplier price) to calculate from  
@@ -33,12 +50,13 @@ const ProductView = () => {
     return {
       id: dbProduct.id,
       name: dbProduct.name,
+      slug: dbProduct.slug,
       price: basePrice, // We'll format this properly in the component
       image: dbProduct.images?.[0]?.url || "/placeholder.svg",
       badge: dbProduct.verified_product ? "B2BOX verified" : undefined,
       viral: false
-    } as Product;
-  }, [id, products]);
+    } as Product & { slug: string };
+  }, [productId, products]);
 
   type VariantRow = {
     id: string;
@@ -48,6 +66,7 @@ const ProductView = () => {
   };
 
   const initialVariants: VariantRow[] = useMemo(() => {
+    console.log("Creating initial variants from:", variants);
     return variants.map(variant => ({
       id: variant.id,
       variant,
@@ -60,6 +79,7 @@ const ProductView = () => {
 
   // Update rows when variants change
   useEffect(() => {
+    console.log("Updating rows. Variants length:", variants.length, "Initial variants:", initialVariants);
     setRows(initialVariants);
   }, [initialVariants]);
 
@@ -221,6 +241,15 @@ const ProductView = () => {
     };
     script.text = JSON.stringify(jsonLd);
   }, [product]);
+
+  // Redirect to slug-based URL if we're using ID-based URL
+  useEffect(() => {
+    if (product && product.slug && id && !slug) {
+      const currentPath = location.pathname;
+      const newPath = currentPath.replace(`/product/id/${id}`, `/product/${product.slug}`);
+      navigate(newPath, { replace: true });
+    }
+  }, [product, id, slug, navigate, location.pathname]);
 
   if (!product || variantsLoading) {
     return (

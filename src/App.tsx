@@ -34,9 +34,13 @@ const App = () => {
               <Route path="/app" element={<Index />} />
               <Route path="/app/ar" element={<Index />} />
               <Route path="/app/co" element={<Index />} />
-              <Route path="/app/product/:id" element={<ProductView />} />
-              <Route path="/app/ar/product/:id" element={<ProductView />} />
-              <Route path="/app/co/product/:id" element={<ProductView />} />
+              <Route path="/app/product/:slug" element={<ProductView />} />
+              <Route path="/app/ar/product/:slug" element={<ProductView />} />
+              <Route path="/app/co/product/:slug" element={<ProductView />} />
+              {/* Fallback routes for ID-based URLs */}
+              <Route path="/app/product/id/:id" element={<ProductView />} />
+              <Route path="/app/ar/product/id/:id" element={<ProductView />} />
+              <Route path="/app/co/product/id/:id" element={<ProductView />} />
               <Route path="/app/admin" element={<Admin />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

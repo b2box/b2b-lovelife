@@ -9,6 +9,7 @@ export type Product = {
   image: string;
   badge?: string;
   viral?: boolean;
+  slug?: string;
 };
 
 type Props = { product: Product };
@@ -16,10 +17,16 @@ type Props = { product: Product };
 const ProductCard = ({ product }: Props) => {
   const navigate = useNavigate();
   const { country } = useCountryPricing();
+  
+  const handleClick = () => {
+    const productUrl = product.slug ? `/app/product/${product.slug}` : `/app/product/id/${product.id}`;
+    navigate(productUrl);
+  };
+
   return (
     <Card
       className="card-elevated hover:lift transition-transform rounded-2xl border-0 cursor-pointer"
-      onClick={() => navigate(`/app/product/${product.id}`)}
+      onClick={handleClick}
       aria-label={`Ver ${product.name}`}
     >
       <CardContent className="p-[5px]">
