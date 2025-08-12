@@ -240,7 +240,7 @@ const ProductView = () => {
                       >
                         <div className="text-lg md:text-xl font-semibold">{content.pricingTiers.inicial.name}</div>
                         <div className={`mt-2 rounded-2xl border px-6 py-5 ${selectedTier === "inicial" ? "border-foreground text-foreground" : "border-border text-muted-foreground"}`}>
-                          <div className={`text-3xl font-bold ${selectedTier === "inicial" ? "" : "opacity-60"}`}>{content.currencySymbol}35</div>
+                          <div className={`text-3xl font-bold ${selectedTier === "inicial" ? "" : "opacity-60"}`}>{content.currencySymbol}{content.pricingTiers.inicial.price}</div>
                           <div className="text-xs opacity-70">{content.pricingTiers.inicial.range}</div>
                         </div>
                       </button>
@@ -256,7 +256,7 @@ const ProductView = () => {
                           {selectedTier === "mayorista" && (
                             <span className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-foreground text-background text-xs px-3 py-1">{content.pricingTiers.mayorista.badge}</span>
                           )}
-                          <div className="text-3xl font-bold">{content.currencySymbol}300</div>
+                          <div className="text-3xl font-bold">{content.currencySymbol}{content.pricingTiers.mayorista.price}</div>
                           <div className="text-xs text-muted-foreground">{content.pricingTiers.mayorista.range}</div>
                         </div>
                       </button>
@@ -269,7 +269,7 @@ const ProductView = () => {
                       >
                         <div className="text-lg md:text-xl font-semibold">{content.pricingTiers.distribuidor.name}</div>
                         <div className={`mt-2 rounded-2xl border px-6 py-5 ${selectedTier === "distribuidor" ? "border-foreground text-foreground" : "border-border text-muted-foreground"}`}>
-                          <div className={`text-3xl font-bold ${selectedTier === "distribuidor" ? "" : "opacity-60"}`}>{content.currencySymbol}725</div>
+                          <div className={`text-3xl font-bold ${selectedTier === "distribuidor" ? "" : "opacity-60"}`}>{content.currencySymbol}{content.pricingTiers.distribuidor.price}</div>
                           <div className="text-xs opacity-70">{content.pricingTiers.distribuidor.range}</div>
                         </div>
                       </button>

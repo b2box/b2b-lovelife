@@ -41,15 +41,23 @@ interface MarketContent {
     inicial: {
       name: string;
       range: string;
+      price: number;
+      minQuantity: number;
+      maxQuantity: number;
     };
     mayorista: {
       name: string;
       range: string;
       badge: string;
+      price: number;
+      minQuantity: number;
+      maxQuantity: number;
     };
     distribuidor: {
       name: string;
       range: string;
+      price: number;
+      minQuantity: number;
     };
   };
   tableHeaders: {
@@ -107,16 +115,24 @@ const marketContent: Record<Market, MarketContent> = {
     pricingTiers: {
       inicial: {
         name: "Inicial",
-        range: "50 – 499 unidades"
+        range: "50 – 499 unidades",
+        price: 850,
+        minQuantity: 50,
+        maxQuantity: 499
       },
       mayorista: {
         name: "Mayorista",
         range: "500 – 1250 unidades",
-        badge: "Recomendado"
+        badge: "Recomendado",
+        price: 680,
+        minQuantity: 500,
+        maxQuantity: 1250
       },
       distribuidor: {
         name: "Distribuidor",
-        range: "+1250 unidades"
+        range: "+1250 unidades",
+        price: 550,
+        minQuantity: 1250
       }
     },
     tableHeaders: {
@@ -172,16 +188,24 @@ const marketContent: Record<Market, MarketContent> = {
     pricingTiers: {
       inicial: {
         name: "Inicial",
-        range: "50 – 499 unidades"
+        range: "50 – 499 unidades",
+        price: 3200,
+        minQuantity: 50,
+        maxQuantity: 499
       },
       mayorista: {
         name: "Mayorista",
         range: "500 – 1250 unidades",
-        badge: "Recomendado"
+        badge: "Recomendado",
+        price: 2580,
+        minQuantity: 500,
+        maxQuantity: 1250
       },
       distribuidor: {
         name: "Distribuidor",
-        range: "+1250 unidades"
+        range: "+1250 unidades",
+        price: 2080,
+        minQuantity: 1250
       }
     },
     tableHeaders: {
@@ -237,16 +261,24 @@ const marketContent: Record<Market, MarketContent> = {
     pricingTiers: {
       inicial: {
         name: "Starter",
-        range: "50 – 499 units"
+        range: "50 – 499 units",
+        price: 2.8,
+        minQuantity: 50,
+        maxQuantity: 499
       },
       mayorista: {
         name: "Wholesale",
         range: "500 – 1250 units",
-        badge: "Recommended"
+        badge: "Recommended",
+        price: 2.2,
+        minQuantity: 500,
+        maxQuantity: 1250
       },
       distribuidor: {
         name: "Distributor",
-        range: "+1250 units"
+        range: "+1250 units",
+        price: 1.8,
+        minQuantity: 1250
       }
     },
     tableHeaders: {
