@@ -113,7 +113,7 @@ export const VariantPricingEditor: React.FC<VariantPricingEditorProps> = ({
         // Initialize markets with default settings if we have pricing settings
         if (pricingSettings) {
           console.log("Using pricing settings to initialize markets:", pricingSettings);
-          const initializedMarkets = ensureMarkets(markets, newBaseTiers, pricingSettings);
+          const initializedMarkets = ensureMarkets(null, newBaseTiers, pricingSettings);
           console.log("Initialized markets:", initializedMarkets);
           newMarkets.AR = initializedMarkets.AR;
           newMarkets.COL = initializedMarkets.COL;

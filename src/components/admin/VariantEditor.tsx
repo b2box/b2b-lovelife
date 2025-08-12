@@ -213,6 +213,11 @@ export const VariantEditor: React.FC<VariantEditorProps> = ({
         description: "Variante actualizada correctamente",
       });
 
+      // Update initial form state to reflect saved state
+      const updatedForm = { ...form };
+      setInitialForm(updatedForm);
+      setHasUnsavedChanges(false);
+      
       onSave();
       // Don't close the editor after saving
     } catch (error) {

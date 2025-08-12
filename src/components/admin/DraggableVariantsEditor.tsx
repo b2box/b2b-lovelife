@@ -298,7 +298,8 @@ export const DraggableVariantsEditor: React.FC<DraggableVariantsEditorProps> = (
     if (data) {
       // Auto-apply pricing structure with configured markup percentages
       await createDefaultPricingStructure(data.id);
-      setVariants((v) => [...v, data as AdminVariant]);
+      const newVariants = [...variants, data as AdminVariant];
+      setVariants(newVariants);
       onVariantEdit(data as AdminVariant);
     }
   };
