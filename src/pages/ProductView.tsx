@@ -67,38 +67,13 @@ const ProductView = () => {
 
   const [selectedTier, setSelectedTier] = useState<"inicial" | "mayorista" | "distribuidor">("mayorista");
 
-  const initialVariants: VariantRow[] = useMemo(() => {
-    console.log("Creating initial variants from:", variants);
-    return variants.map(variant => {
-      // Get the minimum quantity from the default selected tier (mayorista = tier2)
-      const mayoristaTier = (variant as any).variant_price_tiers?.find((tier: any) => tier.tier === "tier2");
-      const fallbackTier = (variant as any).variant_price_tiers?.find((tier: any) => tier.tier === "tier1") || 
-                          (variant as any).variant_price_tiers?.[0];
-      const selectedTierData = mayoristaTier || fallbackTier;
-      const minQty = selectedTierData?.min_qty || 1;
-      
-      return {
-        id: variant.id,
-        variant,
-        qty: minQty, // Set initial quantity to minimum required for mayorista tier
-        comps: { labeling: false, barcode: false, photos: false, packaging: false }
-      };
-    });
-  }, [variants]); // selectedTier is now a constant default, no need to depend on it
-
   const [rows, setRows] = useState<VariantRow[]>([]);
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
-  // Update rows when variants change
+  // Initialize rows when variants change - consolidated to avoid multiple effects
   useEffect(() => {
-    console.log("Updating rows. Variants length:", variants.length, "Initial variants:", initialVariants);
-    setRows(initialVariants);
-  }, [initialVariants]);
-
-  // Update quantities when tier changes
-  useEffect(() => {
-    if (rows.length > 0) {
+    if (variants.length > 0) {
       const tierMap = {
         inicial: "tier1",
         mayorista: "tier2", 
@@ -107,30 +82,30 @@ const ProductView = () => {
 
       const dbTier = tierMap[selectedTier];
 
-      const updatedRows = rows.map(row => {
-        // Find the price tier for the selected tier  
-        const selectedTierData = (row.variant as any).variant_price_tiers?.find((tier: any) => tier.tier === dbTier);
-        const fallbackTier = (row.variant as any).variant_price_tiers?.[0];
+      const newRows = variants.map(variant => {
+        // Get the minimum quantity for the selected tier
+        const selectedTierData = (variant as any).variant_price_tiers?.find((tier: any) => tier.tier === dbTier);
+        const fallbackTier = (variant as any).variant_price_tiers?.find((tier: any) => tier.tier === "tier1") || 
+                            (variant as any).variant_price_tiers?.[0];
         const tierData = selectedTierData || fallbackTier;
         const minQty = tierData?.min_qty || 1;
-
+        
         return {
-          ...row,
-          qty: minQty // Update quantity to minimum for selected tier
+          id: variant.id,
+          variant,
+          qty: minQty,
+          comps: { labeling: false, barcode: false, photos: false, packaging: false }
         };
       });
 
-      setRows(updatedRows);
-      console.log(`Updated quantities for ${selectedTier} tier`);
+      setRows(newRows);
+      
+      // Set first variant as selected if none selected
+      if (!selectedVariantId && newRows.length > 0) {
+        setSelectedVariantId(newRows[0].id);
+      }
     }
-  }, [selectedTier]); // Run when tier changes
-
-  // Set the first variant as selected by default (separate effect to avoid loop)
-  useEffect(() => {
-    if (initialVariants.length > 0 && !selectedVariantId) {
-      setSelectedVariantId(initialVariants[0].id);
-    }
-  }, [initialVariants.length]); // Only depend on length, not the actual array or selectedVariantId
+  }, [variants, selectedTier]); // Consolidated dependencies
 
   const perUnitLabeling = 0.15;
   const perUnitPackaging = 0.04;
@@ -141,11 +116,11 @@ const ProductView = () => {
   // Get pricing settings and market content for calculations
   const { data: pricingSettings } = usePricingSettings();
 
-  // Calculate variant pricing directly without hook violations
+  // Calculate variant pricing using the exact values from editor
   const getVariantPrice = (variant: ProductVariant, tier: "inicial" | "mayorista" | "distribuidor") => {
     if (!pricingSettings) return 0;
 
-    // Map tier names to database tier values
+    // Map tier names to database tier values  
     const tierMap = {
       inicial: "tier1",
       mayorista: "tier2", 
@@ -163,39 +138,45 @@ const ProductView = () => {
       return variant.price || 0;
     }
 
-    // Get the base CNY price
+    // Get the base CNY price from the tier data
     const cnyPrice = priceTier.unit_price;
 
-    // Apply market-specific conversion and markup
+    // Apply market-specific conversion using the exact formulas from the editor
     let finalPrice = cnyPrice;
 
     switch (market) {
       case "AR":
+        // CNY -> USD conversion then markup
         const arsExchangeRate = pricingSettings.arRate || 1;
         const arsMarkup = tier === "inicial" ? pricingSettings.arPercents[0] :
                          tier === "mayorista" ? pricingSettings.arPercents[1] :
                          pricingSettings.arPercents[2];
-        finalPrice = cnyPrice * arsExchangeRate * (arsMarkup / 100);
+        // Convert CNY to USD first, then apply markup percentage
+        finalPrice = (cnyPrice * arsExchangeRate) * (1 + arsMarkup / 100);
         break;
         
       case "CO":
+        // CNY -> COP conversion then markup
         const copExchangeRate = pricingSettings.coRate || 1;
         const copMarkup = tier === "inicial" ? pricingSettings.coPercents[0] :
                          tier === "mayorista" ? pricingSettings.coPercents[1] :
                          pricingSettings.coPercents[2];
-        finalPrice = cnyPrice * copExchangeRate * (copMarkup / 100);
+        // Convert CNY to COP first, then apply markup percentage
+        finalPrice = (cnyPrice * copExchangeRate) * (1 + copMarkup / 100);
         break;
         
       case "CN":
+        // CNY -> USD conversion then markup
         const usdExchangeRate = pricingSettings.cnRate || 1;
         const usdMarkup = tier === "inicial" ? pricingSettings.cnPercents[0] :
                          tier === "mayorista" ? pricingSettings.cnPercents[1] :
                          pricingSettings.cnPercents[2];
-        finalPrice = cnyPrice * usdExchangeRate * (usdMarkup / 100);
+        // Convert CNY to USD first, then apply markup percentage
+        finalPrice = (cnyPrice * usdExchangeRate) * (1 + usdMarkup / 100);
         break;
     }
 
-    return Math.round(finalPrice * 100) / 100; // Round to 2 decimal places
+    return Math.round(finalPrice * 100) / 100;
   };
 
   const rowTotal = (r: VariantRow) => {
