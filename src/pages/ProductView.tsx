@@ -32,7 +32,7 @@ const ProductView = () => {
       if (uuidRegex.test(slug)) return slug;
     }
     return undefined;
-  }, [slug, id, products]);
+  }, [slug, id, products.length]); // Only depend on length, not the array
 
   const { variants, loading: variantsLoading } = useProductVariants(productId);
   const { toast } = useToast();
@@ -56,7 +56,7 @@ const ProductView = () => {
       badge: dbProduct.verified_product ? "B2BOX verified" : undefined,
       viral: false
     } as Product & { slug: string };
-  }, [productId, products]);
+  }, [productId, products.length]); // Only depend on length, not the array
 
   type VariantRow = {
     id: string;
