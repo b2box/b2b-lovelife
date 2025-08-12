@@ -56,7 +56,7 @@ const seoConfigs: Record<Market, SEOConfig> = {
     }
   },
   CN: {
-    title: "B2BOX Global | Wholesale Viral Products Direct from China",
+    title: "B2BOX Global | Wholesale Viral Products Worldwide",
     description: "Buy viral products wholesale with fast shipping and competitive prices. B2B e‑commerce platform for your online store.",
     canonical: "/",
     hreflang: [
@@ -72,7 +72,7 @@ const seoConfigs: Record<Market, SEOConfig> = {
       "logo": "/lovable-uploads/a6ada814-1660-4b53-ba08-afcb29e598eb.png",
       "address": {
         "@type": "PostalAddress",
-        "addressCountry": "CN"
+        "addressCountry": "US"
       },
       "sameAs": ["https://facebook.com/b2box", "https://instagram.com/b2box"]
     }

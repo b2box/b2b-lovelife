@@ -21,7 +21,7 @@ export function useGeolocation() {
         const response = await fetch("https://ipapi.co/json/");
         const data = await response.json();
         
-        let market: Market = "CN"; // Default to global/China
+        let market: Market = "CN"; // Default to global
         
         if (data.country_code === "AR") {
           market = "AR";
