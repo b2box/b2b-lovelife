@@ -304,12 +304,18 @@ const ProductView = () => {
                 <div className="space-y-3">
                   <div className="relative overflow-hidden rounded-[28px] bg-muted aspect-square">
                     {(() => {
-                      const selectedVariant = variants.find(v => v.id === selectedVariantId);
-                      const variantImages = selectedVariant?.images || [];
-                      const sortedImages = variantImages.sort((a, b) => a.sort_order - b.sort_order);
-                      const currentImage = sortedImages[selectedImageIndex];
+                      // Collect all images from all variants
+                      const allImages = variants.flatMap(variant => 
+                        variant.images?.map(img => ({
+                          ...img,
+                          variantName: variant.name || product.name,
+                          variantId: variant.id
+                        })) || []
+                      ).sort((a, b) => a.sort_order - b.sort_order);
+                      
+                      const currentImage = allImages[selectedImageIndex];
                       const displayImage = currentImage?.url || product.image;
-                      const imageCount = sortedImages.length;
+                      const imageCount = allImages.length;
 
                       return (
                         <>
@@ -332,6 +338,12 @@ const ProductView = () => {
                           <span className="absolute top-3 right-3 rounded-full bg-black/50 text-white text-xs px-2 py-1">
                             {selectedImageIndex + 1} de {imageCount || 1}
                           </span>
+                          {/* Variant indicator */}
+                          {currentImage && (
+                            <span className="absolute bottom-3 left-3 rounded-full bg-black/70 text-white text-xs px-3 py-1">
+                              {currentImage.variantName}
+                            </span>
+                          )}
                           {imageCount > 1 && (
                             <button 
                               className="absolute right-3 top-1/2 -translate-y-1/2 grid size-10 place-items-center rounded-full bg-black/40 text-white hover:bg-black/60" 
@@ -346,31 +358,43 @@ const ProductView = () => {
                     })()}
                   </div>
 
-                  {/* Thumbnails - Real variant images */}
-                  <div className="flex items-center gap-3">
+                  {/* Thumbnails - All variant images */}
+                  <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide">
                     {(() => {
-                      const selectedVariant = variants.find(v => v.id === selectedVariantId);
-                      const variantImages = selectedVariant?.images || [];
-                      const sortedImages = variantImages.sort((a, b) => a.sort_order - b.sort_order);
-                      const displayImages = sortedImages.slice(0, 5);
-                      const remainingCount = Math.max(0, sortedImages.length - 5);
+                      // Collect all images from all variants with variant info
+                      const allImages = variants.flatMap(variant => 
+                        variant.images?.map(img => ({
+                          ...img,
+                          variantName: variant.name || product.name,
+                          variantId: variant.id
+                        })) || []
+                      ).sort((a, b) => a.sort_order - b.sort_order);
+                      
+                      const displayImages = allImages.slice(0, 8); // Show more thumbnails
+                      const remainingCount = Math.max(0, allImages.length - 8);
 
                       return displayImages.map((image, i) => (
                         <button
-                          key={image.id}
-                          className={`relative h-16 w-16 md:h-18 md:w-18 overflow-hidden rounded-xl ring-1 bg-muted ${
-                            selectedImageIndex === i ? 'ring-primary ring-2' : 'ring-border'
-                          }`}
+                          key={`${image.variantId}-${image.id}`}
+                          className={`relative h-16 w-16 md:h-18 md:w-18 flex-shrink-0 overflow-hidden rounded-xl ring-1 bg-muted transition-all ${
+                            selectedImageIndex === i ? 'ring-primary ring-2 scale-110' : 'ring-border hover:ring-primary/50'
+                          } ${image.variantId === selectedVariantId ? 'ring-blue-500' : ''}`}
                           onClick={() => setSelectedImageIndex(i)}
-                          aria-label={`Ver imagen ${i + 1} de ${selectedVariant?.name || product.name}`}
+                          aria-label={`Ver imagen ${i + 1} de ${image.variantName}`}
                         >
                           <img 
                             src={image.url} 
-                            alt={image.alt || `${selectedVariant?.name || product.name} imagen ${i + 1}`} 
+                            alt={image.alt || `${image.variantName} imagen ${i + 1}`} 
                             className="h-full w-full object-cover" 
                             loading="lazy" 
                           />
-                          {i === 4 && remainingCount > 0 && (
+                          {/* Variant indicator on thumbnail */}
+                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-1">
+                            <div className="text-[10px] text-white font-medium truncate">
+                              {image.variantName}
+                            </div>
+                          </div>
+                          {i === 7 && remainingCount > 0 && (
                             <div className="absolute inset-0 grid place-items-center bg-black/40 text-white text-sm font-medium">
                               +{remainingCount}
                             </div>
