@@ -96,6 +96,35 @@ const ProductView = () => {
     setRows(initialVariants);
   }, [initialVariants]);
 
+  // Update quantities when tier changes
+  useEffect(() => {
+    if (rows.length > 0) {
+      const tierMap = {
+        inicial: "tier1",
+        mayorista: "tier2", 
+        distribuidor: "tier3"
+      } as const;
+
+      const dbTier = tierMap[selectedTier];
+
+      const updatedRows = rows.map(row => {
+        // Find the price tier for the selected tier
+        const selectedTierData = row.variant.price_tiers?.find(tier => tier.tier === dbTier);
+        const fallbackTier = row.variant.price_tiers?.[0];
+        const tierData = selectedTierData || fallbackTier;
+        const minQty = tierData?.min_qty || 1;
+
+        return {
+          ...row,
+          qty: minQty // Update quantity to minimum for selected tier
+        };
+      });
+
+      setRows(updatedRows);
+      console.log(`Updated quantities for ${selectedTier} tier`);
+    }
+  }, [selectedTier]); // Run when tier changes
+
   // Set the first variant as selected by default (separate effect to avoid loop)
   useEffect(() => {
     if (initialVariants.length > 0 && !selectedVariantId) {
