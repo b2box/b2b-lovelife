@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/landing/Navbar";
 import Hero from "@/components/landing/Hero";
 import CategoryTabs from "@/components/landing/CategoryTabs";
@@ -13,9 +16,28 @@ import TestimonialsBanner from "@/components/landing/TestimonialsBanner";
 import { useSEOByMarket } from "@/hooks/useSEOByMarket";
 
 const IndexAR = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const isApp = location.pathname.startsWith("/app");
   useSEOByMarket("AR");
+
+  useEffect(() => {
+    // Check if user is already authenticated
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session?.user) {
+        navigate("/app", { replace: true });
+      }
+    });
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        navigate("/app", { replace: true });
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-background">
