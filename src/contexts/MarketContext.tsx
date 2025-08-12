@@ -11,7 +11,7 @@ const MarketContext = createContext<MarketContextType | undefined>(undefined);
 
 export function MarketProvider({ children }: { children: ReactNode }) {
   const { detectedMarket, isLoading, setMarket: setDetectedMarket } = useGeolocation();
-  const [market, setMarketState] = useState<Market>("AR");
+  const [market, setMarketState] = useState<Market>("CN"); // Default to CN (global)
 
   useEffect(() => {
     if (detectedMarket && !isLoading) {

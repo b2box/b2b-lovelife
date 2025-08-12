@@ -67,12 +67,19 @@ const ProductView = () => {
 
   const initialVariants: VariantRow[] = useMemo(() => {
     console.log("Creating initial variants from:", variants);
-    return variants.map(variant => ({
-      id: variant.id,
-      variant,
-      qty: 0,
-      comps: { labeling: false, barcode: false, photos: false, packaging: false }
-    }));
+    return variants.map(variant => {
+      // Get the minimum quantity from the first price tier
+      const firstTier = variant.price_tiers?.find(tier => tier.tier === "tier1") || 
+                       variant.price_tiers?.[0];
+      const minQty = firstTier?.min_qty || 1;
+      
+      return {
+        id: variant.id,
+        variant,
+        qty: minQty, // Set initial quantity to minimum required
+        comps: { labeling: false, barcode: false, photos: false, packaging: false }
+      };
+    });
   }, [variants]);
 
   const [rows, setRows] = useState<VariantRow[]>([]);

@@ -228,73 +228,73 @@ const marketContent: Record<Market, MarketContent> = {
     currency: "USD",
     currencySymbol: "$",
     trendBanner: {
-      text: "Trending product on",
+      text: "Producto en tendencia en",
       platform: {
         name: "Amazon Global",
         logo: "/lovable-uploads/45cfca5f-c2c1-4176-810b-ed7640362022.png"
       }
     },
     trendsButton: {
-      text: "See more on",
+      text: "Ver más en",
       logo: "/lovable-uploads/5e29948e-f7fe-4970-b62d-37787f06dabb.png"
     },
-    minOrderText: "Minimum order $100 USD",
-    cartButtonText: "Add to cart",
+    minOrderText: "Orden mínima $100 USD",
+    cartButtonText: "Añadir al carrito",
     features: {
       shipping: {
-        title: "Shipping method",
-        description: "Air and sea freight worldwide. Times and costs vary by destination and volume."
+        title: "Método de envío",
+        description: "Envíos aéreos y marítimos mundiales. Tiempos y costos varían según destino y volumen."
       },
       customization: {
-        title: "Product customization",
-        description: "Includes branding, custom packaging and specifications according to your brand."
+        title: "Personalizar producto",
+        description: "Incluye branding, empaques personalizados y especificaciones según tu marca."
       },
       payment: {
-        title: "Deferred payment",
-        description: "Pay only 30% today. Pay the rest when we confirm everything from China."
+        title: "Pago diferido",
+        description: "Pagá solo el 30% hoy. El resto lo pagás cuando confirmemos todo desde China."
       },
       quality: {
-        title: "Quality control",
-        description: "Factory quality control with international standards."
+        title: "Control de calidad",
+        description: "Control de calidad en fábrica con estándares internacionales."
       }
     },
     pricingTiers: {
       inicial: {
-        name: "Starter",
-        range: "50 – 499 units",
+        name: "Inicial",
+        range: "50 – 499 unidades",
         price: 2.8,
         minQuantity: 50,
         maxQuantity: 499
       },
       mayorista: {
-        name: "Wholesale",
-        range: "500 – 1250 units",
-        badge: "Recommended",
+        name: "Mayorista",
+        range: "500 – 1250 unidades",
+        badge: "Recomendado",
         price: 2.2,
         minQuantity: 500,
         maxQuantity: 1250
       },
       distribuidor: {
-        name: "Distributor",
-        range: "+1250 units",
+        name: "Distribuidor",
+        range: "+1250 unidades",
         price: 1.8,
         minQuantity: 1250
       }
     },
     tableHeaders: {
-      product: "Product",
-      units: "Units",
-      unitPrice: "Unit Price",
-      labeling: "Marketplace Labeling",
-      barcode: "Barcode Registration",
-      photos: "Commercial Photography",
-      packaging: "Packaging",
-      total: "Total Price"
+      product: "Producto",
+      units: "Unidades",
+      unitPrice: "Precio Unitario",
+      labeling: "Etiquetado para Mercado",
+      barcode: "Registro de Código de Barras",
+      photos: "Fotografías Comerciales",
+      packaging: "Empaque",
+      total: "Precio Total"
     },
     complementPricing: {
       labelingUnit: "/U",
       packagingUnit: "/U",
-      unitsText: "units"
+      unitsText: "unidades"
     }
   }
 };
@@ -307,6 +307,7 @@ export function useProductMarketContent() {
     if (location.pathname.includes("/app/co")) return "CO";
     if (location.pathname.includes("/ar")) return "AR";
     if (location.pathname.includes("/co")) return "CO";
+    // Default should be CN (global) instead of AR
     return "CN";
   }, [location.pathname]);
 
