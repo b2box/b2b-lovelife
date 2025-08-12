@@ -7,12 +7,15 @@ import { ArrowUpRight, CheckCircle2, Cog, Hash, Box, Package, Battery, Ruler, Sc
 import { useToast } from "@/hooks/use-toast";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 import { useProducts } from "@/hooks/useProducts";
+import { useProductMarketContent } from "@/hooks/useProductMarketContent";
+import { MarketSpecificBanners } from "@/components/product/MarketSpecificBanners";
 
 const ProductView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { products } = useProducts();
   const { toast } = useToast();
+  const { market, content } = useProductMarketContent();
 
   const product = useMemo(() => {
     if (!id) return undefined;
@@ -93,7 +96,7 @@ const ProductView = () => {
 
   const addToCart = () => {
     if (totals.total < minOrder) {
-      toast({ title: "Orden mínima $100", description: "Agrega más productos para continuar." });
+      toast({ title: content.minOrderText, description: "Agrega más productos para continuar." });
       return;
     }
     toast({ title: "Añadido al carrito", description: `${totals.items} unidades agregadas.` });
@@ -235,10 +238,10 @@ const ProductView = () => {
                         className="text-center"
                         aria-pressed={selectedTier === "inicial"}
                       >
-                        <div className="text-lg md:text-xl font-semibold">Inicial</div>
+                        <div className="text-lg md:text-xl font-semibold">{content.pricingTiers.inicial.name}</div>
                         <div className={`mt-2 rounded-2xl border px-6 py-5 ${selectedTier === "inicial" ? "border-foreground text-foreground" : "border-border text-muted-foreground"}`}>
-                          <div className={`text-3xl font-bold ${selectedTier === "inicial" ? "" : "opacity-60"}`}>$35</div>
-                          <div className="text-xs opacity-70">50 – 499 unidades</div>
+                          <div className={`text-3xl font-bold ${selectedTier === "inicial" ? "" : "opacity-60"}`}>{content.currencySymbol}35</div>
+                          <div className="text-xs opacity-70">{content.pricingTiers.inicial.range}</div>
                         </div>
                       </button>
                       {/* Mayorista destacado */}
@@ -248,13 +251,13 @@ const ProductView = () => {
                         className="text-center"
                         aria-pressed={selectedTier === "mayorista"}
                       >
-                        <div className="text-lg md:text-xl font-semibold">Mayorista</div>
+                        <div className="text-lg md:text-xl font-semibold">{content.pricingTiers.mayorista.name}</div>
                         <div className={`relative mt-2 rounded-2xl border px-6 py-5 ${selectedTier === "mayorista" ? "border-foreground" : "border-border"}`}>
                           {selectedTier === "mayorista" && (
-                            <span className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-foreground text-background text-xs px-3 py-1">Recomendado</span>
+                            <span className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-foreground text-background text-xs px-3 py-1">{content.pricingTiers.mayorista.badge}</span>
                           )}
-                          <div className="text-3xl font-bold">$300</div>
-                          <div className="text-xs text-muted-foreground">500 – 1250 unidades</div>
+                          <div className="text-3xl font-bold">{content.currencySymbol}300</div>
+                          <div className="text-xs text-muted-foreground">{content.pricingTiers.mayorista.range}</div>
                         </div>
                       </button>
                       {/* Distribuidor */}
@@ -264,29 +267,17 @@ const ProductView = () => {
                         className="text-center"
                         aria-pressed={selectedTier === "distribuidor"}
                       >
-                        <div className="text-lg md:text-xl font-semibold">Distribuidor</div>
+                        <div className="text-lg md:text-xl font-semibold">{content.pricingTiers.distribuidor.name}</div>
                         <div className={`mt-2 rounded-2xl border px-6 py-5 ${selectedTier === "distribuidor" ? "border-foreground text-foreground" : "border-border text-muted-foreground"}`}>
-                          <div className={`text-3xl font-bold ${selectedTier === "distribuidor" ? "" : "opacity-60"}`}>$725</div>
-                          <div className="text-xs opacity-70">+1250 unidades</div>
+                          <div className={`text-3xl font-bold ${selectedTier === "distribuidor" ? "" : "opacity-60"}`}>{content.currencySymbol}725</div>
+                          <div className="text-xs opacity-70">{content.pricingTiers.distribuidor.range}</div>
                         </div>
                       </button>
                     </div>
                   </div>
 
                   {/* Faja inferior: tendencia + Trends con flecha */}
-                  <div className="flex items-center justify-between gap-3 px-4 py-3 bg-brand-yellow rounded-b-[28px]">
-                    <div className="flex items-center gap-2 text-sm font-medium">
-                      <span>Producto en tendencia en</span>
-                      <img src="/lovable-uploads/45cfca5f-c2c1-4176-810b-ed7640362022.png" alt="Logo Mercado Libre" className="h-5 w-auto" loading="lazy" />
-                    </div>
-                    <button className="inline-flex items-center gap-2 text-sm font-medium" aria-label="Ver más en Trends">
-                      <span>Ver más en</span>
-                      <img src="/lovable-uploads/5e29948e-f7fe-4970-b62d-37787f06dabb.png" alt="Logo Trends" className="h-5 w-auto" loading="lazy" />
-                      <span className="grid size-8 place-items-center rounded-full border border-black/30 text-black/70 bg-white/70 hover:bg-white">
-                        <ArrowUpRight />
-                      </span>
-                    </button>
-                  </div>
+                  <MarketSpecificBanners />
                 </article>
               </div>
             </div>
@@ -295,23 +286,23 @@ const ProductView = () => {
           {/* Columna derecha (20%): Resumen sticky */}
           <aside className="hidden md:block sticky top-24 self-start h-max rounded-2xl bg-card text-card-foreground border p-4">
             <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <span>Orden mínima $100</span>
+              <span>{content.minOrderText}</span>
               <CheckCircle2 className="opacity-60" />
             </div>
 
             <button
               onClick={addToCart}
               className="mt-4 w-full rounded-xl bg-green-500 text-white py-3 font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
-              aria-label="Añadir al carrito"
+              aria-label={content.cartButtonText}
               disabled={totals.total < minOrder}
             >
-              Añadir al carrito
+              {content.cartButtonText}
             </button>
 
             <div className="mt-4 space-y-1 text-sm">
-              <div className="flex justify-between"><span>Productos ({totals.items})</span><span>${totals.products.toFixed(2)}</span></div>
-              <div className="flex justify-between"><span>Complementos</span><span>${totals.complements.toFixed(2)}</span></div>
-              <div className="flex justify-between font-semibold text-base pt-1 border-t"><span>Total</span><span>${totals.total.toFixed(2)}</span></div>
+              <div className="flex justify-between"><span>{content.tableHeaders.product} ({totals.items})</span><span>{content.currencySymbol}{totals.products.toFixed(2)}</span></div>
+              <div className="flex justify-between"><span>Complementos</span><span>{content.currencySymbol}{totals.complements.toFixed(2)}</span></div>
+              <div className="flex justify-between font-semibold text-base pt-1 border-t"><span>Total</span><span>{content.currencySymbol}{totals.total.toFixed(2)}</span></div>
             </div>
 
             <div className="mt-4 grid grid-cols-3 gap-2 text-xs text-muted-foreground">
@@ -325,7 +316,7 @@ const ProductView = () => {
                   </div>
                 </HoverCardTrigger>
                 <HoverCardContent side="top" align="end" className="w-64 p-3 text-xs">
-                  Envíos aéreos y marítimos disponibles. Tiempos y costos varían según destino y volumen.
+                  {content.features.shipping.description}
                 </HoverCardContent>
               </HoverCard>
 
@@ -339,7 +330,7 @@ const ProductView = () => {
                   </div>
                 </HoverCardTrigger>
                 <HoverCardContent side="top" align="center" className="w-64 p-3 text-xs">
-                  Incluye branding, empaques y especificaciones según tu marca. Cotización rápida.
+                  {content.features.customization.description}
                 </HoverCardContent>
               </HoverCard>
 
@@ -385,14 +376,14 @@ const ProductView = () => {
             <table className="min-w-[960px] w-full text-sm">
               <thead className="bg-secondary/40 text-muted-foreground">
                 <tr>
-                  <th className="text-left px-4 py-3 font-medium">Producto</th>
-                  <th className="text-left px-4 py-3 font-medium">Unidades</th>
-                  <th className="text-left px-4 py-3 font-medium">Precio Unitario</th>
-                  <th className="px-4 py-3 font-medium">Etiquetado por Marketplaces</th>
-                  <th className="px-4 py-3 font-medium">Registro de Código de Barras</th>
-                  <th className="px-4 py-3 font-medium">Fotografías Comerciales</th>
-                  <th className="px-4 py-3 font-medium">Empaque</th>
-                  <th className="text-right px-4 py-3 font-medium">Precio Total</th>
+                  <th className="text-left px-4 py-3 font-medium">{content.tableHeaders.product}</th>
+                  <th className="text-left px-4 py-3 font-medium">{content.tableHeaders.units}</th>
+                  <th className="text-left px-4 py-3 font-medium">{content.tableHeaders.unitPrice}</th>
+                  <th className="px-4 py-3 font-medium">{content.tableHeaders.labeling}</th>
+                  <th className="px-4 py-3 font-medium">{content.tableHeaders.barcode}</th>
+                  <th className="px-4 py-3 font-medium">{content.tableHeaders.photos}</th>
+                  <th className="px-4 py-3 font-medium">{content.tableHeaders.packaging}</th>
+                  <th className="text-right px-4 py-3 font-medium">{content.tableHeaders.total}</th>
                 </tr>
               </thead>
               <tbody>
@@ -414,17 +405,17 @@ const ProductView = () => {
                         <button className="px-3 py-1" onClick={() => changeQty(r.id, 1)} aria-label="Aumentar">+</button>
                       </div>
                     </td>
-                    <td className="px-4 py-4">${r.unitPrice.toFixed(2)}</td>
+                    <td className="px-4 py-4">{content.currencySymbol}{r.unitPrice.toFixed(2)}</td>
 
                     {/* Etiquetado */}
                     <td className="px-4 py-4 text-center">
                       <button
                         className={`px-3 py-1 rounded-full text-xs border ${r.comps.labeling ? "bg-green-500/15 text-green-700" : "bg-transparent"}`}
                         onClick={() => toggleComp(r.id, "labeling")}
-                      >
-                        ${perUnitLabeling.toFixed(2)} /U
-                      </button>
-                      <div className="text-[10px] text-muted-foreground mt-1">{r.stock.toLocaleString()} unidades</div>
+                        >
+                          {content.currencySymbol}{perUnitLabeling.toFixed(2)} {content.complementPricing.labelingUnit}
+                        </button>
+                        <div className="text-[10px] text-muted-foreground mt-1">{r.stock.toLocaleString()} {content.complementPricing.unitsText}</div>
                     </td>
 
                     {/* Código de barras */}
@@ -432,8 +423,8 @@ const ProductView = () => {
                       <button
                         className={`px-3 py-1 rounded-full text-xs border ${r.comps.barcode ? "bg-green-500/15 text-green-700" : "bg-transparent"}`}
                         onClick={() => toggleComp(r.id, "barcode")}
-                      >
-                        ${fixedBarcode.toFixed(0)}
+                        >
+                          {content.currencySymbol}{fixedBarcode.toFixed(0)}
                       </button>
                     </td>
 
@@ -442,8 +433,8 @@ const ProductView = () => {
                       <button
                         className={`px-3 py-1 rounded-full text-xs border ${r.comps.photos ? "bg-green-500/15 text-green-700" : "bg-transparent"}`}
                         onClick={() => toggleComp(r.id, "photos")}
-                      >
-                        ${fixedPhotos.toLocaleString()}
+                        >
+                          {content.currencySymbol}{fixedPhotos.toLocaleString()}
                       </button>
                     </td>
 
@@ -452,12 +443,12 @@ const ProductView = () => {
                       <button
                         className={`px-3 py-1 rounded-full text-xs border ${r.comps.packaging ? "bg-green-500/15 text-green-700" : "bg-transparent"}`}
                         onClick={() => toggleComp(r.id, "packaging")}
-                      >
-                        ${perUnitPackaging.toFixed(2)} /U
+                        >
+                          {content.currencySymbol}{perUnitPackaging.toFixed(2)} {content.complementPricing.packagingUnit}
                       </button>
                     </td>
 
-                    <td className="px-4 py-4 text-right font-medium">${rowTotal(r).toFixed(2)}</td>
+                    <td className="px-4 py-4 text-right font-medium">{content.currencySymbol}{rowTotal(r).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -469,8 +460,8 @@ const ProductView = () => {
                 <Cog className="size-5" />
               </span>
               <div>
-                <h3 className="font-semibold">Opciones de personalización</h3>
-                <p className="text-sm text-muted-foreground">Si deseas personalizar tus productos, nuestro equipo en China se encargará.</p>
+                <h3 className="font-semibold">{content.features.customization.title}</h3>
+                <p className="text-sm text-muted-foreground">{content.features.customization.description}</p>
               </div>
             </article>
             <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4">
@@ -478,8 +469,8 @@ const ProductView = () => {
                 <Cog className="size-5" />
               </span>
               <div>
-                <h3 className="font-semibold">Entrega confiable</h3>
-                <p className="text-sm text-muted-foreground">Contamos con una logística optimizada para que recibas tus productos lo antes posible.</p>
+                <h3 className="font-semibold">{content.features.shipping.title}</h3>
+                <p className="text-sm text-muted-foreground">{content.features.shipping.description}</p>
               </div>
             </article>
             <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4">
@@ -487,8 +478,8 @@ const ProductView = () => {
                 <Cog className="size-5" />
               </span>
               <div>
-                <h3 className="font-semibold">Pago diferido</h3>
-                <p className="text-sm text-muted-foreground">Hoy solo pagas el 30%. El resto lo pagas cuando confirmemos todo desde China.</p>
+                <h3 className="font-semibold">{content.features.payment.title}</h3>
+                <p className="text-sm text-muted-foreground">{content.features.payment.description}</p>
               </div>
             </article>
             <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4">
@@ -496,8 +487,8 @@ const ProductView = () => {
                 <Cog className="size-5" />
               </span>
               <div>
-                <h3 className="font-semibold">Control de calidad</h3>
-                <p className="text-sm text-muted-foreground">Control de calidad en fábrica con estándares internacionales.</p>
+                <h3 className="font-semibold">{content.features.quality.title}</h3>
+                <p className="text-sm text-muted-foreground">{content.features.quality.description}</p>
               </div>
             </article>
           </div>
