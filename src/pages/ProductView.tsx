@@ -71,23 +71,16 @@ const ProductView = () => {
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
-  // Initialize rows when variants change - consolidated to avoid multiple effects
+  // Initialize rows when variants change - stabilized to prevent reloads
   useEffect(() => {
+    console.log("ProductView: Setting up rows, variants count:", variants.length);
+    
     if (variants.length > 0) {
-      const tierMap = {
-        inicial: "tier1",
-        mayorista: "tier2", 
-        distribuidor: "tier3"
-      } as const;
-
-      const dbTier = tierMap[selectedTier];
-
       const newRows = variants.map(variant => {
-        // Get the minimum quantity for the selected tier
-        const selectedTierData = (variant as any).variant_price_tiers?.find((tier: any) => tier.tier === dbTier);
-        const fallbackTier = (variant as any).variant_price_tiers?.find((tier: any) => tier.tier === "tier1") || 
-                            (variant as any).variant_price_tiers?.[0];
-        const tierData = selectedTierData || fallbackTier;
+        // Get the minimum quantity for mayorista tier (default)
+        const mayoristaTier = (variant as any).variant_price_tiers?.find((tier: any) => tier.tier === "mayorista");
+        const fallbackTier = (variant as any).variant_price_tiers?.[0];
+        const tierData = mayoristaTier || fallbackTier;
         const minQty = tierData?.min_qty || 1;
         
         return {
@@ -105,7 +98,7 @@ const ProductView = () => {
         setSelectedVariantId(newRows[0].id);
       }
     }
-  }, [variants, selectedTier]); // Consolidated dependencies
+  }, [variants.length, selectedVariantId]); // Only depend on length, not the array itself
 
   const perUnitLabeling = 0.15;
   const perUnitPackaging = 0.04;
@@ -330,8 +323,8 @@ const ProductView = () => {
                     })()}
                   </div>
 
-                  {/* Thumbnails - All variant images */}
-                  <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">{/* Reduced gap from 3 to 2 */}
+                  {/* Thumbnails - Maximum 5 like reference image */}
+                  <div className="flex items-center gap-2 overflow-hidden">
                     {(() => {
                       // Collect all images from all variants with variant info
                       const allImages = variants.flatMap(variant => 
@@ -342,15 +335,15 @@ const ProductView = () => {
                         })) || []
                       ).sort((a, b) => a.sort_order - b.sort_order);
                       
-                      const displayImages = allImages.slice(0, 8); // Show more thumbnails
-                      const remainingCount = Math.max(0, allImages.length - 8);
+                      const displayImages = allImages.slice(0, 5); // Limit to 5 thumbnails max
+                      const remainingCount = Math.max(0, allImages.length - 5);
 
                       return displayImages.map((image, i) => (
                         <button
                           key={`${image.variantId}-${image.id}`}
                           className={`relative h-12 w-12 md:h-14 md:w-14 flex-shrink-0 overflow-hidden rounded-lg ring-1 bg-muted transition-all ${
-                            selectedImageIndex === i ? 'ring-primary ring-2 scale-110' : 'ring-border hover:ring-primary/50'
-                          } ${image.variantId === selectedVariantId ? 'ring-blue-500' : ''}`}
+                            selectedImageIndex === i ? 'ring-primary ring-2 scale-105' : 'ring-border hover:ring-primary/50'
+                          }`}
                           onClick={() => setSelectedImageIndex(i)}
                           aria-label={`Ver imagen ${i + 1} de ${image.variantName}`}
                         >
@@ -360,14 +353,9 @@ const ProductView = () => {
                             className="h-full w-full object-cover" 
                             loading="lazy" 
                           />
-                          {/* Variant indicator on thumbnail */}
-                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-1">
-                            <div className="text-[10px] text-white font-medium truncate">
-                              {image.variantName}
-                            </div>
-                          </div>
-                          {i === 7 && remainingCount > 0 && (
-                            <div className="absolute inset-0 grid place-items-center bg-black/40 text-white text-sm font-medium">
+                          {/* +X indicator for extra images on the last thumbnail */}
+                          {i === 4 && remainingCount > 0 && (
+                            <div className="absolute inset-0 grid place-items-center bg-black/60 text-white text-sm font-bold rounded-lg">
                               +{remainingCount}
                             </div>
                           )}
