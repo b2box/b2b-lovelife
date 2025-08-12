@@ -76,12 +76,18 @@ const ProductView = () => {
   }, [variants]);
 
   const [rows, setRows] = useState<VariantRow[]>([]);
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   // Update rows when variants change
   useEffect(() => {
     console.log("Updating rows. Variants length:", variants.length, "Initial variants:", initialVariants);
     setRows(initialVariants);
-  }, [initialVariants]);
+    // Set the first variant as selected by default
+    if (initialVariants.length > 0 && !selectedVariantId) {
+      setSelectedVariantId(initialVariants[0].id);
+    }
+  }, [initialVariants, selectedVariantId]);
 
   const perUnitLabeling = 0.15;
   const perUnitPackaging = 0.04;
@@ -287,36 +293,81 @@ const ProductView = () => {
               <div className="rounded-[28px] bg-card p-3 md:p-4">
                 <div className="space-y-3">
                   <div className="relative overflow-hidden rounded-[28px] bg-muted aspect-square">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="absolute inset-0 h-full w-full object-cover"
-                      loading="lazy"
-                    />
-                    {/* Viral badge */}
-                    {product.viral && (
-                      <img
-                        src="/lovable-uploads/984b614e-1f6b-484a-8b88-5c741374625b.png"
-                        alt="Viral ahora"
-                        className="absolute left-3 top-3 h-8 w-auto select-none"
-                        loading="lazy"
-                      />
-                    )}
-                    {/* Contador y flecha */}
-                    <span className="absolute top-3 right-3 rounded-full bg-black/50 text-white text-xs px-2 py-1">1 de 9</span>
-                    <button className="absolute right-3 top-1/2 -translate-y-1/2 grid size-10 place-items-center rounded-full bg-black/40 text-white hover:bg-black/60" aria-label="Siguiente imagen">›</button>
+                    {(() => {
+                      const selectedVariant = variants.find(v => v.id === selectedVariantId);
+                      const variantImages = selectedVariant?.images || [];
+                      const sortedImages = variantImages.sort((a, b) => a.sort_order - b.sort_order);
+                      const currentImage = sortedImages[selectedImageIndex];
+                      const displayImage = currentImage?.url || product.image;
+                      const imageCount = sortedImages.length;
+
+                      return (
+                        <>
+                          <img
+                            src={displayImage}
+                            alt={currentImage?.alt || product.name}
+                            className="absolute inset-0 h-full w-full object-cover"
+                            loading="lazy"
+                          />
+                          {/* Viral badge */}
+                          {product.viral && (
+                            <img
+                              src="/lovable-uploads/984b614e-1f6b-484a-8b88-5c741374625b.png"
+                              alt="Viral ahora"
+                              className="absolute left-3 top-3 h-8 w-auto select-none"
+                              loading="lazy"
+                            />
+                          )}
+                          {/* Contador y flecha */}
+                          <span className="absolute top-3 right-3 rounded-full bg-black/50 text-white text-xs px-2 py-1">
+                            {selectedImageIndex + 1} de {imageCount || 1}
+                          </span>
+                          {imageCount > 1 && (
+                            <button 
+                              className="absolute right-3 top-1/2 -translate-y-1/2 grid size-10 place-items-center rounded-full bg-black/40 text-white hover:bg-black/60" 
+                              aria-label="Siguiente imagen"
+                              onClick={() => setSelectedImageIndex((prev) => (prev + 1) % imageCount)}
+                            >
+                              ›
+                            </button>
+                          )}
+                        </>
+                      );
+                    })()}
                   </div>
 
-                  {/* Thumbnails */}
+                  {/* Thumbnails - Real variant images */}
                   <div className="flex items-center gap-3">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <div key={i} className="relative h-16 w-16 md:h-18 md:w-18 overflow-hidden rounded-xl ring-1 ring-border bg-muted">
-                        <img src={product.image} alt={`${product.name} miniatura ${i + 1}`} className="h-full w-full object-cover" loading="lazy" />
-                        {i === 4 && (
-                          <div className="absolute inset-0 grid place-items-center bg-black/40 text-white text-sm font-medium">+4</div>
-                        )}
-                      </div>
-                    ))}
+                    {(() => {
+                      const selectedVariant = variants.find(v => v.id === selectedVariantId);
+                      const variantImages = selectedVariant?.images || [];
+                      const sortedImages = variantImages.sort((a, b) => a.sort_order - b.sort_order);
+                      const displayImages = sortedImages.slice(0, 5);
+                      const remainingCount = Math.max(0, sortedImages.length - 5);
+
+                      return displayImages.map((image, i) => (
+                        <button
+                          key={image.id}
+                          className={`relative h-16 w-16 md:h-18 md:w-18 overflow-hidden rounded-xl ring-1 bg-muted ${
+                            selectedImageIndex === i ? 'ring-primary ring-2' : 'ring-border'
+                          }`}
+                          onClick={() => setSelectedImageIndex(i)}
+                          aria-label={`Ver imagen ${i + 1} de ${selectedVariant?.name || product.name}`}
+                        >
+                          <img 
+                            src={image.url} 
+                            alt={image.alt || `${selectedVariant?.name || product.name} imagen ${i + 1}`} 
+                            className="h-full w-full object-cover" 
+                            loading="lazy" 
+                          />
+                          {i === 4 && remainingCount > 0 && (
+                            <div className="absolute inset-0 grid place-items-center bg-black/40 text-white text-sm font-medium">
+                              +{remainingCount}
+                            </div>
+                          )}
+                        </button>
+                      ));
+                    })()}
                   </div>
                 </div>
               </div>
@@ -494,7 +545,16 @@ const ProductView = () => {
                   const variantOption = r.variant.option_name || r.variant.attributes?.color || "Estándar";
                   
                   return (
-                    <tr key={r.id} className="border-t">
+                    <tr 
+                      key={r.id} 
+                      className={`border-t cursor-pointer hover:bg-muted/30 transition-colors ${
+                        selectedVariantId === r.id ? 'bg-muted/50' : ''
+                      }`}
+                      onClick={() => {
+                        setSelectedVariantId(r.id);
+                        setSelectedImageIndex(0); // Reset image index when changing variants
+                      }}
+                    >
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-3">
                           <img src={variantImage} alt={variantName} className="size-12 rounded-md object-cover" loading="lazy" />
