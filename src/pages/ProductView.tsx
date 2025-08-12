@@ -3,7 +3,7 @@ import Footer from "@/components/landing/Footer";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import type { Product } from "@/components/landing/ProductCard";
-import { ArrowUpRight, CheckCircle2, Cog, Hash, Box, Package, Battery, Ruler, Scale } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, Cog, Hash, Box, Package, Battery, Ruler, Scale, ArrowLeftRight, ArrowUpDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 import { useProducts } from "@/hooks/useProducts";
@@ -857,89 +857,180 @@ const ProductView = () => {
 
         {/* Detalles técnicos */}
         <section className="mt-8 w-full md:w-3/5">
-          <h2 className="text-xl font-semibold mb-3">Detalles técnicos</h2>
-          <div className="rounded-2xl border bg-card overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="bg-secondary/40 text-muted-foreground">
-                <tr>
-                  <th className="text-left px-4 py-3 font-medium">Producto</th>
-                  <th className="text-left px-4 py-3 font-medium">Detalles caja</th>
-                  <th className="text-left px-4 py-3 font-medium">Detalles producto</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-t">
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 text-destructive"><Hash className="size-4" /><span className="text-foreground">Código PA</span></div>
-                    <div className="text-muted-foreground">PA00120</div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 text-destructive"><Ruler className="size-4" /><span className="text-foreground">Ancho de la caja</span></div>
-                    <div className="text-muted-foreground">15.5 cm</div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 text-destructive"><Ruler className="size-4" /><span className="text-foreground">Ancho del producto</span></div>
-                    <div className="text-muted-foreground">14 cm</div>
-                  </td>
-                </tr>
-                <tr className="border-t">
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 text-destructive"><Box className="size-4" /><span className="text-foreground">Categoría</span></div>
-                    <div className="text-muted-foreground">Hogar</div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 text-destructive"><Ruler className="size-4" /><span className="text-foreground">Largo de la caja</span></div>
-                    <div className="text-muted-foreground">24.5 cm</div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 text-destructive"><Ruler className="size-4" /><span className="text-foreground">Largo del producto</span></div>
-                    <div className="text-muted-foreground">21 cm</div>
-                  </td>
-                </tr>
-                <tr className="border-t">
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 text-destructive"><Box className="size-4" /><span className="text-foreground">Subcategoría</span></div>
-                    <div className="text-muted-foreground">Organizadores</div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 text-destructive"><Ruler className="size-4" /><span className="text-foreground">Alto de la caja</span></div>
-                    <div className="text-muted-foreground">5.5 cm</div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 text-destructive"><Ruler className="size-4" /><span className="text-foreground">Alto del producto</span></div>
-                    <div className="text-muted-foreground">20.5 cm</div>
-                  </td>
-                </tr>
-                <tr className="border-t">
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 text-destructive"><Package className="size-4" /><span className="text-foreground">Material</span></div>
-                    <div className="text-muted-foreground">Plástico</div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 text-destructive"><Scale className="size-4" /><span className="text-foreground">Peso de la caja</span></div>
-                    <div className="text-muted-foreground">0.22 kg</div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 text-destructive"><Scale className="size-4" /><span className="text-foreground">Peso del producto</span></div>
-                    <div className="text-muted-foreground">0.17 kg</div>
-                  </td>
-                </tr>
-                <tr className="border-t">
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 text-destructive"><Battery className="size-4" /><span className="text-foreground">¿Contiene batería?</span></div>
-                    <div className="text-muted-foreground">No</div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 text-destructive"><Package className="size-4" /><span className="text-foreground">Empaque</span></div>
-                    <div className="text-muted-foreground">Incluido</div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 text-destructive"><Package className="size-4" /><span className="text-foreground">—</span></div>
-                    <div className="text-muted-foreground">—</div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <h2 className="text-xl font-semibold mb-6">Detalles técnicos</h2>
+          <div className="bg-white rounded-lg p-6">
+            {(() => {
+              const selectedVariant = variants.find(v => v.id === selectedVariantId) || variants[0];
+              if (!selectedVariant) return <p className="text-muted-foreground">No hay datos disponibles</p>;
+              
+              const categories = product ? products.find(p => p.id === product.id)?.categories || [] : [];
+              const mainCategory = categories[0];
+              const subCategory = categories[1];
+              
+              return (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {/* Columna 1: Producto */}
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-3 mb-6">
+                      <Package className="size-5 text-coral" />
+                      <h3 className="text-lg font-semibold">Producto</h3>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3">
+                        <Hash className="size-4 text-coral" />
+                        <div>
+                          <div className="text-gray-400 text-sm">Código PA</div>
+                          <div className="text-black font-medium">{selectedVariant.sku || "—"}</div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3">
+                        <Box className="size-4 text-coral" />
+                        <div>
+                          <div className="text-gray-400 text-sm">Categoría</div>
+                          <div className="text-black font-medium">{mainCategory?.name || "—"}</div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3">
+                        <Box className="size-4 text-coral" />
+                        <div>
+                          <div className="text-gray-400 text-sm">Subcategoría</div>
+                          <div className="text-black font-medium">{subCategory?.name || "—"}</div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3">
+                        <Package className="size-4 text-coral" />
+                        <div>
+                          <div className="text-gray-400 text-sm">Material</div>
+                          <div className="text-black font-medium">Plástico</div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3">
+                        <Battery className="size-4 text-coral" />
+                        <div>
+                          <div className="text-gray-400 text-sm">¿Contiene batería?</div>
+                          <div className="text-black font-medium">{selectedVariant.has_battery ? "Sí" : "No"}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Columna 2: Detalles caja */}
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-3 mb-6">
+                      <Package className="size-5 text-coral" />
+                      <h3 className="text-lg font-semibold">Detalles caja</h3>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3">
+                        <ArrowLeftRight className="size-4 text-coral" />
+                        <div>
+                          <div className="text-gray-400 text-sm">Ancho de la caja</div>
+                          <div className="text-black font-medium">
+                            {selectedVariant.box_width_cm ? `${selectedVariant.box_width_cm} cm` : "—"}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3">
+                        <ArrowUpDown className="size-4 text-coral" />
+                        <div>
+                          <div className="text-gray-400 text-sm">Largo de la caja</div>
+                          <div className="text-black font-medium">
+                            {selectedVariant.box_length_cm ? `${selectedVariant.box_length_cm} cm` : "—"}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3">
+                        <ArrowUpDown className="size-4 text-coral rotate-90" />
+                        <div>
+                          <div className="text-gray-400 text-sm">Alto de la caja</div>
+                          <div className="text-black font-medium">
+                            {selectedVariant.box_height_cm ? `${selectedVariant.box_height_cm} cm` : "—"}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3">
+                        <Scale className="size-4 text-coral" />
+                        <div>
+                          <div className="text-gray-400 text-sm">Peso de la caja</div>
+                          <div className="text-black font-medium">
+                            {selectedVariant.box_weight_kg ? `${selectedVariant.box_weight_kg} kg` : "—"}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3">
+                        <Package className="size-4 text-coral" />
+                        <div>
+                          <div className="text-gray-400 text-sm">Empaque</div>
+                          <div className="text-black font-medium">
+                            {selectedVariant.has_individual_packaging ? "Incluido" : "No incluido"}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Columna 3: Detalles producto */}
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-3 mb-6">
+                      <Package className="size-5 text-coral" />
+                      <h3 className="text-lg font-semibold">Detalles producto</h3>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3">
+                        <ArrowLeftRight className="size-4 text-coral" />
+                        <div>
+                          <div className="text-gray-400 text-sm">Ancho del producto</div>
+                          <div className="text-black font-medium">
+                            {selectedVariant.width_cm ? `${selectedVariant.width_cm} cm` : "—"}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3">
+                        <ArrowUpDown className="size-4 text-coral" />
+                        <div>
+                          <div className="text-gray-400 text-sm">Largo del producto</div>
+                          <div className="text-black font-medium">
+                            {selectedVariant.length_cm ? `${selectedVariant.length_cm} cm` : "—"}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3">
+                        <ArrowUpDown className="size-4 text-coral rotate-90" />
+                        <div>
+                          <div className="text-gray-400 text-sm">Alto del producto</div>
+                          <div className="text-black font-medium">
+                            {selectedVariant.height_cm ? `${selectedVariant.height_cm} cm` : "—"}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3">
+                        <Scale className="size-4 text-coral" />
+                        <div>
+                          <div className="text-gray-400 text-sm">Peso del producto</div>
+                          <div className="text-black font-medium">
+                            {selectedVariant.weight_kg ? `${selectedVariant.weight_kg} kg` : "—"}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </section>
 
