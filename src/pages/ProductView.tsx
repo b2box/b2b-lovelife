@@ -511,7 +511,7 @@ const ProductView = () => {
           </section>
 
           {/* Columna derecha (20%): Resumen sticky */}
-          <aside className="hidden md:block sticky top-24 self-start h-max rounded-2xl bg-card text-card-foreground border p-4">
+          <aside className="hidden md:block sticky top-6 self-start h-max rounded-2xl bg-card text-card-foreground border p-4 z-20 shadow-lg">{/* Improved sticky positioning with better top offset and z-index */}
             <div className="flex items-center justify-between text-sm text-muted-foreground">
               <span>{content.minOrderText}</span>
               <CheckCircle2 className="opacity-60" />
