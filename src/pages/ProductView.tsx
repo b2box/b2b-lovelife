@@ -973,7 +973,7 @@ const ProductView = () => {
                         <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
                           <div className="space-y-2">
                             {/* Precio fijo - siempre visible */}
-                            <div className="text-xs text-muted-foreground">
+                             <div className="text-[10px] text-muted-foreground">
                               {content.currencySymbol}{(pricingSettings?.barcode_registration_usd || 1).toFixed(0)} por variante
                             </div>
                             
@@ -1002,7 +1002,7 @@ const ProductView = () => {
                         <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
                           <div className="space-y-2">
                             {/* Precio fijo - siempre visible */}
-                            <div className="text-xs text-muted-foreground">
+                             <div className="text-[10px] text-muted-foreground">
                               {content.currencySymbol}{(pricingSettings?.commercial_photos_usd || 45).toFixed(0)} por variante
                             </div>
                             
@@ -1031,7 +1031,7 @@ const ProductView = () => {
                         <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
                           <div className="space-y-2">
                             {/* Precio por unidad - siempre visible */}
-                            <div className="text-xs text-muted-foreground">
+                            <div className="text-[10px] text-muted-foreground">
                               {content.currencySymbol}{((variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100)).toFixed(3)} por unidad
                             </div>
                             
