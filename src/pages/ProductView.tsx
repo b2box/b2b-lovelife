@@ -1252,7 +1252,7 @@ const ProductView = () => {
               </div>
 
               {/* Barra de progreso verde */}
-              <div className="h-[6px] bg-[#22C55E] rounded-full mb-4"></div>
+              <div className="h-[6px] bg-[#46cd8a] rounded-full mb-4"></div>
 
               {/* Botón CTA */}
               <button
