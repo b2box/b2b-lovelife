@@ -582,26 +582,26 @@ const ProductView = () => {
                   <th className="px-2 py-2"></th>
                   <th className="text-center px-2 py-2 font-medium w-[120px]">
                     <div className="flex flex-col items-center gap-1">
-                      <span className="text-xs">Etiquetado para</span>
-                      <span className="text-xs">Marketplaces</span>
+                      <span className="text-[10px]">Etiquetado para</span>
+                      <span className="text-[10px]">Marketplaces</span>
                     </div>
                   </th>
                   <th className="text-center px-2 py-2 font-medium w-[100px]">
                     <div className="flex flex-col items-center gap-1">
-                      <span className="text-xs">Registro de</span>
-                      <span className="text-xs">Código de Barras</span>
+                      <span className="text-[10px]">Registro de</span>
+                      <span className="text-[10px]">Código de Barras</span>
                     </div>
                   </th>
                   <th className="text-center px-2 py-2 font-medium w-[90px]">
                     <div className="flex flex-col items-center gap-1">
-                      <span className="text-xs">Fotografías</span>
-                      <span className="text-xs">Comerciales</span>
+                      <span className="text-[10px]">Fotografías</span>
+                      <span className="text-[10px]">Comerciales</span>
                     </div>
                   </th>
                   <th className="text-center px-2 py-2 font-medium w-[100px]">
                     <div className="flex flex-col items-center gap-1">
-                      <span className="text-xs">Empaque</span>
-                      <span className="text-xs">Optimizado</span>
+                      <span className="text-[10px]">Empaque</span>
+                      <span className="text-[10px]">Optimizado</span>
                     </div>
                   </th>
                   <th className="text-center px-2 py-2 font-medium w-[80px]">Total</th>
