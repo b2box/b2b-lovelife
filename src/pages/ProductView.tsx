@@ -370,8 +370,10 @@ const ProductView = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      {/* Contenido principal ocupando todo el ancho */}
-      <main className="w-full container mx-auto py-6 md:py-8">
+      {/* Layout de 2 columnas: 75% contenido + 25% columna derecha */}
+      <div className="flex gap-6">
+        {/* Columna principal: 75% */}
+        <main className="w-3/4 container mx-auto py-6 md:py-8">
           {/* Breadcrumb simple - placeholder para el diseño final */}
           <nav aria-label="breadcrumb" className="text-sm text-muted-foreground mb-4">
             <button onClick={() => navigate("/app")} className="story-link">Productos</button>
@@ -1235,8 +1237,23 @@ const ProductView = () => {
           </div>
         </section>
 
-      </main>
-      
+        </main>
+        
+        {/* Columna derecha: 25% */}
+        <aside className="w-1/4 flex-shrink-0">
+          <div className="sticky top-6">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+              <h3 className="text-lg font-semibold mb-4">Columna Derecha</h3>
+              <div className="space-y-3">
+                <div className="text-sm text-gray-600">
+                  Contenido de la columna lateral
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
       <Footer />
     </div>
   );
