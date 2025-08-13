@@ -88,9 +88,10 @@ const ProductView = () => {
     // Update quantities for all rows based on selected variant
     setRows(prev => prev.map(row => {
        if (row.id === variantId) {
-         // Find the price tier for current tier with CNY currency for min_qty
+         // Find the price tier for current tier with USD/COP currency for min_qty (safer approach)
+         const targetCurrency = market === "CO" ? "COP" : "USD";
          const priceTier = (row.variant as any).variant_price_tiers?.find((tier: any) => 
-           tier.tier === selectedTier && tier.currency === "CNY"
+           tier.tier === selectedTier && tier.currency === targetCurrency
          );
          const minQty = priceTier?.min_qty || 1;
         
@@ -100,18 +101,20 @@ const ProductView = () => {
     }));
     
     // Jump to first image of selected variant
-    const allImages = variants.flatMap(variant => 
-      (variant as any).product_variant_images?.map((img: any) => ({
-        ...img,
-        variantId: variant.id
-      })) || []
-    ).sort((a, b) => a.sort_order - b.sort_order);
-    
-    const variantImageIndex = allImages.findIndex(img => img.variantId === variantId);
-    if (variantImageIndex !== -1) {
-      setSelectedImageIndex(variantImageIndex);
+    if (variants && variants.length > 0) {
+      const allImages = variants.flatMap(variant => 
+        (variant as any).product_variant_images?.map((img: any) => ({
+          ...img,
+          variantId: variant.id
+        })) || []
+      ).sort((a, b) => a.sort_order - b.sort_order);
+      
+      const variantImageIndex = allImages.findIndex(img => img.variantId === variantId);
+      if (variantImageIndex !== -1) {
+        setSelectedImageIndex(variantImageIndex);
+      }
     }
-  }, [selectedTier, variants]);
+  }, [selectedTier, variants, market]);
 
   // Initialize rows when variants change - stabilized to prevent reloads
   useEffect(() => {
@@ -726,8 +729,12 @@ const ProductView = () => {
                     <tr 
                       key={r.id} 
                       className={`border-t cursor-pointer hover:bg-muted/30 transition-colors ${
-                        isSelected ? 'bg-white border-2 border-green-500 rounded-lg shadow-lg shadow-green-500/20' : ''
+                        isSelected ? 'bg-white border-2 rounded-xl' : ''
                       }`}
+                      style={isSelected ? { 
+                        borderColor: '#abff97',
+                        boxShadow: '0 4px 12px rgba(171, 255, 151, 0.3)'
+                      } : {}}
                       onClick={() => handleVariantSelection(r.id)}
                     >
                       <td className="px-3 py-3">
