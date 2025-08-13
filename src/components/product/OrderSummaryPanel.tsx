@@ -29,7 +29,7 @@ export function OrderSummaryPanel({
   return (
     <aside className="hidden md:block w-[320px] flex-shrink-0">
       <div className="sticky top-6 z-10" style={{ position: 'sticky' }}>
-        <div className="max-h-[calc(100vh-4rem)] overflow-y-auto">
+        
           
             {/* Encabezado con check verde */}
             <div className="flex items-center justify-between mb-4">
@@ -113,7 +113,6 @@ export function OrderSummaryPanel({
                   Transparencia total: desglose de costos, sin cargos ocultos al confirmar tu orden.
                 </HoverCardContent>
               </HoverCard>
-          </div>
         </div>
       </div>
     </aside>
