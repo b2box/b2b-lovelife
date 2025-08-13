@@ -83,36 +83,74 @@ const ProductView = () => {
 
   // Handler for variant selection - changes prices, quantities and image
   const handleVariantSelection = useCallback((variantId: string) => {
-    setSelectedVariantId(variantId);
-    
-    // Update quantities for all rows based on selected variant
-    setRows(prev => prev.map(row => {
-       if (row.id === variantId) {
-         // Find the price tier for current tier with USD/COP currency for min_qty (safer approach)
-         const targetCurrency = market === "CO" ? "COP" : "USD";
-         const priceTier = (row.variant as any).variant_price_tiers?.find((tier: any) => 
-           tier.tier === selectedTier && tier.currency === targetCurrency
-         );
-         const minQty = priceTier?.min_qty || 1;
-        
-        return { ...row, qty: minQty };
-      }
-      return row;
-    }));
-    
-    // Jump to first image of selected variant
-    if (variants && variants.length > 0) {
-      const allImages = variants.flatMap(variant => 
-        (variant as any).product_variant_images?.map((img: any) => ({
-          ...img,
-          variantId: variant.id
-        })) || []
-      ).sort((a, b) => a.sort_order - b.sort_order);
+    try {
+      console.log('=== VARIANT SELECTION START ===');
+      console.log('Selected variant ID:', variantId);
+      console.log('Current selectedTier:', selectedTier);
+      console.log('Market:', market);
+      console.log('Variants array:', variants);
       
-      const variantImageIndex = allImages.findIndex(img => img.variantId === variantId);
-      if (variantImageIndex !== -1) {
-        setSelectedImageIndex(variantImageIndex);
-      }
+      setSelectedVariantId(variantId);
+      
+      // Update quantities for all rows based on selected variant
+      setRows(prev => {
+        console.log('Current rows before update:', prev);
+        
+        const updatedRows = prev.map(row => {
+          if (row.id === variantId) {
+            console.log('Updating row for variant:', row.variant);
+            
+            // Find the price tier for current tier with USD/COP currency for min_qty (safer approach)
+            const targetCurrency = market === "CO" ? "COP" : "USD";
+            console.log('Target currency:', targetCurrency);
+            
+            const priceTiers = (row.variant as any).variant_price_tiers;
+            console.log('Available price tiers:', priceTiers);
+            
+            const priceTier = priceTiers?.find((tier: any) => 
+              tier.tier === selectedTier && tier.currency === targetCurrency
+            );
+            console.log('Found price tier:', priceTier);
+            
+            const minQty = priceTier?.min_qty || 1;
+            console.log('Min quantity:', minQty);
+           
+           return { ...row, qty: minQty };
+         }
+         return row;
+       });
+       
+       console.log('Updated rows:', updatedRows);
+       return updatedRows;
+     });
+     
+     // Jump to first image of selected variant
+     if (variants && variants.length > 0) {
+       console.log('Processing variant images...');
+       const allImages = variants.flatMap(variant => {
+         const variantImages = (variant as any).product_variant_images;
+         console.log(`Variant ${variant.id} images:`, variantImages);
+         
+         return variantImages?.map((img: any) => ({
+           ...img,
+           variantId: variant.id
+         })) || [];
+       }).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+       
+       console.log('All images flattened:', allImages);
+       
+       const variantImageIndex = allImages.findIndex(img => img.variantId === variantId);
+       console.log('Found variant image index:', variantImageIndex);
+       
+       if (variantImageIndex !== -1) {
+         setSelectedImageIndex(variantImageIndex);
+       }
+     }
+     
+     console.log('=== VARIANT SELECTION END ===');
+    } catch (error) {
+      console.error('ERROR in handleVariantSelection:', error);
+      console.error('Error stack:', error.stack);
     }
   }, [selectedTier, variants, market]);
 
@@ -729,7 +767,7 @@ const ProductView = () => {
                     <tr 
                       key={r.id} 
                       className={`border-t cursor-pointer hover:bg-muted/30 transition-colors ${
-                        isSelected ? 'bg-white border-2 rounded-xl' : ''
+                        isSelected ? 'bg-white border-2 rounded-2xl' : ''
                       }`}
                       style={isSelected ? { 
                         borderColor: '#abff97',
@@ -751,9 +789,35 @@ const ProductView = () => {
                       <td className="px-2 py-3" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-center">
                           <div className="inline-flex items-center border rounded">
-                            <button className="px-2 py-1 text-xs" onClick={() => changeQty(r.id, -minQty)} aria-label="Disminuir">-</button>
+                            <button 
+                              className="px-2 py-1 text-xs" 
+                              onClick={() => {
+                                // Use tier 1 (inicial) min_qty for this specific variant
+                                const inicialTier = (r.variant as any).variant_price_tiers?.find((tier: any) => 
+                                  tier.tier === "inicial" && tier.currency === "USD"
+                                );
+                                const variantMinQty = inicialTier?.min_qty || 1;
+                                changeQty(r.id, -variantMinQty);
+                              }} 
+                              aria-label="Disminuir"
+                            >
+                              -
+                            </button>
                             <span className="px-2 py-1 min-w-[40px] text-center text-xs">{r.qty}</span>
-                            <button className="px-2 py-1 text-xs" onClick={() => changeQty(r.id, minQty)} aria-label="Aumentar">+</button>
+                            <button 
+                              className="px-2 py-1 text-xs" 
+                              onClick={() => {
+                                // Use tier 1 (inicial) min_qty for this specific variant
+                                const inicialTier = (r.variant as any).variant_price_tiers?.find((tier: any) => 
+                                  tier.tier === "inicial" && tier.currency === "USD"
+                                );
+                                const variantMinQty = inicialTier?.min_qty || 1;
+                                changeQty(r.id, variantMinQty);
+                              }} 
+                              aria-label="Aumentar"
+                            >
+                              +
+                            </button>
                           </div>
                         </div>
                       </td>
