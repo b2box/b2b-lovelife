@@ -798,9 +798,20 @@ const ProductView = () => {
                               type="number"
                               value={r.qty || 0}
                               onChange={(e) => {
-                                const newQty = parseInt(e.target.value) || 0;
+                                const inputValue = parseInt(e.target.value) || 0;
+                                
+                                // Get the min_qty for this variant and tier
+                                const priceTiers = (r.variant as any)?.variant_price_tiers || [];
+                                const priceTier = priceTiers.find((tier: any) => 
+                                  tier?.tier === selectedTier && tier?.currency === "CNY"
+                                );
+                                const minQty = priceTier?.min_qty || 1;
+                                
+                                // Ensure the value is not less than min_qty
+                                const newQty = Math.max(inputValue, minQty);
                                 const currentQty = r.qty || 0;
                                 const diff = newQty - currentQty;
+                                
                                 if (diff !== 0) {
                                   changeQty(r.id, diff);
                                 }
