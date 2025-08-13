@@ -267,14 +267,13 @@ const ProductView = () => {
     script.text = JSON.stringify(jsonLd);
   }, [product]);
 
-  // Redirect to slug-based URL if we're using ID-based URL
+  // Redirect to slug-based URL if we're using ID-based URL - stabilized
   useEffect(() => {
-    if (product && product.slug && id && !slug) {
-      const currentPath = location.pathname;
-      const newPath = currentPath.replace(`/product/id/${id}`, `/product/${product.slug}`);
+    if (product?.slug && id && !slug) {
+      const newPath = `/product/${product.slug}`;
       navigate(newPath, { replace: true });
     }
-  }, [product, id, slug, navigate, location.pathname]);
+  }, [product?.slug, id, slug]); // Removed navigate and location.pathname to prevent re-renders
 
   if (!product || variantsLoading) {
     return (
@@ -565,8 +564,8 @@ const ProductView = () => {
           </aside>
         </div>
 
-        {/* Descripción y características - Solo columna izquierda */}
-        <section className="mt-6 md:mt-8 md:w-3/5">
+        {/* Descripción y características - Posicionada inmediatamente después del contenido */}
+        <section className="mt-4 md:w-4/5">
           <article className="prose prose-sm md:prose-base max-w-none">
             <p>
               ¡Aprovecha cada rincón con la Estantería de Dos Niveles para Almacenamiento que lo transforma todo! Este diseño práctico de dos niveles organiza cosméticos, productos de higiene y más, con una estructura ventilada y colores vibrantes que revitalizan tu espacio. ¡Perfecto para tu baño o tocador!
