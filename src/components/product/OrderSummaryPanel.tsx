@@ -30,7 +30,7 @@ export function OrderSummaryPanel({
     <aside className="hidden md:block w-[320px] flex-shrink-0">
       <div className="sticky top-6 z-10" style={{ position: 'sticky' }}>
         <div className="max-h-[calc(100vh-4rem)] overflow-y-auto">
-          <div className="bg-white border border-[#E5E7EB] rounded-[24px] p-3 shadow-sm">
+          
             {/* Encabezado con check verde */}
             <div className="flex items-center justify-between mb-4">
               <span className="text-[22px] font-semibold text-[#0A0A0A]">Orden mínima $100</span>
@@ -113,7 +113,6 @@ export function OrderSummaryPanel({
                   Transparencia total: desglose de costos, sin cargos ocultos al confirmar tu orden.
                 </HoverCardContent>
               </HoverCard>
-            </div>
           </div>
         </div>
       </div>
