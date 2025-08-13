@@ -425,8 +425,8 @@ const ProductView = () => {
           </section>
 
           {/* Columna derecha: Resumen sticky */}
-          <div className="hidden md:block relative">
-            <div className="sticky top-6 w-[320px]">
+          <div className="hidden md:block">
+            <div className="sticky top-6 w-[320px] h-fit">
               <div className="bg-white border border-[#E5E7EB] rounded-[24px] p-3 shadow-sm">
                 {/* Encabezado con check verde */}
                 <div className="flex items-center justify-between mb-4">
