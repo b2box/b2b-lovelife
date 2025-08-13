@@ -1241,7 +1241,7 @@ const ProductView = () => {
         
         {/* Columna derecha: 25% */}
         <aside className="w-1/4 flex-shrink-0">
-          <div className="sticky top-0">
+          <div className="sticky top-[88px]">
             <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
               <h3 className="text-lg font-semibold mb-4">Columna Derecha</h3>
               <div className="space-y-3">
