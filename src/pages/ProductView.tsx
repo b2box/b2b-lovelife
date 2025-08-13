@@ -898,12 +898,25 @@ const ProductView = () => {
                                    );
                                    const minQtyTier1 = tier1PriceTier?.min_qty || 1;
                                    
+                                   // Force minimum value to be tier1 min_qty
                                    const newQty = Math.max(inputValue, minQtyTier1);
                                    const currentQty = r.qty || 0;
                                    const diff = newQty - currentQty;
                                    
                                    if (diff !== 0) {
                                      changeQty(r.id, diff);
+                                   }
+                                 }}
+                                 onBlur={(e) => {
+                                   // Extra validation on blur to ensure minimum
+                                   const priceTiers = (r.variant as any)?.variant_price_tiers || [];
+                                   const tier1PriceTier = priceTiers.find((tier: any) => 
+                                     tier?.tier === "tier1" && tier?.currency === "CNY"
+                                   );
+                                   const minQtyTier1 = tier1PriceTier?.min_qty || 1;
+                                   
+                                   if (r.qty < minQtyTier1) {
+                                     changeQty(r.id, minQtyTier1 - r.qty);
                                  }
                                 }}
                                 className="w-10 px-1 py-0.5 text-center text-xs border-0 focus:outline-none focus:ring-1 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
