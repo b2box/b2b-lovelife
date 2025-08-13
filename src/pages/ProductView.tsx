@@ -375,7 +375,7 @@ const ProductView = () => {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-[3fr_1fr]">
           {/* Columna izquierda (75%): Galería + Detalles */}
           <section>
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-4">{/* Optimizar proporción galería/detalles */}
+            <div className="grid grid-cols-1 md:grid-cols-[40%_60%] gap-4">{/* Optimizar proporción galería/detalles */}
               {/* Galería - compacta */}
               <div className="rounded-2xl bg-card p-2 md:p-3 h-fit">
                 <div className="space-y-2">
