@@ -24,7 +24,7 @@ export function MarketSpecificBanners({ className }: MarketSpecificBannersProps)
         <img 
           src={content.trendsButton.logo} 
           alt="Logo Trends" 
-          className="h-5 w-auto" 
+          className="h-14 w-auto" 
           loading="lazy" 
         />
         <span className="grid size-8 place-items-center rounded-full border border-black/30 text-black/70 bg-white/70 hover:bg-white">
