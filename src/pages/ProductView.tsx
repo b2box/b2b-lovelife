@@ -92,14 +92,6 @@ const ProductView = () => {
         const priceTier = (row.variant as any).variant_price_tiers?.find((tier: any) => tier.tier === selectedTier);
         const minQty = priceTier?.min_qty || 1;
         
-        console.log("Variant selection debug:", {
-          variantId,
-          selectedTier,
-          priceTier,
-          minQty,
-          all_tiers: (row.variant as any).variant_price_tiers
-        });
-        
         return { ...row, qty: minQty };
       }
       return row;
@@ -129,14 +121,6 @@ const ProductView = () => {
         const tierData = priceTier || fallbackTier;
         const minQty = tierData?.min_qty || 1;
         
-        console.log("Row initialization debug:", {
-          variantId: variant.id,
-          selectedTier,
-          priceTier,
-          minQty,
-          all_tiers: (variant as any).variant_price_tiers
-        });
-        
         return {
           id: variant.id,
           variant,
@@ -164,14 +148,6 @@ const ProductView = () => {
         const tierData = priceTier || fallbackTier;
         const minQty = tierData?.min_qty || 1;
         
-        console.log("Tier change debug:", {
-          variantId: row.variant.id,
-          selectedTier,
-          priceTier,
-          minQty,
-          all_tiers: (row.variant as any).variant_price_tiers
-        });
-        
         return { ...row, qty: minQty };
       }));
     }
@@ -191,21 +167,12 @@ const ProductView = () => {
     // Get the currency based on current market
     const targetCurrency = market === "CO" ? "COP" : "USD";
     
-    console.log("Pricing debug:", {
-      variantId: variant.id,
-      tier,
-      targetCurrency,
-      variant_price_tiers: (variant as any).variant_price_tiers
-    });
-    
     // Find the price tier for this variant, tier, and currency
     const priceTier = (variant as any).variant_price_tiers?.find(
       (priceTier: any) => 
         priceTier.tier === tier && 
         priceTier.currency === targetCurrency
     );
-
-    console.log("Found price tier:", priceTier);
 
     if (!priceTier) {
       return variant.price || 0;
@@ -221,17 +188,10 @@ const ProductView = () => {
     const tiers = ((variant as any).variant_price_tiers || [])
       .sort((a: any, b: any) => (b.min_qty || 0) - (a.min_qty || 0));
     
-    console.log("Tier calculation debug:", {
-      variantId: variant.id,
-      qty,
-      tiers: tiers.map((t: any) => ({ tier: t.tier, min_qty: t.min_qty }))
-    });
-    
     // Find the highest tier where quantity meets minimum
     for (const tier of tiers) {
       if (qty >= (tier.min_qty || 0)) {
         const tierName = tier.tier as "inicial" | "mayorista" | "distribuidor";
-        console.log("Selected tier:", tierName);
         return tierName;
       }
     }
@@ -696,14 +656,6 @@ const ProductView = () => {
                    // Get units from price tier data - find tier directly by name
                    const priceTier = (r.variant as any).variant_price_tiers?.find((tier: any) => tier.tier === selectedTier);
                    const minQty = priceTier?.min_qty || 1;
-                   
-                   console.log("Table row debug:", {
-                     variantId: r.variant.id,
-                     selectedTier,
-                     priceTier,
-                     minQty,
-                     all_tiers: (r.variant as any).variant_price_tiers
-                   });
                   
                   const isSelected = selectedVariantId === r.id;
                   
