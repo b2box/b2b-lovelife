@@ -382,164 +382,20 @@ const ProductView = () => {
                   <h1 className="text-2xl md:text-3xl font-semibold leading-tight">{product.name}</h1>
                 </header>
 
-                {/* Barra de precios por tiers - Optimizada */}
-                <article className="rounded-xl bg-card text-card-foreground border overflow-hidden shadow-sm">
-                  <div className="p-2 pb-0">
-                    <div className="grid grid-cols-3 gap-3">
-                      {/* Inicial */}
-                      <button
-                        type="button"
-                        onClick={() => setSelectedTier("inicial")}
-                        className="text-center group transition-all duration-200"
-                        aria-pressed={selectedTier === "inicial"}
-                      >
-                        <div className="text-base font-bold mb-1 text-foreground">{content.pricingTiers.inicial.name}</div>
-                        <div className={`
-                          rounded-xl border-2 px-4 py-4 transition-all duration-200 bg-white/50
-                          ${selectedTier === "inicial" 
-                            ? "border-foreground shadow-lg scale-105 bg-white" 
-                            : "border-border/50 hover:border-border group-hover:scale-102"
-                          }
-                        `}>
-                          <div className={`
-                            text-2xl font-black mb-1 transition-opacity duration-200
-                            ${selectedTier === "inicial" ? "text-foreground" : "text-muted-foreground"}
-                          `}>
-                             {content.currencySymbol}{(() => {
-                               // Calculate dynamic price for inicial tier using selected variant
-                               const selectedVariant = variants.find(v => v.id === selectedVariantId) || variants[0];
-                               if (selectedVariant) {
-                                 return getVariantPrice(selectedVariant, "inicial").toFixed(2);
-                               }
-                               return "0.00";
-                             })()}
-                          </div>
-                          <div className="text-sm text-muted-foreground font-medium">
-                            {(() => {
-                              // Get actual min_qty from selected variant's price tiers (not first variant)
-                              const selectedVariant = rows.find(r => r.id === selectedVariantId)?.variant || variants[0];
-                              if (!selectedVariant) return content.pricingTiers.inicial.range;
-                              
-                              // Use CNY currency to get the correct min_qty values
-                              const inicialTier = (selectedVariant as any).variant_price_tiers?.find((pt: any) => 
-                                pt.tier === "inicial" && pt.currency === "CNY"
-                              );
-                              const mayoristaTier = (selectedVariant as any).variant_price_tiers?.find((pt: any) => 
-                                pt.tier === "mayorista" && pt.currency === "CNY"
-                              );
-                              
-                              if (inicialTier && mayoristaTier) {
-                                return `${inicialTier.min_qty} – ${mayoristaTier.min_qty - 1} unidades`;
-                              }
-                              return content.pricingTiers.inicial.range;
-                            })()}
-                          </div>
-                        </div>
-                      </button>
-
-                      {/* Mayorista destacado */}
-                      <button
-                        type="button"
-                        onClick={() => setSelectedTier("mayorista")}
-                        className="text-center group transition-all duration-200"
-                        aria-pressed={selectedTier === "mayorista"}
-                      >
-                        <div className="text-lg font-bold mb-2 text-foreground">{content.pricingTiers.mayorista.name}</div>
-                        <div className={`
-                          relative rounded-[18px] border-2 px-6 py-6 transition-all duration-200 bg-white/50
-                          ${selectedTier === "mayorista" 
-                            ? "border-foreground shadow-xl scale-105 bg-white" 
-                            : "border-border/50 hover:border-border group-hover:scale-102"
-                          }
-                        `}>
-                          <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-foreground text-background text-xs font-bold px-4 py-1 shadow-lg">
-                            {content.pricingTiers.mayorista.badge}
-                          </span>
-                          <div className="text-3xl font-black mb-1 text-foreground">
-                             {content.currencySymbol}{(() => {
-                               // Calculate dynamic price for mayorista tier using selected variant
-                               const selectedVariant = variants.find(v => v.id === selectedVariantId) || variants[0];
-                               if (selectedVariant) {
-                                 return getVariantPrice(selectedVariant, "mayorista").toFixed(2);
-                               }
-                               return "0.00";
-                             })()}
-                          </div>
-                          <div className="text-sm text-muted-foreground font-medium">
-                            {(() => {
-                              // Get actual min_qty from selected variant's price tiers (not first variant)
-                              const selectedVariant = rows.find(r => r.id === selectedVariantId)?.variant || variants[0];
-                              if (!selectedVariant) return content.pricingTiers.mayorista.range;
-                              
-                              // Use CNY currency to get the correct min_qty values
-                              const mayoristaTier = (selectedVariant as any).variant_price_tiers?.find((pt: any) => 
-                                pt.tier === "mayorista" && pt.currency === "CNY"
-                              );
-                              const distribuidorTier = (selectedVariant as any).variant_price_tiers?.find((pt: any) => 
-                                pt.tier === "distribuidor" && pt.currency === "CNY"
-                              );
-                              
-                              if (mayoristaTier && distribuidorTier) {
-                                return `${mayoristaTier.min_qty} – ${distribuidorTier.min_qty - 1} unidades`;
-                              }
-                              return content.pricingTiers.mayorista.range;
-                            })()}
-                          </div>
-                        </div>
-                      </button>
-
-                      {/* Distribuidor */}
-                      <button
-                        type="button"
-                        onClick={() => setSelectedTier("distribuidor")}
-                        className="text-center group transition-all duration-200"
-                        aria-pressed={selectedTier === "distribuidor"}
-                      >
-                        <div className="text-lg font-bold mb-2 text-foreground">{content.pricingTiers.distribuidor.name}</div>
-                        <div className={`
-                          rounded-[18px] border-2 px-6 py-6 transition-all duration-200 bg-white/50
-                          ${selectedTier === "distribuidor" 
-                            ? "border-foreground shadow-lg scale-105 bg-white" 
-                            : "border-border/50 hover:border-border group-hover:scale-102"
-                          }
-                        `}>
-                          <div className={`
-                            text-3xl font-black mb-1 transition-opacity duration-200
-                            ${selectedTier === "distribuidor" ? "text-foreground" : "text-muted-foreground"}
-                          `}>
-                             {content.currencySymbol}{(() => {
-                               // Calculate dynamic price for distribuidor tier using selected variant
-                               const selectedVariant = variants.find(v => v.id === selectedVariantId) || variants[0];
-                               if (selectedVariant) {
-                                 return getVariantPrice(selectedVariant, "distribuidor").toFixed(2);
-                               }
-                               return "0.00";
-                             })()}
-                          </div>
-                          <div className="text-sm text-muted-foreground font-medium">
-                            {(() => {
-                              // Get actual min_qty from selected variant's price tiers (not first variant)
-                              const selectedVariant = rows.find(r => r.id === selectedVariantId)?.variant || variants[0];
-                              if (!selectedVariant) return content.pricingTiers.distribuidor.range;
-                              
-                              // Use CNY currency to get the correct min_qty values
-                              const distribuidorTier = (selectedVariant as any).variant_price_tiers?.find((pt: any) => 
-                                pt.tier === "distribuidor" && pt.currency === "CNY"
-                              );
-                              
-                              if (distribuidorTier) {
-                                return `+${distribuidorTier.min_qty} unidades`;
-                              }
-                              return content.pricingTiers.distribuidor.range;
-                            })()}
-                          </div>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Faja inferior: tendencia + Trends con flecha */}
-                  <MarketSpecificBanners />
+                {/* Descripción del producto */}
+                <article className="prose prose-sm md:prose-base max-w-none">
+                  <p>
+                    ¡Aprovecha cada rincón con la Estantería de Dos Niveles para Almacenamiento que lo transforma todo! Este diseño práctico de dos niveles organiza cosméticos, productos de higiene y más, con una estructura ventilada y colores vibrantes que revitalizan tu espacio. ¡Perfecto para tu baño o tocador!
+                  </p>
+                  <h3>Características destacadas:</h3>
+                  <ul>
+                    <li>🧴 Dos niveles versátiles: Almacena más en menos espacio.</li>
+                    <li>💨 Estructura ventilada: Mantiene tus artículos frescos y secos.</li>
+                    <li>🎨 Colores vibrantes: Disponible en tonos que alegran tu ambiente.</li>
+                    <li>💪🏻 Resistencia sólida: Sostiene tus objetos con seguridad.</li>
+                    <li>✨ Material premium brillante: ¡Plástico resistente con acabados modernos!</li>
+                  </ul>
+                  <p>🛍 Ideal para: ✅Baños organizados, ✅tocadores prácticos y ✅hogares con estilo.</p>
                 </article>
               </div>
             </div>
@@ -635,21 +491,165 @@ const ProductView = () => {
           </aside>
         </div>
 
-        {/* Descripción y características - Posicionada inmediatamente después del contenido */}
+        {/* Barra de precios por tiers - Posicionada después del contenido principal */}
         <section className="mt-4 md:w-4/5">
-          <article className="prose prose-sm md:prose-base max-w-none">
-            <p>
-              ¡Aprovecha cada rincón con la Estantería de Dos Niveles para Almacenamiento que lo transforma todo! Este diseño práctico de dos niveles organiza cosméticos, productos de higiene y más, con una estructura ventilada y colores vibrantes que revitalizan tu espacio. ¡Perfecto para tu baño o tocador!
-            </p>
-            <h3>Características destacadas:</h3>
-            <ul>
-              <li>🧴 Dos niveles versátiles: Almacena más en menos espacio.</li>
-              <li>💨 Estructura ventilada: Mantiene tus artículos frescos y secos.</li>
-              <li>🎨 Colores vibrantes: Disponible en tonos que alegran tu ambiente.</li>
-              <li>💪🏻 Resistencia sólida: Sostiene tus objetos con seguridad.</li>
-              <li>✨ Material premium brillante: ¡Plástico resistente con acabados modernos!</li>
-            </ul>
-            <p>🛍 Ideal para: ✅Baños organizados, ✅tocadores prácticos y ✅hogares con estilo.</p>
+          <article className="rounded-xl bg-card text-card-foreground border overflow-hidden shadow-sm">
+            <div className="p-2 pb-0">
+              <div className="grid grid-cols-3 gap-3">
+                {/* Inicial */}
+                <button
+                  type="button"
+                  onClick={() => setSelectedTier("inicial")}
+                  className="text-center group transition-all duration-200"
+                  aria-pressed={selectedTier === "inicial"}
+                >
+                  <div className="text-base font-bold mb-1 text-foreground">{content.pricingTiers.inicial.name}</div>
+                  <div className={`
+                    rounded-xl border-2 px-4 py-4 transition-all duration-200 bg-white/50
+                    ${selectedTier === "inicial" 
+                      ? "border-foreground shadow-lg scale-105 bg-white" 
+                      : "border-border/50 hover:border-border group-hover:scale-102"
+                    }
+                  `}>
+                    <div className={`
+                      text-2xl font-black mb-1 transition-opacity duration-200
+                      ${selectedTier === "inicial" ? "text-foreground" : "text-muted-foreground"}
+                    `}>
+                       {content.currencySymbol}{(() => {
+                         // Calculate dynamic price for inicial tier using selected variant
+                         const selectedVariant = variants.find(v => v.id === selectedVariantId) || variants[0];
+                         if (selectedVariant) {
+                           return getVariantPrice(selectedVariant, "inicial").toFixed(2);
+                         }
+                         return "0.00";
+                       })()}
+                    </div>
+                    <div className="text-sm text-muted-foreground font-medium">
+                      {(() => {
+                        // Get actual min_qty from selected variant's price tiers (not first variant)
+                        const selectedVariant = rows.find(r => r.id === selectedVariantId)?.variant || variants[0];
+                        if (!selectedVariant) return content.pricingTiers.inicial.range;
+                        
+                        // Use CNY currency to get the correct min_qty values
+                        const inicialTier = (selectedVariant as any).variant_price_tiers?.find((pt: any) => 
+                          pt.tier === "inicial" && pt.currency === "CNY"
+                        );
+                        const mayoristaTier = (selectedVariant as any).variant_price_tiers?.find((pt: any) => 
+                          pt.tier === "mayorista" && pt.currency === "CNY"
+                        );
+                        
+                        if (inicialTier && mayoristaTier) {
+                          return `${inicialTier.min_qty} – ${mayoristaTier.min_qty - 1} unidades`;
+                        }
+                        return content.pricingTiers.inicial.range;
+                      })()}
+                    </div>
+                  </div>
+                </button>
+
+                {/* Mayorista destacado */}
+                <button
+                  type="button"
+                  onClick={() => setSelectedTier("mayorista")}
+                  className="text-center group transition-all duration-200"
+                  aria-pressed={selectedTier === "mayorista"}
+                >
+                  <div className="text-lg font-bold mb-2 text-foreground">{content.pricingTiers.mayorista.name}</div>
+                  <div className={`
+                    relative rounded-[18px] border-2 px-6 py-6 transition-all duration-200 bg-white/50
+                    ${selectedTier === "mayorista" 
+                      ? "border-foreground shadow-xl scale-105 bg-white" 
+                      : "border-border/50 hover:border-border group-hover:scale-102"
+                    }
+                  `}>
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-foreground text-background text-xs font-bold px-4 py-1 shadow-lg">
+                      {content.pricingTiers.mayorista.badge}
+                    </span>
+                    <div className="text-3xl font-black mb-1 text-foreground">
+                       {content.currencySymbol}{(() => {
+                         // Calculate dynamic price for mayorista tier using selected variant
+                         const selectedVariant = variants.find(v => v.id === selectedVariantId) || variants[0];
+                         if (selectedVariant) {
+                           return getVariantPrice(selectedVariant, "mayorista").toFixed(2);
+                         }
+                         return "0.00";
+                       })()}
+                    </div>
+                    <div className="text-sm text-muted-foreground font-medium">
+                      {(() => {
+                        // Get actual min_qty from selected variant's price tiers (not first variant)
+                        const selectedVariant = rows.find(r => r.id === selectedVariantId)?.variant || variants[0];
+                        if (!selectedVariant) return content.pricingTiers.mayorista.range;
+                        
+                        // Use CNY currency to get the correct min_qty values
+                        const mayoristaTier = (selectedVariant as any).variant_price_tiers?.find((pt: any) => 
+                          pt.tier === "mayorista" && pt.currency === "CNY"
+                        );
+                        const distribuidorTier = (selectedVariant as any).variant_price_tiers?.find((pt: any) => 
+                          pt.tier === "distribuidor" && pt.currency === "CNY"
+                        );
+                        
+                        if (mayoristaTier && distribuidorTier) {
+                          return `${mayoristaTier.min_qty} – ${distribuidorTier.min_qty - 1} unidades`;
+                        }
+                        return content.pricingTiers.mayorista.range;
+                      })()}
+                    </div>
+                  </div>
+                </button>
+
+                {/* Distribuidor */}
+                <button
+                  type="button"
+                  onClick={() => setSelectedTier("distribuidor")}
+                  className="text-center group transition-all duration-200"
+                  aria-pressed={selectedTier === "distribuidor"}
+                >
+                  <div className="text-lg font-bold mb-2 text-foreground">{content.pricingTiers.distribuidor.name}</div>
+                  <div className={`
+                    rounded-[18px] border-2 px-6 py-6 transition-all duration-200 bg-white/50
+                    ${selectedTier === "distribuidor" 
+                      ? "border-foreground shadow-lg scale-105 bg-white" 
+                      : "border-border/50 hover:border-border group-hover:scale-102"
+                    }
+                  `}>
+                    <div className={`
+                      text-3xl font-black mb-1 transition-opacity duration-200
+                      ${selectedTier === "distribuidor" ? "text-foreground" : "text-muted-foreground"}
+                    `}>
+                       {content.currencySymbol}{(() => {
+                         // Calculate dynamic price for distribuidor tier using selected variant
+                         const selectedVariant = variants.find(v => v.id === selectedVariantId) || variants[0];
+                         if (selectedVariant) {
+                           return getVariantPrice(selectedVariant, "distribuidor").toFixed(2);
+                         }
+                         return "0.00";
+                       })()}
+                    </div>
+                    <div className="text-sm text-muted-foreground font-medium">
+                      {(() => {
+                        // Get actual min_qty from selected variant's price tiers (not first variant)
+                        const selectedVariant = rows.find(r => r.id === selectedVariantId)?.variant || variants[0];
+                        if (!selectedVariant) return content.pricingTiers.distribuidor.range;
+                        
+                        // Use CNY currency to get the correct min_qty values
+                        const distribuidorTier = (selectedVariant as any).variant_price_tiers?.find((pt: any) => 
+                          pt.tier === "distribuidor" && pt.currency === "CNY"
+                        );
+                        
+                        if (distribuidorTier) {
+                          return `+${distribuidorTier.min_qty} unidades`;
+                        }
+                        return content.pricingTiers.distribuidor.range;
+                      })()}
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            {/* Faja inferior: tendencia + Trends con flecha */}
+            <MarketSpecificBanners />
           </article>
         </section>
 
