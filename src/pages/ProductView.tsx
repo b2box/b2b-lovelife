@@ -369,86 +369,71 @@ const ProductView = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container mx-auto py-6 md:py-8">
-        {/* Breadcrumb simple - placeholder para el diseño final */}
-        <nav aria-label="breadcrumb" className="text-sm text-muted-foreground mb-4">
-          <button onClick={() => navigate("/app")} className="story-link">Productos</button>
-          <span className="mx-2">/</span>
-          <span className="text-foreground">{product.name}</span>
-        </nav>
+      
+      {/* Layout de 2 columnas desde la base */}
+      <div className="flex">
+        {/* Columna izquierda: 75% - Todo el contenido principal */}
+        <main className="w-3/4 container mx-auto py-6 md:py-8">
+          {/* Breadcrumb simple - placeholder para el diseño final */}
+          <nav aria-label="breadcrumb" className="text-sm text-muted-foreground mb-4">
+            <button onClick={() => navigate("/app")} className="story-link">Productos</button>
+            <span className="mx-2">/</span>
+            <span className="text-foreground">{product.name}</span>
+          </nav>
 
-        <div className="flex gap-6">
-          {/* Contenido principal */}
-          <div className="flex-1">
-            <div className="flex flex-col md:flex-row gap-6">
-              {/* Columna izquierda: Galería + Detalles */}
-              <section className="flex-1 min-w-0">
-                <div className="grid grid-cols-1 md:grid-cols-[40%_60%] gap-4">{/* Optimizar proporción galería/detalles */}
-              {/* Galería - compacta */}
-              <div className="rounded-2xl bg-card p-2 md:p-3 h-fit">
-                <div className="space-y-2">
-                  <div className="relative overflow-hidden rounded-xl bg-muted aspect-square">
-                    <ImageGallery 
+          <div className="flex flex-col md:flex-row gap-6">
+            {/* Columna izquierda: Galería + Detalles */}
+            <section className="flex-1 min-w-0">
+              <div className="grid grid-cols-1 md:grid-cols-[40%_60%] gap-4">{/* Optimizar proporción galería/detalles */}
+                {/* Galería - compacta */}
+                <div className="rounded-2xl bg-card p-2 md:p-3 h-fit">
+                  <div className="space-y-2">
+                    <div className="relative overflow-hidden rounded-xl bg-muted aspect-square">
+                      <ImageGallery 
+                        variants={variants}
+                        product={product}
+                        selectedImageIndex={selectedImageIndex}
+                        onImageIndexChange={setSelectedImageIndex}
+                      />
+                    </div>
+
+                    {/* Thumbnails */}
+                    <ImageThumbnails 
                       variants={variants}
                       product={product}
                       selectedImageIndex={selectedImageIndex}
                       onImageIndexChange={setSelectedImageIndex}
                     />
                   </div>
+                </div>
 
-                  {/* Thumbnails */}
-                  <ImageThumbnails 
-                    variants={variants}
-                    product={product}
-                    selectedImageIndex={selectedImageIndex}
-                    onImageIndexChange={setSelectedImageIndex}
-                  />
+                {/* Detalles + Tramos 75% */}
+                <div className="space-y-4">
+                  <header>
+                    <h1 className="text-xl md:text-2xl font-semibold leading-tight">{product.name}</h1>
+                  </header>
+
+                  {/* Descripción del producto */}
+                  <article className="prose prose-sm md:prose-sm max-w-none text-sm">
+                    <p>
+                      ¡Aprovecha cada rincón con la Estantería de Dos Niveles para Almacenamiento que lo transforma todo! Este diseño práctico de dos niveles organiza cosméticos, productos de higiene y más, con una estructura ventilada y colores vibrantes que revitalizan tu espacio. ¡Perfecto para tu baño o tocador!
+                    </p>
+                    <h3>Características destacadas:</h3>
+                    <ul>
+                      <li>🧴 Dos niveles versátiles: Almacena más en menos espacio.</li>
+                      <li>💨 Estructura ventilada: Mantiene tus artículos frescos y secos.</li>
+                      <li>🎨 Colores vibrantes: Disponible en tonos que alegran tu ambiente.</li>
+                      <li>💪🏻 Resistencia sólida: Sostiene tus objetos con seguridad.</li>
+                      <li>✨ Material premium brillante: ¡Plástico resistente con acabados modernos!</li>
+                    </ul>
+                    <p>🛍 Ideal para: ✅Baños organizados, ✅tocadores prácticos y ✅hogares con estilo.</p>
+                  </article>
                 </div>
               </div>
-
-              {/* Detalles + Tramos 75% */}
-              <div className="space-y-4">
-                <header>
-                  <h1 className="text-xl md:text-2xl font-semibold leading-tight">{product.name}</h1>
-                </header>
-
-                {/* Descripción del producto */}
-                <article className="prose prose-sm md:prose-sm max-w-none text-sm">
-                  <p>
-                    ¡Aprovecha cada rincón con la Estantería de Dos Niveles para Almacenamiento que lo transforma todo! Este diseño práctico de dos niveles organiza cosméticos, productos de higiene y más, con una estructura ventilada y colores vibrantes que revitalizan tu espacio. ¡Perfecto para tu baño o tocador!
-                  </p>
-                  <h3>Características destacadas:</h3>
-                  <ul>
-                    <li>🧴 Dos niveles versátiles: Almacena más en menos espacio.</li>
-                    <li>💨 Estructura ventilada: Mantiene tus artículos frescos y secos.</li>
-                    <li>🎨 Colores vibrantes: Disponible en tonos que alegran tu ambiente.</li>
-                    <li>💪🏻 Resistencia sólida: Sostiene tus objetos con seguridad.</li>
-                    <li>✨ Material premium brillante: ¡Plástico resistente con acabados modernos!</li>
-                  </ul>
-                  <p>🛍 Ideal para: ✅Baños organizados, ✅tocadores prácticos y ✅hogares con estilo.</p>
-                </article>
-              </div>
-                </div>
-              </section>
-            </div>
+            </section>
           </div>
-          
-          {/* Panel sticky lateral derecho - al nivel de toda la página */}
-          <aside className="hidden md:block w-1/5 flex-shrink-0">
-            <div className="sticky top-6 z-50">
-              <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-                <h3 className="text-lg font-semibold mb-4">Panel Lateral</h3>
-                <div className="space-y-3">
-                  <div className="text-sm text-gray-600">
-                    Contenido del panel lateral
-                  </div>
-                </div>
-              </div>
-            </div>
-          </aside>
-        </div>
 
-        {/* Barra de precios por tiers - Posicionada después del contenido principal */}
+          {/* Barra de precios por tiers - Posicionada después del contenido principal */}
         <section className="mt-4 md:w-3/4">
           <article className="rounded-xl bg-card text-card-foreground border overflow-hidden shadow-sm">
             <div className="p-2 pb-0">
@@ -1252,7 +1237,19 @@ const ProductView = () => {
           </div>
         </section>
 
-      </main>
+        </main>
+        
+        {/* Columna derecha: 25% - Panel lateral sticky */}
+        <div className="w-1/4 flex-shrink-0">
+          <OrderSummaryPanel
+            content={content}
+            totals={totals}
+            minOrder={minOrder}
+            addToCart={addToCart}
+          />
+        </div>
+      </div>
+      
       <Footer />
     </div>
   );
