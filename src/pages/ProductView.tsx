@@ -428,13 +428,6 @@ const ProductView = () => {
             </div>
           </section>
 
-          {/* Columna derecha: Resumen sticky */}
-          <OrderSummaryPanel
-            content={content}
-            totals={totals}
-            minOrder={minOrder}
-            addToCart={addToCart}
-          />
         </div>
 
         {/* Barra de precios por tiers - Posicionada después del contenido principal */}
