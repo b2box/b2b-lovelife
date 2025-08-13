@@ -1026,32 +1026,32 @@ const ProductView = () => {
                            </div>
                          </td>
 
-                          {/* Empaque Optimizado */}
-                           <td className="px-2 py-3 text-center w-[110px] bg-white hover:bg-gray-50 transition-colors" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex flex-col items-center gap-2 h-24 justify-between">
-                              {/* Fila superior: Precio y Selector alineados horizontalmente */}
-                              <div className="flex items-center justify-between w-full">
-                                <div className="text-[10px] flex-1" style={{ color: '#545454' }}>
-                                  {content.currencySymbol}{((variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100)).toFixed(3)} por unidad
-                                </div>
-                                <div className="flex justify-center">
-                                  {r.comps?.packaging ? (
-                                    <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "packaging")}>
-                                      <span className="text-xs">✓</span>
-                                    </div>
-                                  ) : (
-                                    <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "packaging")}>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                              
-                              {/* Número de artículos - solo si está seleccionado */}
-                              {r.comps?.packaging && (
+                           {/* Empaque Optimizado */}
+                            <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
+                             <div className="flex flex-col items-center gap-2 h-24 justify-between">
+                               {/* Precio por unidad - siempre visible */}
+                               <div className="text-[10px]" style={{ color: '#545454' }}>
+                                 {content.currencySymbol}{((variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100)).toFixed(3)} por unidad
+                               </div>
+                               
+                               {/* Selector */}
+                               <div className="flex justify-center">
+                                 {r.comps?.packaging ? (
+                                   <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "packaging")}>
+                                     <span className="text-xs">✓</span>
+                                   </div>
+                                 ) : (
+                                   <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "packaging")}>
+                                   </div>
+                                 )}
+                               </div>
+                               
+                               {/* Número de artículos - solo si está seleccionado */}
+                               {r.comps?.packaging && (
                                  <div className="text-black text-[10px] font-medium px-3 py-1 rounded-full" style={{ backgroundColor: '#abff97' }}>
-                                   {r.qty.toLocaleString()} artículos
+                                   10 artículos
                                  </div>
-                              )}
+                               )}
                               
                               {/* Total - solo si está seleccionado */}
                               {r.comps?.packaging && (
