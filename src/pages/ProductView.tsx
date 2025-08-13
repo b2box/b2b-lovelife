@@ -955,7 +955,7 @@ const ProductView = () => {
                               
                               {/* Número de artículos - solo si está seleccionado */}
                               {r.comps?.labeling && (
-                                <div className="text-black text-xs font-medium px-3 py-1 rounded-full" style={{ backgroundColor: '#abff97' }}>
+                                <div className="text-black text-[10px] font-medium px-3 py-1 rounded-full" style={{ backgroundColor: '#abff97' }}>
                                   10 artículos
                                 </div>
                               )}
