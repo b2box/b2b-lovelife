@@ -789,9 +789,8 @@ const ProductView = () => {
                               className="px-2 py-1 text-xs" 
                               onClick={() => {
                                 try {
-                                  // Use tier 1 (inicial) min_qty for this specific variant
-                                  const inicialTiers = priceTiers.filter((tier: any) => tier?.tier === "inicial");
-                                  const inicialTier = inicialTiers.find((tier: any) => tier?.currency === "USD") || inicialTiers[0];
+                                  // Use tier inicial min_qty for this specific variant
+                                  const inicialTier = priceTiers.find((tier: any) => tier?.tier === "inicial");
                                   const variantMinQty = inicialTier?.min_qty || 1;
                                   changeQty(r.id, -variantMinQty);
                                 } catch (error) {
@@ -808,9 +807,8 @@ const ProductView = () => {
                               className="px-2 py-1 text-xs" 
                               onClick={() => {
                                 try {
-                                  // Use tier 1 (inicial) min_qty for this specific variant
-                                  const inicialTiers = priceTiers.filter((tier: any) => tier?.tier === "inicial");
-                                  const inicialTier = inicialTiers.find((tier: any) => tier?.currency === "USD") || inicialTiers[0];
+                                  // Use tier inicial min_qty for this specific variant
+                                  const inicialTier = priceTiers.find((tier: any) => tier?.tier === "inicial");
                                   const variantMinQty = inicialTier?.min_qty || 1;
                                   changeQty(r.id, variantMinQty);
                                 } catch (error) {
