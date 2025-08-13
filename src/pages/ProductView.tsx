@@ -88,15 +88,20 @@ const ProductView = () => {
     // Update quantities for all rows based on selected variant
     setRows(prev => prev.map(row => {
       if (row.id === variantId) {
-        // Get min quantity for this variant in current tier - map correctly to database tier
-        const tierMap = {
-          "inicial": "tier1",
-          "mayorista": "tier2", 
-          "distribuidor": "tier3"
-        } as const;
+        // Try both direct tier names and tier1/tier2/tier3 mapping for min quantity
+        let priceTier = (row.variant as any).variant_price_tiers?.find((tier: any) => tier.tier === selectedTier);
         
-        const dbTier = tierMap[selectedTier];
-        const priceTier = (row.variant as any).variant_price_tiers?.find((tier: any) => tier.tier === dbTier);
+        if (!priceTier) {
+          const tierMap = {
+            "inicial": "tier1",
+            "mayorista": "tier2", 
+            "distribuidor": "tier3"
+          } as const;
+          
+          const dbTier = tierMap[selectedTier];
+          priceTier = (row.variant as any).variant_price_tiers?.find((tier: any) => tier.tier === dbTier);
+        }
+        
         const minQty = priceTier?.min_qty || 1;
         
         return { ...row, qty: minQty };
@@ -122,15 +127,20 @@ const ProductView = () => {
   useEffect(() => {
     if (variants.length > 0 && rows.length === 0) {
       const newRows = variants.map(variant => {
-        // Get the minimum quantity for selected tier - map correctly to database tier
-        const tierMap = {
-          "inicial": "tier1",
-          "mayorista": "tier2", 
-          "distribuidor": "tier3"
-        } as const;
+        // Try both direct tier names and tier1/tier2/tier3 mapping for min quantity
+        let priceTier = (variant as any).variant_price_tiers?.find((tier: any) => tier.tier === selectedTier);
         
-        const dbTier = tierMap[selectedTier];
-        const priceTier = (variant as any).variant_price_tiers?.find((tier: any) => tier.tier === dbTier);
+        if (!priceTier) {
+          const tierMap = {
+            "inicial": "tier1",
+            "mayorista": "tier2", 
+            "distribuidor": "tier3"
+          } as const;
+          
+          const dbTier = tierMap[selectedTier];
+          priceTier = (variant as any).variant_price_tiers?.find((tier: any) => tier.tier === dbTier);
+        }
+        
         const fallbackTier = (variant as any).variant_price_tiers?.[0];
         const tierData = priceTier || fallbackTier;
         const minQty = tierData?.min_qty || 1;
@@ -156,15 +166,20 @@ const ProductView = () => {
   useEffect(() => {
     if (rows.length > 0) {
       setRows(prev => prev.map(row => {
-        // Map correctly to database tier
-        const tierMap = {
-          "inicial": "tier1",
-          "mayorista": "tier2", 
-          "distribuidor": "tier3"
-        } as const;
+        // Try both direct tier names and tier1/tier2/tier3 mapping
+        let priceTier = (row.variant as any).variant_price_tiers?.find((tier: any) => tier.tier === selectedTier);
         
-        const dbTier = tierMap[selectedTier];
-        const priceTier = (row.variant as any).variant_price_tiers?.find((tier: any) => tier.tier === dbTier);
+        if (!priceTier) {
+          const tierMap = {
+            "inicial": "tier1",
+            "mayorista": "tier2", 
+            "distribuidor": "tier3"
+          } as const;
+          
+          const dbTier = tierMap[selectedTier];
+          priceTier = (row.variant as any).variant_price_tiers?.find((tier: any) => tier.tier === dbTier);
+        }
+        
         const fallbackTier = (row.variant as any).variant_price_tiers?.[0];
         const tierData = priceTier || fallbackTier;
         const minQty = tierData?.min_qty || 1;
@@ -185,24 +200,31 @@ const ProductView = () => {
 
   // Use pre-calculated prices directly from variant pricing editor
   const getVariantPrice = (variant: ProductVariant, tier: "inicial" | "mayorista" | "distribuidor") => {
-    // Map tier names to database tier values
-    const tierMap = {
-      "inicial": "tier1",
-      "mayorista": "tier2", 
-      "distribuidor": "tier3"
-    } as const;
-    
-    const dbTier = tierMap[tier];
-    
     // Get the currency based on current market
     const targetCurrency = market === "CO" ? "COP" : "USD";
     
-    // Find the price tier for this variant, tier, and currency
-    const priceTier = (variant as any).variant_price_tiers?.find(
+    // Try direct tier name mapping first (without tier1/tier2/tier3 conversion)
+    let priceTier = (variant as any).variant_price_tiers?.find(
       (priceTier: any) => 
-        priceTier.tier === dbTier && 
+        priceTier.tier === tier && 
         priceTier.currency === targetCurrency
     );
+    
+    // If not found, try with tier1/tier2/tier3 mapping
+    if (!priceTier) {
+      const tierMap = {
+        "inicial": "tier1",
+        "mayorista": "tier2", 
+        "distribuidor": "tier3"
+      } as const;
+      
+      const dbTier = tierMap[tier];
+      priceTier = (variant as any).variant_price_tiers?.find(
+        (priceTier: any) => 
+          priceTier.tier === dbTier && 
+          priceTier.currency === targetCurrency
+      );
+    }
 
     if (!priceTier) {
       return variant.price || 0;
@@ -214,21 +236,24 @@ const ProductView = () => {
   
   // Function to determine the appropriate tier based on quantity
   const getTierFromQuantity = (variant: ProductVariant, qty: number): "inicial" | "mayorista" | "distribuidor" => {
-    const tierMap = {
-      "tier1": "inicial",
-      "tier2": "mayorista", 
-      "tier3": "distribuidor"
-    } as const;
+    // Try both direct tier names and tier1/tier2/tier3 mapping
+    const tierMappings = [
+      { "inicial": "inicial" as const, "mayorista": "mayorista" as const, "distribuidor": "distribuidor" as const },
+      { "tier1": "inicial" as const, "tier2": "mayorista" as const, "tier3": "distribuidor" as const }
+    ];
     
-    // Get all tiers for this variant sorted by min_qty descending
-    const tiers = ((variant as any).variant_price_tiers || [])
-      .filter((tier: any) => tier.tier.startsWith('tier'))
-      .sort((a: any, b: any) => (b.min_qty || 0) - (a.min_qty || 0));
-    
-    // Find the highest tier where quantity meets minimum
-    for (const tier of tiers) {
-      if (qty >= (tier.min_qty || 0)) {
-        return tierMap[tier.tier as keyof typeof tierMap] || "inicial";
+    for (const tierMap of tierMappings) {
+      // Get all tiers for this variant sorted by min_qty descending
+      const tiers = ((variant as any).variant_price_tiers || [])
+        .filter((tier: any) => Object.keys(tierMap).includes(tier.tier))
+        .sort((a: any, b: any) => (b.min_qty || 0) - (a.min_qty || 0));
+      
+      // Find the highest tier where quantity meets minimum
+      for (const tier of tiers) {
+        if (qty >= (tier.min_qty || 0)) {
+          const mappedTier = tierMap[tier.tier as keyof typeof tierMap];
+          if (mappedTier) return mappedTier;
+        }
       }
     }
     
@@ -689,15 +714,20 @@ const ProductView = () => {
                   const variantName = r.variant.name || product.name;
                   const variantOption = r.variant.option_name || r.variant.attributes?.color || "Estándar";
                   
-                   // Get units from price tier data - map correctly to database tier
-                   const tierMap = {
-                     "inicial": "tier1",
-                     "mayorista": "tier2", 
-                     "distribuidor": "tier3"
-                   } as const;
+                   // Get units from price tier data - try both direct and mapped tier names
+                   let priceTier = (r.variant as any).variant_price_tiers?.find((tier: any) => tier.tier === selectedTier);
                    
-                   const dbTier = tierMap[selectedTier];
-                   const priceTier = (r.variant as any).variant_price_tiers?.find((tier: any) => tier.tier === dbTier);
+                   if (!priceTier) {
+                     const tierMap = {
+                       "inicial": "tier1",
+                       "mayorista": "tier2", 
+                       "distribuidor": "tier3"
+                     } as const;
+                     
+                     const dbTier = tierMap[selectedTier];
+                     priceTier = (r.variant as any).variant_price_tiers?.find((tier: any) => tier.tier === dbTier);
+                   }
+                   
                    const minQty = priceTier?.min_qty || 1;
                   
                   const isSelected = selectedVariantId === r.id;
