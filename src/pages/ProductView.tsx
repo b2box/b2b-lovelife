@@ -559,16 +559,52 @@ const ProductView = () => {
           <h2 className="text-xl font-semibold mb-3">Variantes</h2>
           <div className="overflow-x-auto rounded-2xl border bg-card">
             <table className="w-full text-sm">
-              <thead className="bg-secondary/40 text-muted-foreground">
-                <tr>
+              <thead>
+                <tr className="bg-secondary/40 text-muted-foreground">
                   <th className="text-left px-3 py-3 font-medium w-[200px]">{content.tableHeaders.product}</th>
                   <th className="text-center px-2 py-3 font-medium w-[80px]">{content.tableHeaders.units}</th>
-                  <th className="text-center px-2 py-3 font-medium w-[90px]">Precio Unitario</th>
-                  <th className="text-center px-2 py-3 font-medium w-[120px]">Etiquetado para Marketplaces</th>
-                  <th className="text-center px-2 py-3 font-medium w-[100px]">Registro de Código de Barras</th>
-                  <th className="text-center px-2 py-3 font-medium w-[90px]">Fotografías Comerciales</th>
-                  <th className="text-center px-2 py-3 font-medium w-[100px]">Empaque Optimizado</th>
-                  <th className="text-center px-2 py-3 font-medium w-[80px]">Total</th>
+                  <th className="text-center px-2 py-3 font-medium w-[90px]">
+                    <div className="flex flex-col items-center gap-1">
+                      <span>Precio</span>
+                      <span>Unitario</span>
+                    </div>
+                  </th>
+                  <th className="text-center px-2 py-3 font-medium bg-blue-100 text-blue-900" colSpan={4}>
+                    <div className="flex items-center justify-center gap-2">
+                      <span>Complementos</span>
+                    </div>
+                  </th>
+                  <th className="text-center px-2 py-3 font-medium w-[80px] bg-blue-200 text-blue-900">Precio</th>
+                </tr>
+                <tr className="bg-secondary/20 text-muted-foreground border-t">
+                  <th className="px-3 py-2"></th>
+                  <th className="px-2 py-2"></th>
+                  <th className="px-2 py-2"></th>
+                  <th className="text-center px-2 py-2 font-medium w-[120px]">
+                    <div className="flex flex-col items-center gap-1">
+                      <span>Etiquetado para</span>
+                      <span>Marketplaces</span>
+                    </div>
+                  </th>
+                  <th className="text-center px-2 py-2 font-medium w-[100px]">
+                    <div className="flex flex-col items-center gap-1">
+                      <span>Registro de</span>
+                      <span>Código de Barras</span>
+                    </div>
+                  </th>
+                  <th className="text-center px-2 py-2 font-medium w-[90px]">
+                    <div className="flex flex-col items-center gap-1">
+                      <span>Fotografías</span>
+                      <span>Comerciales</span>
+                    </div>
+                  </th>
+                  <th className="text-center px-2 py-2 font-medium w-[100px]">
+                    <div className="flex flex-col items-center gap-1">
+                      <span>Empaque</span>
+                      <span>Optimizado</span>
+                    </div>
+                  </th>
+                  <th className="text-center px-2 py-2 font-medium w-[80px]">Total</th>
                 </tr>
               </thead>
               <tbody>
@@ -621,58 +657,82 @@ const ProductView = () => {
 
                       {/* Etiquetado */}
                       <td className="px-2 py-3 text-center" onClick={(e) => e.stopPropagation()}>
-                        <div className={`inline-block w-6 h-6 rounded border-2 cursor-pointer transition-all ${
-                          r.comps.labeling ? 'bg-green-500 border-green-500' : 'border-gray-300 hover:border-green-400'
-                        }`} onClick={() => toggleComp(r.id, "labeling")}>
-                          {r.comps.labeling && <div className="text-white text-xs leading-none mt-0.5">✓</div>}
-                        </div>
-                        <div className="text-xs text-green-600 mt-1">{r.qty.toLocaleString()} artículos</div>
-                        <div className="text-xs text-muted-foreground">
-                          PU: {content.currencySymbol}{((variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100)).toFixed(3)}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100).toFixed(2)}
-                        </div>
+                        {r.comps.labeling ? (
+                          <div className="space-y-2">
+                            <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-500 text-white cursor-pointer" onClick={() => toggleComp(r.id, "labeling")}>
+                              <span className="text-xs">✓</span>
+                            </div>
+                            <div className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">
+                              {r.qty.toLocaleString()} artículos
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {content.currencySymbol}{((variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100)).toFixed(3)} PU
+                            </div>
+                            <div className="text-xs font-medium">
+                              TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100).toFixed(2)}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-green-400 cursor-pointer transition-all" onClick={() => toggleComp(r.id, "labeling")}>
+                          </div>
+                        )}
                       </td>
 
                       {/* Código de barras */}
                       <td className="px-2 py-3 text-center" onClick={(e) => e.stopPropagation()}>
-                        <div className={`inline-block w-6 h-6 rounded border-2 cursor-pointer transition-all ${
-                          r.comps.barcode ? 'bg-green-500 border-green-500' : 'border-gray-300 hover:border-green-400'
-                        }`} onClick={() => toggleComp(r.id, "barcode")}>
-                          {r.comps.barcode && <div className="text-white text-xs leading-none mt-0.5">✓</div>}
-                        </div>
-                        <div className="text-xs text-green-600 mt-1">
-                          {content.currencySymbol}{(pricingSettings?.barcode_registration_usd || 1).toFixed(2)} fijo
-                        </div>
+                        {r.comps.barcode ? (
+                          <div className="space-y-2">
+                            <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-500 text-white cursor-pointer" onClick={() => toggleComp(r.id, "barcode")}>
+                              <span className="text-xs">✓</span>
+                            </div>
+                            <div className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">
+                              {content.currencySymbol}{(pricingSettings?.barcode_registration_usd || 1).toFixed(0)}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-green-400 cursor-pointer transition-all" onClick={() => toggleComp(r.id, "barcode")}>
+                          </div>
+                        )}
                       </td>
 
                       {/* Fotos */}
                       <td className="px-2 py-3 text-center" onClick={(e) => e.stopPropagation()}>
-                        <div className={`inline-block w-6 h-6 rounded border-2 cursor-pointer transition-all ${
-                          r.comps.photos ? 'bg-green-500 border-green-500' : 'border-gray-300 hover:border-green-400'
-                        }`} onClick={() => toggleComp(r.id, "photos")}>
-                          {r.comps.photos && <div className="text-white text-xs leading-none mt-0.5">✓</div>}
-                        </div>
-                        <div className="text-xs text-green-600 mt-1">
-                          {content.currencySymbol}{(pricingSettings?.commercial_photos_usd || 45).toFixed(2)} fijo
-                        </div>
+                        {r.comps.photos ? (
+                          <div className="space-y-2">
+                            <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-500 text-white cursor-pointer" onClick={() => toggleComp(r.id, "photos")}>
+                              <span className="text-xs">✓</span>
+                            </div>
+                            <div className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">
+                              {content.currencySymbol}{(pricingSettings?.commercial_photos_usd || 45).toFixed(0)}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-green-400 cursor-pointer transition-all" onClick={() => toggleComp(r.id, "photos")}>
+                          </div>
+                        )}
                       </td>
 
                       {/* Empaque */}
                       <td className="px-2 py-3 text-center" onClick={(e) => e.stopPropagation()}>
-                        <div className={`inline-block w-6 h-6 rounded border-2 cursor-pointer transition-all ${
-                          r.comps.packaging ? 'bg-green-500 border-green-500' : 'border-gray-300 hover:border-green-400'
-                        }`} onClick={() => toggleComp(r.id, "packaging")}>
-                          {r.comps.packaging && <div className="text-white text-xs leading-none mt-0.5">✓</div>}
-                        </div>
-                        <div className="text-xs text-green-600 mt-1">{r.qty.toLocaleString()} artículos</div>
-                        <div className="text-xs text-muted-foreground">
-                          PU: {content.currencySymbol}{((variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100)).toFixed(3)}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100).toFixed(2)}
-                        </div>
+                        {r.comps.packaging ? (
+                          <div className="space-y-2">
+                            <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-500 text-white cursor-pointer" onClick={() => toggleComp(r.id, "packaging")}>
+                              <span className="text-xs">✓</span>
+                            </div>
+                            <div className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">
+                              {r.qty.toLocaleString()} artículos
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {content.currencySymbol}{((variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100)).toFixed(3)} PU
+                            </div>
+                            <div className="text-xs font-medium">
+                              TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100).toFixed(2)}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-green-400 cursor-pointer transition-all" onClick={() => toggleComp(r.id, "packaging")}>
+                          </div>
+                        )}
                       </td>
 
                       <td className="px-2 py-3 text-center">
