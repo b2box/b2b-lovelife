@@ -800,10 +800,19 @@ const ProductView = () => {
                               onChange={(e) => {
                                 const inputValue = parseInt(e.target.value) || 0;
                                 
+                                // Map tier names to database tier values
+                                const tierMap = {
+                                  inicial: "tier1",
+                                  mayorista: "tier2", 
+                                  distribuidor: "tier3"
+                                } as const;
+                                
+                                const dbTier = tierMap[selectedTier as keyof typeof tierMap];
+                                
                                 // Get the min_qty for this variant and tier
-                                const priceTiers = (r.variant as any)?.variant_price_tiers || [];
+                                const priceTiers = (r.variant as any)?.price_tiers || [];
                                 const priceTier = priceTiers.find((tier: any) => 
-                                  tier?.tier === selectedTier && tier?.currency === "CNY"
+                                  tier?.tier === dbTier
                                 );
                                 const minQty = priceTier?.min_qty || 1;
                                 
