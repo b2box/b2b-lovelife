@@ -343,7 +343,17 @@ const ProductView = () => {
                       {/* Inicial */}
                       <button
                         type="button"
-                        onClick={() => setSelectedTier("inicial")}
+                        onClick={() => {
+                          setSelectedTier("inicial");
+                          // Update quantities for all rows based on new tier
+                          setRows(prev => prev.map(row => {
+                            const tierMap = { inicial: "tier1", mayorista: "tier2", distribuidor: "tier3" } as const;
+                            const dbTier = tierMap["inicial"];
+                            const priceTier = (row.variant as any).variant_price_tiers?.find((tier: any) => tier.tier === dbTier);
+                            const minQty = priceTier?.min_qty || 1;
+                            return { ...row, qty: minQty };
+                          }));
+                        }}
                         className="text-center group transition-all duration-200"
                         aria-pressed={selectedTier === "inicial"}
                       >
@@ -375,7 +385,17 @@ const ProductView = () => {
                       {/* Mayorista destacado */}
                       <button
                         type="button"
-                        onClick={() => setSelectedTier("mayorista")}
+                        onClick={() => {
+                          setSelectedTier("mayorista");
+                          // Update quantities for all rows based on new tier
+                          setRows(prev => prev.map(row => {
+                            const tierMap = { inicial: "tier1", mayorista: "tier2", distribuidor: "tier3" } as const;
+                            const dbTier = tierMap["mayorista"];
+                            const priceTier = (row.variant as any).variant_price_tiers?.find((tier: any) => tier.tier === dbTier);
+                            const minQty = priceTier?.min_qty || 1;
+                            return { ...row, qty: minQty };
+                          }));
+                        }}
                         className="text-center group transition-all duration-200"
                         aria-pressed={selectedTier === "mayorista"}
                       >
@@ -407,7 +427,17 @@ const ProductView = () => {
                       {/* Distribuidor */}
                       <button
                         type="button"
-                        onClick={() => setSelectedTier("distribuidor")}
+                        onClick={() => {
+                          setSelectedTier("distribuidor");
+                          // Update quantities for all rows based on new tier
+                          setRows(prev => prev.map(row => {
+                            const tierMap = { inicial: "tier1", mayorista: "tier2", distribuidor: "tier3" } as const;
+                            const dbTier = tierMap["distribuidor"];
+                            const priceTier = (row.variant as any).variant_price_tiers?.find((tier: any) => tier.tier === dbTier);
+                            const minQty = priceTier?.min_qty || 1;
+                            return { ...row, qty: minQty };
+                          }));
+                        }}
                         className="text-center group transition-all duration-200"
                         aria-pressed={selectedTier === "distribuidor"}
                       >
