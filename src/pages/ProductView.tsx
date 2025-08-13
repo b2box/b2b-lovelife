@@ -755,15 +755,14 @@ const ProductView = () => {
                   const isSelected = selectedVariantId === r.id;
                   
                   return (
-                    <tr 
+                     <tr 
                       key={r.id} 
                        className={`border-t cursor-pointer hover:bg-muted/30 transition-colors ${
-                         isSelected ? 'bg-white border-2' : ''
+                         isSelected ? 'bg-white border-2 rounded-3xl' : ''
                        }`}
                        style={isSelected ? { 
                          borderColor: '#abff97',
-                         boxShadow: '0 4px 12px rgba(171, 255, 151, 0.3)',
-                         borderRadius: '24px'
+                         boxShadow: '0 4px 12px rgba(171, 255, 151, 0.3)'
                        } : {}}
                       onClick={() => {
                         try {
