@@ -366,6 +366,7 @@ export type Database = {
           ar_tier1_pct: number
           ar_tier2_pct: number
           ar_tier3_pct: number
+          barcode_registration_usd: number
           cn_cny_to_usd: number
           cn_tier1_pct: number
           cn_tier2_pct: number
@@ -374,8 +375,11 @@ export type Database = {
           co_tier1_pct: number
           co_tier2_pct: number
           co_tier3_pct: number
+          commercial_photos_usd: number
           created_at: string
           id: string
+          marketplace_labeling_pct: number
+          optimized_packaging_pct: number
           updated_at: string
         }
         Insert: {
@@ -383,6 +387,7 @@ export type Database = {
           ar_tier1_pct?: number
           ar_tier2_pct?: number
           ar_tier3_pct?: number
+          barcode_registration_usd?: number
           cn_cny_to_usd?: number
           cn_tier1_pct?: number
           cn_tier2_pct?: number
@@ -391,8 +396,11 @@ export type Database = {
           co_tier1_pct?: number
           co_tier2_pct?: number
           co_tier3_pct?: number
+          commercial_photos_usd?: number
           created_at?: string
           id?: string
+          marketplace_labeling_pct?: number
+          optimized_packaging_pct?: number
           updated_at?: string
         }
         Update: {
@@ -400,6 +408,7 @@ export type Database = {
           ar_tier1_pct?: number
           ar_tier2_pct?: number
           ar_tier3_pct?: number
+          barcode_registration_usd?: number
           cn_cny_to_usd?: number
           cn_tier1_pct?: number
           cn_tier2_pct?: number
@@ -408,8 +417,11 @@ export type Database = {
           co_tier1_pct?: number
           co_tier2_pct?: number
           co_tier3_pct?: number
+          commercial_photos_usd?: number
           created_at?: string
           id?: string
+          marketplace_labeling_pct?: number
+          optimized_packaging_pct?: number
           updated_at?: string
         }
         Relationships: []

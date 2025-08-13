@@ -20,6 +20,10 @@ export type PricingSettings = {
   cn_tier1_pct: number;
   cn_tier2_pct: number;
   cn_tier3_pct: number;
+  marketplace_labeling_pct: number; // Etiquetado para marketplaces
+  barcode_registration_usd: number; // Registro de código de barras
+  commercial_photos_usd: number; // Fotografías comerciales
+  optimized_packaging_pct: number; // Empaque optimizado
 };
 
 const defaults: PricingSettings = {
@@ -35,6 +39,10 @@ const defaults: PricingSettings = {
   cn_tier1_pct: 100,
   cn_tier2_pct: 100,
   cn_tier3_pct: 100,
+  marketplace_labeling_pct: 2,
+  barcode_registration_usd: 1,
+  commercial_photos_usd: 45,
+  optimized_packaging_pct: 5,
 };
 
 const SettingsPanel: React.FC = () => {
@@ -202,6 +210,48 @@ const SettingsPanel: React.FC = () => {
                     </div>
                   </div>
                 </Card>
+              </div>
+            </section>
+
+            <section>
+              <h4 className="text-sm font-medium mb-2">Servicios para variantes</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label>Etiquetado para marketplaces (%)</Label>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    value={settings.marketplace_labeling_pct}
+                    onChange={(e) => setSettings({ ...settings, marketplace_labeling_pct: Number(e.target.value) })}
+                  />
+                </div>
+                <div>
+                  <Label>Registro de código de barras (USD)</Label>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    value={settings.barcode_registration_usd}
+                    onChange={(e) => setSettings({ ...settings, barcode_registration_usd: Number(e.target.value) })}
+                  />
+                </div>
+                <div>
+                  <Label>Fotografías comerciales (USD)</Label>
+                  <Input
+                    type="number"
+                    step="1"
+                    value={settings.commercial_photos_usd}
+                    onChange={(e) => setSettings({ ...settings, commercial_photos_usd: Number(e.target.value) })}
+                  />
+                </div>
+                <div>
+                  <Label>Empaque optimizado (%)</Label>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    value={settings.optimized_packaging_pct}
+                    onChange={(e) => setSettings({ ...settings, optimized_packaging_pct: Number(e.target.value) })}
+                  />
+                </div>
               </div>
             </section>
 
