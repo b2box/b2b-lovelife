@@ -1288,7 +1288,7 @@ const ProductView = () => {
                 <HoverCard>
                   <HoverCardTrigger asChild>
                     <div className="relative w-full h-[100px] rounded-[20px] border border-[#E5E7EB] bg-white p-3 cursor-default flex flex-col items-center justify-center text-center opacity-60">
-                      <img src="/lovable-uploads/bcaad47c-1390-4a6e-a192-4c5279337cf3.png" alt="Método de envío" className="h-6 w-auto mb-2" loading="lazy" />
+                      <img src="/lovable-uploads/5c098f1d-9e25-4952-a9fe-c0717ca06e81.png" alt="Método de envío" className="h-6 w-auto mb-2" loading="lazy" />
                       <span className="text-[12px] text-[#6B7280] leading-tight">Método de envío</span>
                       <div className="absolute top-2 right-2 w-4 h-4 bg-[#6B7280] text-white rounded-full flex items-center justify-center text-[10px] font-bold">?</div>
                     </div>
@@ -1302,7 +1302,7 @@ const ProductView = () => {
                 <HoverCard>
                   <HoverCardTrigger asChild>
                     <div className="relative w-full h-[100px] rounded-[20px] border border-[#E5E7EB] bg-white p-3 cursor-default flex flex-col items-center justify-center text-center opacity-60">
-                      <img src="/lovable-uploads/e176248e-ec33-4374-8df2-39c6d1d81194.png" alt="Personalizar producto" className="h-6 w-auto mb-2" loading="lazy" />
+                      <img src="/lovable-uploads/e1c5b592-a961-4184-9814-ed40a457c3dc.png" alt="Personalizar producto" className="h-6 w-auto mb-2" loading="lazy" />
                       <span className="text-[12px] text-[#6B7280] leading-tight">Personalizar producto</span>
                       <div className="absolute top-2 right-2 w-4 h-4 bg-[#6B7280] text-white rounded-full flex items-center justify-center text-[10px] font-bold">?</div>
                     </div>
@@ -1316,7 +1316,7 @@ const ProductView = () => {
                 <HoverCard>
                   <HoverCardTrigger asChild>
                     <div className="relative w-full h-[100px] rounded-[20px] border border-[#E5E7EB] bg-white p-3 cursor-default flex flex-col items-center justify-center text-center opacity-60">
-                      <img src="/lovable-uploads/6a45e477-73d7-45a9-9eda-470e2c37a6cb.png" alt="Precios sin sorpresas" className="h-6 w-auto mb-2" loading="lazy" />
+                      <img src="/lovable-uploads/4ed195be-8175-4133-a8f1-8e9e8cf3cf39.png" alt="Precios sin sorpresas" className="h-6 w-auto mb-2" loading="lazy" />
                       <span className="text-[12px] text-[#6B7280] leading-tight">Precios sin sorpresas</span>
                       <div className="absolute top-2 right-2 w-4 h-4 bg-[#6B7280] text-white rounded-full flex items-center justify-center text-[10px] font-bold">?</div>
                     </div>
