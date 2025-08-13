@@ -879,11 +879,30 @@ const ProductView = () => {
         <section className="mt-8 w-full md:w-3/5">
           <h2 className="text-xl font-semibold mb-3">Imágenes</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {Array.from({ length: 2 }).map((_, i) => (
-              <div key={i} className="rounded-2xl border overflow-hidden bg-muted">
-                <img src={product.image} alt={`${product.name} imagen ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
-              </div>
-            ))}
+            {(() => {
+              // Collect all images from all variants
+              const allImages = variants.flatMap(variant => 
+                (variant as any).product_variant_images?.map((img: any) => ({
+                  ...img,
+                  variantName: variant.name || product.name,
+                  variantId: variant.id
+                })) || []
+              ).sort((a, b) => a.sort_order - b.sort_order);
+
+              return allImages.map((image, i) => (
+                <div key={`${image.variantId}-${image.id}`} className="relative rounded-2xl border overflow-hidden bg-muted aspect-square group hover:shadow-lg transition-all duration-200">
+                  <img 
+                    src={image.url} 
+                    alt={image.alt || `${image.variantName} imagen ${i + 1}`} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" 
+                    loading="lazy" 
+                  />
+                  <div className="absolute bottom-2 left-2 rounded-full bg-black/70 text-white text-xs px-2 py-1">
+                    {image.variantName}
+                  </div>
+                </div>
+              ));
+            })()}
           </div>
         </section>
 
