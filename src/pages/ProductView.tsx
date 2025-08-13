@@ -832,239 +832,240 @@ const ProductView = () => {
                   
                   const isSelected = selectedVariantId === r.id;
                   
-                   return (
-                     <tr key={r.id}>
-                       <td colSpan={8} className="p-0">
-                         <div 
-                           className={`m-2 cursor-pointer hover:bg-muted/30 transition-all duration-200 rounded-3xl ${
-                             isSelected ? 'bg-white shadow-lg border-2' : 'border border-transparent'
-                           }`}
-                           style={isSelected ? { 
-                             borderColor: '#abff97',
-                             boxShadow: '0 4px 12px rgba(171, 255, 151, 0.3)'
-                           } : {}}
-                           onClick={() => {
-                             try {
-                               handleVariantSelection(r.id);
-                             } catch (error) {
-                               console.error('Click handler error:', error);
-                             }
-                           }}
-                         >
-                           <div className="grid grid-cols-8 gap-2 p-3 items-center">
-                      <td className="px-3 py-3">
-                        <div className="flex items-center gap-2">
-                           <img src={variantImage} alt={variantName} className="w-16 h-16 rounded object-cover flex-shrink-0" loading="lazy" />
-                           <div className="min-w-0">
-                             <div className="font-medium leading-tight text-base truncate">{variantName}</div>
-                             {variantOption !== "Estándar" && (
-                               <div className="text-sm text-muted-foreground truncate">{variantOption}</div>
-                             )}
-                           </div>
-                        </div>
-                      </td>
-                      <td className="px-2 py-3" onClick={(e) => e.stopPropagation()}>
-                        <div className="flex items-center justify-center">
-                           <div className="inline-flex items-center border rounded">
-                             <button 
-                               className="px-1 py-0.5 text-xs hover:bg-gray-100" 
-                               onClick={() => changeQty(r.id, -1)} 
-                               aria-label="Disminuir"
-                             >
-                               -
-                             </button>
-                             <input
-                               type="number"
-                               value={r.qty || 0}
-                               onChange={(e) => {
-                                 const inputValue = parseInt(e.target.value) || 0;
-                                 
-                                 // Map tier names to database tier values
-                                 const tierMap = {
-                                   inicial: "tier1",
-                                   mayorista: "tier2", 
-                                   distribuidor: "tier3"
-                                 } as const;
-                                 
-                                 const dbTier = tierMap[selectedTier as keyof typeof tierMap];
-                                 
-                                 // Get the min_qty for this variant and tier
-                                 const priceTiers = (r.variant as any)?.price_tiers || [];
-                                 const priceTier = priceTiers.find((tier: any) => 
-                                   tier?.tier === dbTier
-                                 );
-                                 const minQty = priceTier?.min_qty || 1;
-                                 
-                                 // Ensure the value is not less than min_qty
-                                 const newQty = Math.max(inputValue, minQty);
-                                 const currentQty = r.qty || 0;
-                                 const diff = newQty - currentQty;
-                                 
-                                 if (diff !== 0) {
-                                   changeQty(r.id, diff);
-                                 }
-                               }}
-                               className="w-10 px-1 py-0.5 text-center text-xs border-0 focus:outline-none focus:ring-1 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                               min={(() => {
-                                 const priceTiers = (r.variant as any)?.variant_price_tiers || [];
-                                 const priceTier = priceTiers.find((tier: any) => 
-                                   tier?.tier === selectedTier && tier?.currency === "CNY"
-                                 );
-                                 return priceTier?.min_qty || 1;
-                               })()}
-                             />
-                             <button 
-                               className="px-1 py-0.5 text-xs hover:bg-gray-100" 
-                               onClick={() => changeQty(r.id, 1)} 
-                               aria-label="Aumentar"
-                             >
-                               +
-                             </button>
-                           </div>
-                        </div>
-                      </td>
-                      <td className="px-2 py-3 text-center">
-                        <div className="text-xs font-medium">{content.currencySymbol}{variantPrice.toFixed(2)}</div>
-                      </td>
-
-                      {/* Etiquetado */}
-                      <td className="px-2 py-3 text-center" onClick={(e) => e.stopPropagation()}>
-                        <div className="space-y-2">
-                           {/* Precio por unidad - siempre visible */}
-                           <div className="text-[10px] text-muted-foreground">
-                             {content.currencySymbol}{((variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100)).toFixed(3)} por unidad
-                           </div>
-                          
-                          {/* Número de artículos - solo si está seleccionado */}
-                          {r.comps?.labeling && (
-                            <div className="text-black text-xs font-medium px-3 py-1 rounded-full" style={{ backgroundColor: '#abff97' }}>
-                              {r.qty.toLocaleString()} artículos
+                    return (
+                      <tr 
+                        key={r.id}
+                        className={`cursor-pointer hover:bg-muted/30 transition-all duration-200 ${
+                          isSelected ? 'bg-white shadow-lg' : ''
+                        }`}
+                        style={isSelected ? { 
+                          borderLeft: '4px solid #abff97',
+                          boxShadow: '0 4px 12px rgba(171, 255, 151, 0.3)'
+                        } : {}}
+                        onClick={() => {
+                          try {
+                            handleVariantSelection(r.id);
+                          } catch (error) {
+                            console.error('Click handler error:', error);
+                          }
+                        }}
+                      >
+                        {/* Producto */}
+                        <td className="px-3 py-3 w-[200px]">
+                          <div className="flex items-center gap-2">
+                            <img src={variantImage} alt={variantName} className="w-16 h-16 rounded object-cover flex-shrink-0" loading="lazy" />
+                            <div className="min-w-0">
+                              <div className="font-medium leading-tight text-base truncate">{variantName}</div>
+                              {variantOption !== "Estándar" && (
+                                <div className="text-sm text-muted-foreground truncate">{variantOption}</div>
+                              )}
                             </div>
-                          )}
-                          
-                          {/* Selector */}
-                          <div className="flex justify-center">
-                            {r.comps?.labeling ? (
-                              <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "labeling")}>
-                                <span className="text-xs">✓</span>
+                          </div>
+                        </td>
+
+                        {/* Unidades */}
+                        <td className="px-2 py-3 w-[80px]" onClick={(e) => e.stopPropagation()}>
+                          <div className="flex items-center justify-center">
+                            <div className="inline-flex items-center border rounded">
+                              <button 
+                                className="px-1 py-0.5 text-xs hover:bg-gray-100" 
+                                onClick={() => changeQty(r.id, -1)} 
+                                aria-label="Disminuir"
+                              >
+                                -
+                              </button>
+                              <input
+                                type="number"
+                                value={r.qty || 0}
+                                onChange={(e) => {
+                                  const inputValue = parseInt(e.target.value) || 0;
+                                  
+                                  // Map tier names to database tier values
+                                  const tierMap = {
+                                    inicial: "tier1",
+                                    mayorista: "tier2", 
+                                    distribuidor: "tier3"
+                                  } as const;
+                                  
+                                  const dbTier = tierMap[selectedTier as keyof typeof tierMap];
+                                  
+                                  // Get the min_qty for this variant and tier
+                                  const priceTiers = (r.variant as any)?.price_tiers || [];
+                                  const priceTier = priceTiers.find((tier: any) => 
+                                    tier?.tier === dbTier
+                                  );
+                                  const minQty = priceTier?.min_qty || 1;
+                                  
+                                  // Ensure the value is not less than min_qty
+                                  const newQty = Math.max(inputValue, minQty);
+                                  const currentQty = r.qty || 0;
+                                  const diff = newQty - currentQty;
+                                  
+                                  if (diff !== 0) {
+                                    changeQty(r.id, diff);
+                                  }
+                                }}
+                                className="w-10 px-1 py-0.5 text-center text-xs border-0 focus:outline-none focus:ring-1 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                min={(() => {
+                                  const priceTiers = (r.variant as any)?.variant_price_tiers || [];
+                                  const priceTier = priceTiers.find((tier: any) => 
+                                    tier?.tier === selectedTier && tier?.currency === "CNY"
+                                  );
+                                  return priceTier?.min_qty || 1;
+                                })()}
+                              />
+                              <button 
+                                className="px-1 py-0.5 text-xs hover:bg-gray-100" 
+                                onClick={() => changeQty(r.id, 1)} 
+                                aria-label="Aumentar"
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Precio Unitario */}
+                        <td className="px-2 py-3 text-center w-[90px]">
+                          <div className="text-xs font-medium">{content.currencySymbol}{variantPrice.toFixed(2)}</div>
+                        </td>
+
+                        {/* Etiquetado para Marketplaces */}
+                        <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
+                          <div className="space-y-2">
+                            {/* Precio por unidad - siempre visible */}
+                            <div className="text-[10px] text-muted-foreground">
+                              {content.currencySymbol}{((variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100)).toFixed(3)} por unidad
+                            </div>
+                            
+                            {/* Número de artículos - solo si está seleccionado */}
+                            {r.comps?.labeling && (
+                              <div className="text-black text-xs font-medium px-3 py-1 rounded-full" style={{ backgroundColor: '#abff97' }}>
+                                {r.qty.toLocaleString()} artículos
                               </div>
-                            ) : (
-                              <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "labeling")}>
+                            )}
+                            
+                            {/* Selector */}
+                            <div className="flex justify-center">
+                              {r.comps?.labeling ? (
+                                <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "labeling")}>
+                                  <span className="text-xs">✓</span>
+                                </div>
+                              ) : (
+                                <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "labeling")}>
+                                </div>
+                              )}
+                            </div>
+                            
+                            {/* Total - solo si está seleccionado */}
+                            {r.comps?.labeling && (
+                              <div className="text-xs font-medium text-muted-foreground">
+                                TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100).toFixed(2)}
                               </div>
                             )}
                           </div>
-                          
-                          {/* Total - solo si está seleccionado */}
-                          {r.comps?.labeling && (
-                            <div className="text-xs font-medium text-muted-foreground">
-                              TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100).toFixed(2)}
-                            </div>
-                          )}
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* Código de barras */}
-                      <td className="px-2 py-3 text-center" onClick={(e) => e.stopPropagation()}>
-                        <div className="space-y-2">
-                          {/* Precio fijo - siempre visible */}
-                          <div className="text-xs text-muted-foreground">
-                            {content.currencySymbol}{(pricingSettings?.barcode_registration_usd || 1).toFixed(0)} por variante
-                          </div>
-                          
-                          {/* Selector */}
-                          <div className="flex justify-center">
-                            {r.comps?.barcode ? (
-                              <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "barcode")}>
-                                <span className="text-xs">✓</span>
-                              </div>
-                            ) : (
-                              <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "barcode")}>
+                        {/* Registro de Código de Barras */}
+                        <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
+                          <div className="space-y-2">
+                            {/* Precio fijo - siempre visible */}
+                            <div className="text-xs text-muted-foreground">
+                              {content.currencySymbol}{(pricingSettings?.barcode_registration_usd || 1).toFixed(0)} por variante
+                            </div>
+                            
+                            {/* Selector */}
+                            <div className="flex justify-center">
+                              {r.comps?.barcode ? (
+                                <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "barcode")}>
+                                  <span className="text-xs">✓</span>
+                                </div>
+                              ) : (
+                                <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "barcode")}>
+                                </div>
+                              )}
+                            </div>
+                            
+                            {/* Total - solo si está seleccionado */}
+                            {r.comps?.barcode && (
+                              <div className="bg-brand-green/20 text-brand-green text-xs font-medium px-3 py-1 rounded-full">
+                                {content.currencySymbol}{(pricingSettings?.barcode_registration_usd || 1).toFixed(0)}
                               </div>
                             )}
                           </div>
-                          
-                          {/* Total - solo si está seleccionado */}
-                          {r.comps?.barcode && (
-                            <div className="bg-brand-green/20 text-brand-green text-xs font-medium px-3 py-1 rounded-full">
-                              {content.currencySymbol}{(pricingSettings?.barcode_registration_usd || 1).toFixed(0)}
-                            </div>
-                          )}
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* Fotos */}
-                      <td className="px-2 py-3 text-center" onClick={(e) => e.stopPropagation()}>
-                        <div className="space-y-2">
-                          {/* Precio fijo - siempre visible */}
-                          <div className="text-xs text-muted-foreground">
-                            {content.currencySymbol}{(pricingSettings?.commercial_photos_usd || 45).toFixed(0)} por variante
-                          </div>
-                          
-                          {/* Selector */}
-                          <div className="flex justify-center">
-                            {r.comps?.photos ? (
-                              <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "photos")}>
-                                <span className="text-xs">✓</span>
-                              </div>
-                            ) : (
-                              <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "photos")}>
+                        {/* Fotografías Comerciales */}
+                        <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
+                          <div className="space-y-2">
+                            {/* Precio fijo - siempre visible */}
+                            <div className="text-xs text-muted-foreground">
+                              {content.currencySymbol}{(pricingSettings?.commercial_photos_usd || 45).toFixed(0)} por variante
+                            </div>
+                            
+                            {/* Selector */}
+                            <div className="flex justify-center">
+                              {r.comps?.photos ? (
+                                <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "photos")}>
+                                  <span className="text-xs">✓</span>
+                                </div>
+                              ) : (
+                                <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "photos")}>
+                                </div>
+                              )}
+                            </div>
+                            
+                            {/* Total - solo si está seleccionado */}
+                            {r.comps?.photos && (
+                              <div className="bg-brand-green/20 text-brand-green text-xs font-medium px-3 py-1 rounded-full">
+                                {content.currencySymbol}{(pricingSettings?.commercial_photos_usd || 45).toFixed(0)}
                               </div>
                             )}
                           </div>
-                          
-                          {/* Total - solo si está seleccionado */}
-                          {r.comps?.photos && (
-                            <div className="bg-brand-green/20 text-brand-green text-xs font-medium px-3 py-1 rounded-full">
-                              {content.currencySymbol}{(pricingSettings?.commercial_photos_usd || 45).toFixed(0)}
-                            </div>
-                          )}
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* Empaque */}
-                      <td className="px-2 py-3 text-center" onClick={(e) => e.stopPropagation()}>
-                        <div className="space-y-2">
-                          {/* Precio por unidad - siempre visible */}
-                          <div className="text-xs text-muted-foreground">
-                            {content.currencySymbol}{((variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100)).toFixed(3)} por unidad
-                          </div>
-                          
-                          {/* Número de artículos - solo si está seleccionado */}
-                          {r.comps?.packaging && (
-                            <div className="bg-green-400 text-black text-xs font-medium px-3 py-1 rounded-full">
-                              {r.qty.toLocaleString()} artículos
+                        {/* Empaque Optimizado */}
+                        <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
+                          <div className="space-y-2">
+                            {/* Precio por unidad - siempre visible */}
+                            <div className="text-xs text-muted-foreground">
+                              {content.currencySymbol}{((variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100)).toFixed(3)} por unidad
                             </div>
-                          )}
-                          
-                          {/* Selector */}
-                          <div className="flex justify-center">
-                            {r.comps?.packaging ? (
-                              <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "packaging")}>
-                                <span className="text-xs">✓</span>
+                            
+                            {/* Número de artículos - solo si está seleccionado */}
+                            {r.comps?.packaging && (
+                              <div className="bg-green-400 text-black text-xs font-medium px-3 py-1 rounded-full">
+                                {r.qty.toLocaleString()} artículos
                               </div>
-                            ) : (
-                              <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "packaging")}>
+                            )}
+                            
+                            {/* Selector */}
+                            <div className="flex justify-center">
+                              {r.comps?.packaging ? (
+                                <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "packaging")}>
+                                  <span className="text-xs">✓</span>
+                                </div>
+                              ) : (
+                                <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "packaging")}>
+                                </div>
+                              )}
+                            </div>
+                            
+                            {/* Total - solo si está seleccionado */}
+                            {r.comps?.packaging && (
+                              <div className="text-xs font-medium text-muted-foreground">
+                                TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100).toFixed(2)}
                               </div>
                             )}
                           </div>
-                          
-                          {/* Total - solo si está seleccionado */}
-                          {r.comps?.packaging && (
-                            <div className="text-xs font-medium text-muted-foreground">
-                              TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100).toFixed(2)}
-                            </div>
-                          )}
-                        </div>
-                      </td>
+                        </td>
 
-                      <td className="px-2 py-3 text-center">
-                        <div className="text-sm font-semibold">{content.currencySymbol}{rowTotal(r).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                      </td>
-                    </div>
-                         </div>
-                       </td>
-                     </tr>
-                   );
+                        {/* Total */}
+                        <td className="px-2 py-3 text-center w-[80px]">
+                          <div className="text-sm font-semibold">{content.currencySymbol}{rowTotal(r).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                        </td>
+                      </tr>
+                    );
                 })}
               </tbody>
             </table>
