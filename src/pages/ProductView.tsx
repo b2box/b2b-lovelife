@@ -708,6 +708,175 @@ const ProductView = () => {
               </div>
             </article>
           </div>
+
+          {/* Detalles técnicos - movido aquí */}
+          <div className="mt-8">
+            <h2 className="text-xl font-semibold mb-6">Detalles técnicos</h2>
+            <div className="bg-white rounded-lg p-6">
+              {(() => {
+                const selectedVariant = variants.find(v => v.id === selectedVariantId) || variants[0];
+                if (!selectedVariant) return <p className="text-muted-foreground">No hay datos disponibles</p>;
+                
+                const categories = product ? products.find(p => p.id === product.id)?.categories || [] : [];
+                const mainCategory = categories[0];
+                const subCategory = categories[1];
+                
+                return (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {/* Columna 1: Producto */}
+                    <div className="space-y-6">
+                      <div className="flex items-center gap-3 mb-6">
+                        <Package className="size-5 text-coral" />
+                        <h3 className="text-lg font-semibold">Producto</h3>
+                      </div>
+                      
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3">
+                          <Hash className="size-4 text-coral" />
+                          <div>
+                            <div className="text-gray-400 text-sm">Código PA</div>
+                            <div className="text-black font-medium">{selectedVariant.sku || "—"}</div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-3">
+                          <Box className="size-4 text-coral" />
+                          <div>
+                            <div className="text-gray-400 text-sm">Categoría</div>
+                            <div className="text-black font-medium">{mainCategory?.name || "—"}</div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-3">
+                          <Box className="size-4 text-coral" />
+                          <div>
+                            <div className="text-gray-400 text-sm">Subcategoría</div>
+                            <div className="text-black font-medium">{subCategory?.name || "—"}</div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-3">
+                          <Package className="size-4 text-coral" />
+                          <div>
+                            <div className="text-gray-400 text-sm">Material</div>
+                            <div className="text-black font-medium">Plástico</div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-3">
+                          <Battery className="size-4 text-coral" />
+                          <div>
+                            <div className="text-gray-400 text-sm">¿Contiene batería?</div>
+                            <div className="text-black font-medium">{selectedVariant.has_battery ? "Sí" : "No"}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Columna 2: Detalles caja */}
+                    <div className="space-y-6">
+                      <div className="flex items-center gap-3 mb-6">
+                        <Package className="size-5 text-coral" />
+                        <h3 className="text-lg font-semibold">Detalles caja</h3>
+                      </div>
+                      
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3">
+                          <ArrowLeftRight className="size-4 text-coral" />
+                          <div>
+                            <div className="text-gray-400 text-sm">Ancho de la caja</div>
+                            <div className="text-black font-medium">
+                              {selectedVariant.box_width_cm ? `${selectedVariant.box_width_cm} cm` : "—"}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-3">
+                          <ArrowUpDown className="size-4 text-coral" />
+                          <div>
+                            <div className="text-gray-400 text-sm">Largo de la caja</div>
+                            <div className="text-black font-medium">
+                              {selectedVariant.box_length_cm ? `${selectedVariant.box_length_cm} cm` : "—"}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-3">
+                          <ArrowUpDown className="size-4 text-coral rotate-90" />
+                          <div>
+                            <div className="text-gray-400 text-sm">Alto de la caja</div>
+                            <div className="text-black font-medium">
+                              {selectedVariant.box_height_cm ? `${selectedVariant.box_height_cm} cm` : "—"}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-3">
+                          <Scale className="size-4 text-coral" />
+                          <div>
+                            <div className="text-gray-400 text-sm">Peso de la caja</div>
+                            <div className="text-black font-medium">
+                              {selectedVariant.box_weight_kg ? `${selectedVariant.box_weight_kg} kg` : "—"}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Columna 3: Detalles producto */}
+                    <div className="space-y-6">
+                      <div className="flex items-center gap-3 mb-6">
+                        <Package className="size-5 text-coral" />
+                        <h3 className="text-lg font-semibold">Detalles producto</h3>
+                      </div>
+                      
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3">
+                          <ArrowLeftRight className="size-4 text-coral" />
+                          <div>
+                            <div className="text-gray-400 text-sm">Ancho del producto</div>
+                            <div className="text-black font-medium">
+                              {selectedVariant.width_cm ? `${selectedVariant.width_cm} cm` : "—"}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-3">
+                          <ArrowUpDown className="size-4 text-coral" />
+                          <div>
+                            <div className="text-gray-400 text-sm">Largo del producto</div>
+                            <div className="text-black font-medium">
+                              {selectedVariant.length_cm ? `${selectedVariant.length_cm} cm` : "—"}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-3">
+                          <ArrowUpDown className="size-4 text-coral rotate-90" />
+                          <div>
+                            <div className="text-gray-400 text-sm">Alto del producto</div>
+                            <div className="text-black font-medium">
+                              {selectedVariant.height_cm ? `${selectedVariant.height_cm} cm` : "—"}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-3">
+                          <Scale className="size-4 text-coral" />
+                          <div>
+                            <div className="text-gray-400 text-sm">Peso del producto</div>
+                            <div className="text-black font-medium">
+                              {selectedVariant.weight_kg ? `${selectedVariant.weight_kg} kg` : "—"}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
         </section>
 
         {/* Detalles técnicos */}
