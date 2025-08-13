@@ -685,47 +685,29 @@ const ProductView = () => {
         <section className="mt-8 md:w-3/4">
           <h2 className="text-xl font-semibold mb-3">Variantes</h2>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border-separate border-spacing-0">
-              <thead>
-                <tr style={{ backgroundColor: '#f5f5f5' }}>
-                  <th className="text-left px-3 py-3 font-medium w-[200px] rounded-tl-2xl" style={{ color: '#898989' }}>{content.tableHeaders.product}</th>
-                  <th className="text-center px-2 py-3 font-medium w-[80px]" style={{ color: '#898989' }}>{content.tableHeaders.units}</th>
-                  <th className="text-center px-2 py-3 font-medium w-[90px] relative" style={{ color: '#898989' }}>
-                    <div className="flex flex-col items-center gap-1">
-                      <span>Precio</span>
-                      <span>Unitario</span>
-                    </div>
-                    <HoverCard>
-                      <HoverCardTrigger asChild>
-                        <button className="absolute top-1 right-1 w-4 h-4 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-[10px] text-gray-600">
-                          ?
-                        </button>
-                      </HoverCardTrigger>
-                      <HoverCardContent className="w-64">
-                        <div className="space-y-2">
-                          <h4 className="text-sm font-semibold">Precio Unitario</h4>
-                          <p className="text-xs text-muted-foreground">
-                            El precio por unidad varía según el nivel de precios seleccionado (inicial, mayorista o distribuidor).
-                          </p>
-                        </div>
-                      </HoverCardContent>
-                    </HoverCard>
-                  </th>
-                  <th className="text-center px-2 py-3 font-medium bg-brand-blue text-white" colSpan={4}>
-                    <div className="flex items-center justify-center gap-2">
-                      <span>Complementos</span>
-                    </div>
-                  </th>
-                  <th className="text-center px-2 py-3 font-medium w-[80px] rounded-tr-2xl" style={{ color: '#898989' }}>Precio</th>
-                </tr>
-                <tr style={{ backgroundColor: '#f5f5f5' }}>
-                  <th className="px-3 py-2"></th>
-                  <th className="px-2 py-2"></th>
-                  <th className="px-2 py-2"></th>
-                   <th className="text-center px-2 py-2 font-medium w-[110px] relative">
+             <table className="w-full text-sm border-separate border-spacing-0">
+               <thead>
+                 {/* Primera fila del header */}
+                 <tr>
+                   <th className="px-3 py-2" style={{ backgroundColor: '#f5f5f5' }}></th>
+                   <th className="px-2 py-2" style={{ backgroundColor: '#f5f5f5' }}></th>
+                   <th className="px-2 py-2" style={{ backgroundColor: '#f5f5f5' }}></th>
+                   <th className="text-center px-2 py-3 font-medium bg-brand-blue text-white rounded-tl-2xl" colSpan={4}>
+                     <div className="flex items-center justify-center gap-2">
+                       <span>Complementos</span>
+                     </div>
+                   </th>
+                   <th className="text-center px-2 py-3 font-medium bg-brand-blue text-white rounded-tr-2xl">Precio</th>
+                 </tr>
+                 
+                 {/* Segunda fila del header */}
+                 <tr style={{ backgroundColor: '#f5f5f5' }}>
+                   <th className="text-left px-3 py-3 font-medium w-[200px]" style={{ color: '#898989' }}>{content.tableHeaders.product}</th>
+                   <th className="text-center px-2 py-3 font-medium w-[80px]" style={{ color: '#898989' }}>{content.tableHeaders.units}</th>
+                   <th className="text-center px-2 py-3 font-medium w-[90px] relative" style={{ color: '#898989' }}>
                      <div className="flex flex-col items-center gap-1">
-                       <span className="text-[10px]">Etiquetado para</span>
-                       <span className="text-[10px]">Marketplaces</span>
+                       <span>Precio</span>
+                       <span>Unitario</span>
                      </div>
                      <HoverCard>
                        <HoverCardTrigger asChild>
@@ -735,80 +717,101 @@ const ProductView = () => {
                        </HoverCardTrigger>
                        <HoverCardContent className="w-64">
                          <div className="space-y-2">
-                           <h4 className="text-sm font-semibold">Etiquetado para Marketplaces</h4>
+                           <h4 className="text-sm font-semibold">Precio Unitario</h4>
                            <p className="text-xs text-muted-foreground">
-                             Servicio de etiquetado especializado para cumplir con los requisitos de los principales marketplaces. Incluye códigos de barras, información de producto y etiquetas de calidad.
+                             El precio por unidad varía según el nivel de precios seleccionado (inicial, mayorista o distribuidor).
                            </p>
                          </div>
                        </HoverCardContent>
                      </HoverCard>
                    </th>
-                   <th className="text-center px-2 py-2 font-medium w-[110px] relative">
-                     <div className="flex flex-col items-center gap-1">
-                       <span className="text-[10px]">Registro de</span>
-                       <span className="text-[10px]">Código de Barras</span>
-                     </div>
-                     <HoverCard>
-                       <HoverCardTrigger asChild>
-                         <button className="absolute top-1 right-1 w-4 h-4 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-[10px] text-gray-600">
-                           ?
-                         </button>
-                       </HoverCardTrigger>
-                       <HoverCardContent className="w-64">
-                         <div className="space-y-2">
-                           <h4 className="text-sm font-semibold">Registro de Código de Barras</h4>
-                           <p className="text-xs text-muted-foreground">
-                             Registro oficial de códigos de barras UPC/EAN para su producto. Necesario para vender en tiendas físicas y algunos marketplaces.
-                           </p>
-                         </div>
-                       </HoverCardContent>
-                     </HoverCard>
-                   </th>
-                   <th className="text-center px-2 py-2 font-medium w-[110px] relative">
-                     <div className="flex flex-col items-center gap-1">
-                       <span className="text-[10px]">Fotografías</span>
-                       <span className="text-[10px]">Comerciales</span>
-                     </div>
-                     <HoverCard>
-                       <HoverCardTrigger asChild>
-                         <button className="absolute top-1 right-1 w-4 h-4 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-[10px] text-gray-600">
-                           ?
-                         </button>
-                       </HoverCardTrigger>
-                       <HoverCardContent className="w-64">
-                         <div className="space-y-2">
-                           <h4 className="text-sm font-semibold">Fotografías Comerciales</h4>
-                           <p className="text-xs text-muted-foreground">
-                             Sesión fotográfica profesional de sus productos con fondo blanco y ángulos optimizados para e-commerce y marketplaces.
-                           </p>
-                         </div>
-                       </HoverCardContent>
-                     </HoverCard>
-                   </th>
-                   <th className="text-center px-2 py-2 font-medium w-[110px] relative">
-                     <div className="flex flex-col items-center gap-1">
-                       <span className="text-[10px]">Empaque</span>
-                       <span className="text-[10px]">Optimizado</span>
-                     </div>
-                     <HoverCard>
-                       <HoverCardTrigger asChild>
-                         <button className="absolute top-1 right-1 w-4 h-4 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-[10px] text-gray-600">
-                           ?
-                         </button>
-                       </HoverCardTrigger>
-                       <HoverCardContent className="w-64">
-                         <div className="space-y-2">
-                           <h4 className="text-sm font-semibold">Empaque Optimizado</h4>
-                           <p className="text-xs text-muted-foreground">
-                             Diseño y optimización del empaque para reducir costos de envío, mejorar la protección del producto y cumplir con estándares de e-commerce.
-                           </p>
-                         </div>
-                       </HoverCardContent>
-                     </HoverCard>
-                   </th>
-                  <th className="text-center px-2 py-2 font-medium w-[80px]">Total</th>
-                </tr>
-              </thead>
+                    <th className="text-center px-2 py-2 font-medium w-[110px] relative bg-brand-blue text-white">
+                      <div className="flex flex-col items-center gap-1">
+                        <span className="text-[10px]">Etiquetado para</span>
+                        <span className="text-[10px]">Marketplaces</span>
+                      </div>
+                      <HoverCard>
+                        <HoverCardTrigger asChild>
+                          <button className="absolute top-1 right-1 w-4 h-4 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-[10px] text-white">
+                            ?
+                          </button>
+                        </HoverCardTrigger>
+                        <HoverCardContent className="w-64">
+                          <div className="space-y-2">
+                            <h4 className="text-sm font-semibold">Etiquetado para Marketplaces</h4>
+                            <p className="text-xs text-muted-foreground">
+                              Servicio de etiquetado especializado para cumplir con los requisitos de los principales marketplaces. Incluye códigos de barras, información de producto y etiquetas de calidad.
+                            </p>
+                          </div>
+                        </HoverCardContent>
+                      </HoverCard>
+                    </th>
+                    <th className="text-center px-2 py-2 font-medium w-[110px] relative bg-brand-blue text-white">
+                      <div className="flex flex-col items-center gap-1">
+                        <span className="text-[10px]">Registro de</span>
+                        <span className="text-[10px]">Código de Barras</span>
+                      </div>
+                      <HoverCard>
+                        <HoverCardTrigger asChild>
+                          <button className="absolute top-1 right-1 w-4 h-4 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-[10px] text-white">
+                            ?
+                          </button>
+                        </HoverCardTrigger>
+                        <HoverCardContent className="w-64">
+                          <div className="space-y-2">
+                            <h4 className="text-sm font-semibold">Registro de Código de Barras</h4>
+                            <p className="text-xs text-muted-foreground">
+                              Registro oficial de códigos de barras UPC/EAN para su producto. Necesario para vender en tiendas físicas y algunos marketplaces.
+                            </p>
+                          </div>
+                        </HoverCardContent>
+                      </HoverCard>
+                    </th>
+                    <th className="text-center px-2 py-2 font-medium w-[110px] relative bg-brand-blue text-white">
+                      <div className="flex flex-col items-center gap-1">
+                        <span className="text-[10px]">Fotografías</span>
+                        <span className="text-[10px]">Comerciales</span>
+                      </div>
+                      <HoverCard>
+                        <HoverCardTrigger asChild>
+                          <button className="absolute top-1 right-1 w-4 h-4 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-[10px] text-white">
+                            ?
+                          </button>
+                        </HoverCardTrigger>
+                        <HoverCardContent className="w-64">
+                          <div className="space-y-2">
+                            <h4 className="text-sm font-semibold">Fotografías Comerciales</h4>
+                            <p className="text-xs text-muted-foreground">
+                              Sesión fotográfica profesional de sus productos con fondo blanco y ángulos optimizados para e-commerce y marketplaces.
+                            </p>
+                          </div>
+                        </HoverCardContent>
+                      </HoverCard>
+                    </th>
+                    <th className="text-center px-2 py-2 font-medium w-[110px] relative bg-brand-blue text-white">
+                      <div className="flex flex-col items-center gap-1">
+                        <span className="text-[10px]">Empaque</span>
+                        <span className="text-[10px]">Optimizado</span>
+                      </div>
+                      <HoverCard>
+                        <HoverCardTrigger asChild>
+                          <button className="absolute top-1 right-1 w-4 h-4 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-[10px] text-white">
+                            ?
+                          </button>
+                        </HoverCardTrigger>
+                        <HoverCardContent className="w-64">
+                          <div className="space-y-2">
+                            <h4 className="text-sm font-semibold">Empaque Optimizado</h4>
+                            <p className="text-xs text-muted-foreground">
+                              Diseño y optimización del empaque para reducir costos de envío, mejorar la protección del producto y cumplir con estándares de e-commerce.
+                            </p>
+                          </div>
+                        </HoverCardContent>
+                      </HoverCard>
+                    </th>
+                   <th className="text-center px-2 py-2 font-medium w-[80px] bg-brand-blue text-white">Total</th>
+                 </tr>
+               </thead>
               <tbody>
                 {rows.length > 0 && rows.map((r) => {
                   if (!r || !r.variant) return null;
