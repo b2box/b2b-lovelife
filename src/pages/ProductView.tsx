@@ -467,13 +467,13 @@ const ProductView = () => {
                 </div>
 
                 {/* Tarjetas de features */}
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-2">
                   {/* Método de envío */}
                   <HoverCard>
                     <HoverCardTrigger asChild>
                       <div className="relative w-[80px] h-[80px] rounded-[20px] border border-[#E5E7EB] bg-white p-3 cursor-default flex flex-col items-center justify-center text-center opacity-60">
                         <img src="/lovable-uploads/bcaad47c-1390-4a6e-a192-4c5279337cf3.png" alt="Método de envío" className="h-6 w-auto mb-2" loading="lazy" />
-                        <span className="text-[14px] text-[#6B7280] leading-tight">Método de envío</span>
+                        <span className="text-[12px] text-[#6B7280] leading-tight">Método de envío</span>
                         <div className="absolute top-2 right-2 w-4 h-4 bg-[#6B7280] text-white rounded-full flex items-center justify-center text-[10px] font-bold">?</div>
                       </div>
                     </HoverCardTrigger>
@@ -487,7 +487,7 @@ const ProductView = () => {
                     <HoverCardTrigger asChild>
                       <div className="relative w-[80px] h-[80px] rounded-[20px] border border-[#E5E7EB] bg-white p-3 cursor-default flex flex-col items-center justify-center text-center opacity-60">
                         <img src="/lovable-uploads/e176248e-ec33-4374-8df2-39c6d1d81194.png" alt="Personalizar producto" className="h-6 w-auto mb-2" loading="lazy" />
-                        <span className="text-[14px] text-[#6B7280] leading-tight">Personalizar producto</span>
+                        <span className="text-[12px] text-[#6B7280] leading-tight">Personalizar producto</span>
                         <div className="absolute top-2 right-2 w-4 h-4 bg-[#6B7280] text-white rounded-full flex items-center justify-center text-[10px] font-bold">?</div>
                       </div>
                     </HoverCardTrigger>
@@ -501,7 +501,7 @@ const ProductView = () => {
                     <HoverCardTrigger asChild>
                       <div className="relative w-[80px] h-[80px] rounded-[20px] border border-[#E5E7EB] bg-white p-3 cursor-default flex flex-col items-center justify-center text-center opacity-60">
                         <img src="/lovable-uploads/6a45e477-73d7-45a9-9eda-470e2c37a6cb.png" alt="Precios sin sorpresas" className="h-6 w-auto mb-2" loading="lazy" />
-                        <span className="text-[14px] text-[#6B7280] leading-tight">Precios sin sorpresas</span>
+                        <span className="text-[12px] text-[#6B7280] leading-tight">Precios sin sorpresas</span>
                         <div className="absolute top-2 right-2 w-4 h-4 bg-[#6B7280] text-white rounded-full flex items-center justify-center text-[10px] font-bold">?</div>
                       </div>
                     </HoverCardTrigger>
