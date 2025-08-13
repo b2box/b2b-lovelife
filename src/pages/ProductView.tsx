@@ -1242,7 +1242,7 @@ const ProductView = () => {
         {/* Columna derecha: 25% */}
         <aside className="w-1/4 flex-shrink-0">
           <div className="sticky top-[113px]">
-            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div className="bg-white border border-gray-200 rounded-lg pt-6 pr-6 pb-6 pl-0 shadow-sm">
               {/* Encabezado con check verde */}
               <div className="flex items-center justify-between mb-4">
                 <span className="text-[22px] font-semibold text-[#0A0A0A]">Orden mínima $100</span>
