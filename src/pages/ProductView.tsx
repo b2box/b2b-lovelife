@@ -597,7 +597,7 @@ const ProductView = () => {
 
 
         {/* Variantes */}
-        <section className="mt-8 md:w-3/4">
+        <section className="mt-8 w-full">
           <h2 className="text-xl font-semibold mb-3">Variantes</h2>
           <div className="overflow-x-auto">
              <table className="w-full text-sm border-separate border-spacing-0">
