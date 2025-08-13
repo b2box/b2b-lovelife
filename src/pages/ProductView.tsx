@@ -790,8 +790,11 @@ const ProductView = () => {
                               onClick={() => {
                                 try {
                                   // Use tier inicial min_qty for this specific variant
+                                  console.log('Decrease - Variant priceTiers:', priceTiers);
                                   const inicialTier = priceTiers.find((tier: any) => tier?.tier === "inicial");
+                                  console.log('Decrease - Found inicial tier:', inicialTier);
                                   const variantMinQty = inicialTier?.min_qty || 1;
+                                  console.log('Decrease - Using minQty:', variantMinQty);
                                   changeQty(r.id, -variantMinQty);
                                 } catch (error) {
                                   console.error('Decrease button error:', error);
@@ -808,8 +811,11 @@ const ProductView = () => {
                               onClick={() => {
                                 try {
                                   // Use tier inicial min_qty for this specific variant
+                                  console.log('Increase - Variant priceTiers:', priceTiers);
                                   const inicialTier = priceTiers.find((tier: any) => tier?.tier === "inicial");
+                                  console.log('Increase - Found inicial tier:', inicialTier);
                                   const variantMinQty = inicialTier?.min_qty || 1;
+                                  console.log('Increase - Using minQty:', variantMinQty);
                                   changeQty(r.id, variantMinQty);
                                 } catch (error) {
                                   console.error('Increase button error:', error);
