@@ -735,7 +735,7 @@ const ProductView = () => {
                       </td>
 
                       <td className="px-2 py-3 text-center">
-                        <div className="text-sm font-semibold">{content.currencySymbol}{rowTotal(r).toFixed(2)}</div>
+                        <div className="text-sm font-semibold">{content.currencySymbol}{rowTotal(r).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                       </td>
                     </tr>
                   );
