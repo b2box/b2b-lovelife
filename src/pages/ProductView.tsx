@@ -772,39 +772,39 @@ const ProductView = () => {
               </tbody>
             </table>
           </div>
-          <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4">
-              <span className="inline-flex items-center justify-center size-10 rounded-xl bg-muted text-muted-foreground" aria-hidden="true">
+          <div className="mt-6 grid grid-cols-2 gap-4">
+            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 aspect-square min-h-[120px]">
+              <span className="inline-flex items-center justify-center size-10 rounded-xl bg-muted text-muted-foreground flex-shrink-0" aria-hidden="true">
                 <Cog className="size-5" />
               </span>
-              <div>
+              <div className="flex-1">
                 <h3 className="font-semibold">{content.features.customization.title}</h3>
                 <p className="text-sm text-muted-foreground">{content.features.customization.description}</p>
               </div>
             </article>
-            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4">
-              <span className="inline-flex items-center justify-center size-10 rounded-xl bg-muted text-muted-foreground" aria-hidden="true">
+            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 aspect-square min-h-[120px]">
+              <span className="inline-flex items-center justify-center size-10 rounded-xl bg-muted text-muted-foreground flex-shrink-0" aria-hidden="true">
                 <Cog className="size-5" />
               </span>
-              <div>
+              <div className="flex-1">
                 <h3 className="font-semibold">{content.features.shipping.title}</h3>
                 <p className="text-sm text-muted-foreground">{content.features.shipping.description}</p>
               </div>
             </article>
-            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4">
-              <span className="inline-flex items-center justify-center size-10 rounded-xl bg-muted text-muted-foreground" aria-hidden="true">
+            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 aspect-square min-h-[120px]">
+              <span className="inline-flex items-center justify-center size-10 rounded-xl bg-muted text-muted-foreground flex-shrink-0" aria-hidden="true">
                 <Cog className="size-5" />
               </span>
-              <div>
+              <div className="flex-1">
                 <h3 className="font-semibold">{content.features.payment.title}</h3>
                 <p className="text-sm text-muted-foreground">{content.features.payment.description}</p>
               </div>
             </article>
-            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4">
-              <span className="inline-flex items-center justify-center size-10 rounded-xl bg-muted text-muted-foreground" aria-hidden="true">
+            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 aspect-square min-h-[120px]">
+              <span className="inline-flex items-center justify-center size-10 rounded-xl bg-muted text-muted-foreground flex-shrink-0" aria-hidden="true">
                 <Cog className="size-5" />
               </span>
-              <div>
+              <div className="flex-1">
                 <h3 className="font-semibold">{content.features.quality.title}</h3>
                 <p className="text-sm text-muted-foreground">{content.features.quality.description}</p>
               </div>
