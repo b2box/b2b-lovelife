@@ -665,7 +665,7 @@ const ProductView = () => {
                               {r.qty.toLocaleString()} artículos
                             </div>
                             <div className="text-xs text-muted-foreground">
-                              {content.currencySymbol}{((variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100)).toFixed(3)} PU
+                              {content.currencySymbol}{((variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100)).toFixed(3)} por unidad
                             </div>
                             <div className="text-xs font-medium">
                               TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100).toFixed(2)}
@@ -722,7 +722,7 @@ const ProductView = () => {
                               {r.qty.toLocaleString()} artículos
                             </div>
                             <div className="text-xs text-muted-foreground">
-                              {content.currencySymbol}{((variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100)).toFixed(3)} PU
+                              {content.currencySymbol}{((variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100)).toFixed(3)} por unidad
                             </div>
                             <div className="text-xs font-medium">
                               TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100).toFixed(2)}
