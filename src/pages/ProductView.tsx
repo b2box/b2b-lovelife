@@ -885,7 +885,7 @@ const ProductView = () => {
           {/* Detalles técnicos - movido aquí */}
           <div className="mt-8 md:w-3/4">
             <h2 className="text-xl font-semibold mb-6">Detalles técnicos</h2>
-            <div className="bg-white rounded-lg p-6">
+            <div className="bg-white rounded-lg p-6 border">
               {(() => {
                 const selectedVariant = variants.find(v => v.id === selectedVariantId) || variants[0];
                 if (!selectedVariant) return <p className="text-muted-foreground">No hay datos disponibles</p>;
