@@ -876,7 +876,7 @@ const ProductView = () => {
         </section>
 
         {/* Imágenes */}
-        <section className="mt-8">
+        <section className="mt-8 w-4/5">
           <h2 className="text-xl font-semibold mb-3">Imágenes</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {(() => {
