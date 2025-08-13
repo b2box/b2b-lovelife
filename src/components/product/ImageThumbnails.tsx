@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 
 interface ImageThumbnailsProps {
   variants: any[];
@@ -8,17 +8,23 @@ interface ImageThumbnailsProps {
 }
 
 const ImageThumbnails = memo(({ variants, product, selectedImageIndex, onImageIndexChange }: ImageThumbnailsProps) => {
-  // Collect all images from all variants with variant info
-  const allImages = variants.flatMap(variant => 
-    (variant as any).product_variant_images?.map((img: any) => ({
-      ...img,
-      variantName: variant.name || product.name,
-      variantId: variant.id
-    })) || []
-  ).sort((a, b) => a.sort_order - b.sort_order);
+  // Collect all images from all variants with error handling
+  const allImages = useMemo(() => {
+    if (!variants?.length) return [];
+    
+    return variants.flatMap(variant => 
+      (variant as any)?.product_variant_images?.map((img: any) => ({
+        ...img,
+        variantName: variant?.name || product?.name || "Producto",
+        variantId: variant?.id
+      })) || []
+    ).sort((a, b) => (a?.sort_order || 0) - (b?.sort_order || 0));
+  }, [variants, product?.name]);
   
   // Calculate which images to show based on selected index
   const { displayImages, startIndex } = useMemo(() => {
+    if (!allImages.length) return { displayImages: [], startIndex: 0 };
+    
     const maxThumbnails = 5;
     let start = 0;
     
@@ -37,6 +43,16 @@ const ImageThumbnails = memo(({ variants, product, selectedImageIndex, onImageIn
   
   const remainingCount = Math.max(0, allImages.length - (startIndex + displayImages.length));
 
+  const handleImageClick = useCallback((actualIndex: number) => {
+    if (actualIndex >= 0 && actualIndex < allImages.length) {
+      onImageIndexChange(actualIndex);
+    }
+  }, [allImages.length, onImageIndexChange]);
+
+  if (!displayImages.length) {
+    return null;
+  }
+
   return (
     <div className="flex items-center gap-2 justify-between w-full max-w-full">
       {displayImages.map((image, i) => {
@@ -45,20 +61,27 @@ const ImageThumbnails = memo(({ variants, product, selectedImageIndex, onImageIn
         
         return (
           <button
-            key={`${image.variantId}-${image.id}`}
+            key={`${image?.variantId}-${image?.id}-${actualIndex}`}
             className={`relative flex-1 aspect-square max-w-[calc(20%-0.5rem)] overflow-hidden rounded-lg transition-all ${
               isSelected 
                 ? 'ring-2 ring-primary ring-offset-2 ring-offset-background scale-105 z-10' 
                 : 'ring-1 ring-border hover:ring-primary/50'
             }`}
-            onClick={() => onImageIndexChange(actualIndex)}
-            aria-label={`Ver imagen ${actualIndex + 1} de ${image.variantName}`}
+            onClick={() => handleImageClick(actualIndex)}
+            aria-label={`Ver imagen ${actualIndex + 1} de ${image?.variantName || 'producto'}`}
+            type="button"
           >
             <img 
-              src={image.url} 
-              alt={image.alt || `${image.variantName} imagen ${actualIndex + 1}`} 
+              src={image?.url || "/placeholder.svg"} 
+              alt={image?.alt || `${image?.variantName || 'producto'} imagen ${actualIndex + 1}`} 
               className="w-full h-full object-cover" 
-              loading="lazy" 
+              loading="lazy"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                if (target.src !== "/placeholder.svg") {
+                  target.src = "/placeholder.svg";
+                }
+              }}
             />
             {/* +X indicator for extra images on the last thumbnail */}
             {i === displayImages.length - 1 && remainingCount > 0 && (

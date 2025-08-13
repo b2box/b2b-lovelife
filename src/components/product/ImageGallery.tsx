@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ImageGalleryProps {
@@ -9,49 +9,61 @@ interface ImageGalleryProps {
 }
 
 const ImageGallery = memo(({ variants, product, selectedImageIndex, onImageIndexChange }: ImageGalleryProps) => {
-  // Collect all images from all variants
-  const allImages = variants.flatMap(variant => 
-    (variant as any).product_variant_images?.map((img: any) => ({
+  // Collect all images from all variants with error handling
+  const allImages = variants?.flatMap(variant => 
+    (variant as any)?.product_variant_images?.map((img: any) => ({
       ...img,
-      variantName: variant.name || product.name,
-      variantId: variant.id
+      variantName: variant?.name || product?.name || "Producto",
+      variantId: variant?.id
     })) || []
-  ).sort((a, b) => a.sort_order - b.sort_order);
+  ).sort((a, b) => (a?.sort_order || 0) - (b?.sort_order || 0)) || [];
   
   const currentImage = allImages[selectedImageIndex];
-  const displayImage = currentImage?.url || product.image;
-  const imageCount = allImages.length;
+  const displayImage = currentImage?.url || product?.image || "/placeholder.svg";
+  const imageCount = allImages.length || 0;
 
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
+    if (imageCount <= 1) return;
     const newIndex = selectedImageIndex > 0 ? selectedImageIndex - 1 : imageCount - 1;
     onImageIndexChange(newIndex);
-  };
+  }, [selectedImageIndex, imageCount, onImageIndexChange]);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
+    if (imageCount <= 1) return;
     const newIndex = (selectedImageIndex + 1) % imageCount;
     onImageIndexChange(newIndex);
-  };
+  }, [selectedImageIndex, imageCount, onImageIndexChange]);
 
   return (
     <>
       <img
         src={displayImage}
-        alt={currentImage?.alt || product.name}
+        alt={currentImage?.alt || product?.name || "Producto"}
         className="absolute inset-0 h-full w-full object-contain"
         loading="lazy"
+        onError={(e) => {
+          const target = e.target as HTMLImageElement;
+          if (target.src !== "/placeholder.svg") {
+            target.src = "/placeholder.svg";
+          }
+        }}
       />
       {/* Viral badge */}
-      {product.viral && (
+      {product?.viral && (
         <img
           src="/lovable-uploads/984b614e-1f6b-484a-8b88-5c741374625b.png"
           alt="Viral ahora"
           className="absolute left-3 top-3 h-8 w-auto select-none"
           loading="lazy"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.style.display = 'none';
+          }}
         />
       )}
       {/* Contador */}
       <span className="absolute top-3 right-3 rounded-full bg-black/50 text-white text-xs px-2 py-1">
-        {selectedImageIndex + 1} de {imageCount || 1}
+        {Math.max(1, selectedImageIndex + 1)} de {Math.max(1, imageCount)}
       </span>
       {/* Variant indicator */}
       {currentImage && (
@@ -66,6 +78,7 @@ const ImageGallery = memo(({ variants, product, selectedImageIndex, onImageIndex
             className="absolute left-3 top-1/2 -translate-y-1/2 grid size-10 place-items-center rounded-full bg-black/40 text-white hover:bg-black/60 transition-colors" 
             aria-label="Imagen anterior"
             onClick={handlePrevious}
+            type="button"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -73,6 +86,7 @@ const ImageGallery = memo(({ variants, product, selectedImageIndex, onImageIndex
             className="absolute right-3 top-1/2 -translate-y-1/2 grid size-10 place-items-center rounded-full bg-black/40 text-white hover:bg-black/60 transition-colors" 
             aria-label="Siguiente imagen"
             onClick={handleNext}
+            type="button"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
