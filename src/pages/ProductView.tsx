@@ -84,73 +84,54 @@ const ProductView = () => {
   // Handler for variant selection - changes prices, quantities and image
   const handleVariantSelection = useCallback((variantId: string) => {
     try {
-      console.log('=== VARIANT SELECTION START ===');
-      console.log('Selected variant ID:', variantId);
-      console.log('Current selectedTier:', selectedTier);
-      console.log('Market:', market);
-      console.log('Variants array:', variants);
-      
       setSelectedVariantId(variantId);
       
       // Update quantities for all rows based on selected variant
-      setRows(prev => {
-        console.log('Current rows before update:', prev);
+      setRows(prev => prev.map(row => {
+        if (row.id === variantId) {
+          // Find the price tier for current tier with safe fallbacks
+          const targetCurrency = market === "CO" ? "COP" : "USD";
+          const priceTiers = (row.variant as any)?.variant_price_tiers || [];
+          
+          const priceTier = priceTiers.find((tier: any) => 
+            tier?.tier === selectedTier && tier?.currency === targetCurrency
+          );
+          
+          const minQty = priceTier?.min_qty || 1;
+          return { ...row, qty: minQty };
+        }
+        return row;
+      }));
+      
+      // Update image selection safely
+      if (variants && Array.isArray(variants) && variants.length > 0) {
+        const allImages: any[] = [];
         
-        const updatedRows = prev.map(row => {
-          if (row.id === variantId) {
-            console.log('Updating row for variant:', row.variant);
-            
-            // Find the price tier for current tier with USD/COP currency for min_qty (safer approach)
-            const targetCurrency = market === "CO" ? "COP" : "USD";
-            console.log('Target currency:', targetCurrency);
-            
-            const priceTiers = (row.variant as any).variant_price_tiers;
-            console.log('Available price tiers:', priceTiers);
-            
-            const priceTier = priceTiers?.find((tier: any) => 
-              tier.tier === selectedTier && tier.currency === targetCurrency
-            );
-            console.log('Found price tier:', priceTier);
-            
-            const minQty = priceTier?.min_qty || 1;
-            console.log('Min quantity:', minQty);
-           
-           return { ...row, qty: minQty };
-         }
-         return row;
-       });
-       
-       console.log('Updated rows:', updatedRows);
-       return updatedRows;
-     });
-     
-     // Jump to first image of selected variant
-     if (variants && variants.length > 0) {
-       console.log('Processing variant images...');
-       const allImages = variants.flatMap(variant => {
-         const variantImages = (variant as any).product_variant_images;
-         console.log(`Variant ${variant.id} images:`, variantImages);
-         
-         return variantImages?.map((img: any) => ({
-           ...img,
-           variantId: variant.id
-         })) || [];
-       }).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
-       
-       console.log('All images flattened:', allImages);
-       
-       const variantImageIndex = allImages.findIndex(img => img.variantId === variantId);
-       console.log('Found variant image index:', variantImageIndex);
-       
-       if (variantImageIndex !== -1) {
-         setSelectedImageIndex(variantImageIndex);
-       }
-     }
-     
-     console.log('=== VARIANT SELECTION END ===');
+        variants.forEach(variant => {
+          const variantImages = (variant as any)?.product_variant_images;
+          if (Array.isArray(variantImages)) {
+            variantImages.forEach(img => {
+              if (img) {
+                allImages.push({
+                  ...img,
+                  variantId: variant.id,
+                  sort_order: img.sort_order || 0
+                });
+              }
+            });
+          }
+        });
+        
+        allImages.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+        
+        const variantImageIndex = allImages.findIndex(img => img?.variantId === variantId);
+        if (variantImageIndex >= 0) {
+          setSelectedImageIndex(variantImageIndex);
+        }
+      }
     } catch (error) {
-      console.error('ERROR in handleVariantSelection:', error);
-      console.error('Error stack:', error.stack);
+      console.error('Error in handleVariantSelection:', error);
+      // Don't throw, just log and continue
     }
   }, [selectedTier, variants, market]);
 
@@ -749,17 +730,22 @@ const ProductView = () => {
                 </tr>
               </thead>
               <tbody>
-                {rows.map((r) => {
-                  const variantPrice = getVariantPrice(r.variant, selectedTier);
-                  const variantImage = (r.variant as any).product_variant_images?.[0]?.url || product.image;
-                  const variantName = r.variant.name || product.name;
+                {rows.length > 0 && rows.map((r) => {
+                  if (!r || !r.variant) return null;
+                  
+                  const variantPrice = getVariantPrice(r.variant, selectedTier) || 0;
+                  const variantImages = (r.variant as any)?.product_variant_images;
+                  const variantImage = (Array.isArray(variantImages) && variantImages[0]?.url) || product?.image || "/placeholder.svg";
+                  const variantName = r.variant.name || product?.name || "Producto";
                   const variantOption = r.variant.option_name || r.variant.attributes?.color || "Estándar";
                   
-                    // Get units from price tier data with CNY currency for min_qty
-                    const priceTier = (r.variant as any).variant_price_tiers?.find((tier: any) => 
-                      tier.tier === selectedTier && tier.currency === "CNY"
-                    );
-                    const minQty = priceTier?.min_qty || 1;
+                  // Get units from price tier data with USD currency for min_qty
+                  const targetCurrency = market === "CO" ? "COP" : "USD";
+                  const priceTiers = (r.variant as any)?.variant_price_tiers || [];
+                  const priceTier = priceTiers.find((tier: any) => 
+                    tier?.tier === selectedTier && tier?.currency === targetCurrency
+                  );
+                  const minQty = priceTier?.min_qty || 1;
                   
                   const isSelected = selectedVariantId === r.id;
                   
@@ -773,7 +759,13 @@ const ProductView = () => {
                         borderColor: '#abff97',
                         boxShadow: '0 4px 12px rgba(171, 255, 151, 0.3)'
                       } : {}}
-                      onClick={() => handleVariantSelection(r.id)}
+                      onClick={() => {
+                        try {
+                          handleVariantSelection(r.id);
+                        } catch (error) {
+                          console.error('Click handler error:', error);
+                        }
+                      }}
                     >
                       <td className="px-3 py-3">
                         <div className="flex items-center gap-2">
@@ -792,27 +784,35 @@ const ProductView = () => {
                             <button 
                               className="px-2 py-1 text-xs" 
                               onClick={() => {
-                                // Use tier 1 (inicial) min_qty for this specific variant
-                                const inicialTier = (r.variant as any).variant_price_tiers?.find((tier: any) => 
-                                  tier.tier === "inicial" && tier.currency === "USD"
-                                );
-                                const variantMinQty = inicialTier?.min_qty || 1;
-                                changeQty(r.id, -variantMinQty);
+                                try {
+                                  // Use tier 1 (inicial) min_qty for this specific variant
+                                  const inicialTiers = priceTiers.filter((tier: any) => tier?.tier === "inicial");
+                                  const inicialTier = inicialTiers.find((tier: any) => tier?.currency === "USD") || inicialTiers[0];
+                                  const variantMinQty = inicialTier?.min_qty || 1;
+                                  changeQty(r.id, -variantMinQty);
+                                } catch (error) {
+                                  console.error('Decrease button error:', error);
+                                  changeQty(r.id, -1); // fallback
+                                }
                               }} 
                               aria-label="Disminuir"
                             >
                               -
                             </button>
-                            <span className="px-2 py-1 min-w-[40px] text-center text-xs">{r.qty}</span>
+                            <span className="px-2 py-1 min-w-[40px] text-center text-xs">{r.qty || 0}</span>
                             <button 
                               className="px-2 py-1 text-xs" 
                               onClick={() => {
-                                // Use tier 1 (inicial) min_qty for this specific variant
-                                const inicialTier = (r.variant as any).variant_price_tiers?.find((tier: any) => 
-                                  tier.tier === "inicial" && tier.currency === "USD"
-                                );
-                                const variantMinQty = inicialTier?.min_qty || 1;
-                                changeQty(r.id, variantMinQty);
+                                try {
+                                  // Use tier 1 (inicial) min_qty for this specific variant
+                                  const inicialTiers = priceTiers.filter((tier: any) => tier?.tier === "inicial");
+                                  const inicialTier = inicialTiers.find((tier: any) => tier?.currency === "USD") || inicialTiers[0];
+                                  const variantMinQty = inicialTier?.min_qty || 1;
+                                  changeQty(r.id, variantMinQty);
+                                } catch (error) {
+                                  console.error('Increase button error:', error);
+                                  changeQty(r.id, 1); // fallback
+                                }
                               }} 
                               aria-label="Aumentar"
                             >
@@ -827,7 +827,7 @@ const ProductView = () => {
 
                       {/* Etiquetado */}
                       <td className="px-2 py-3 text-center" onClick={(e) => e.stopPropagation()}>
-                        {r.comps.labeling ? (
+                        {r.comps?.labeling ? (
                           <div className="space-y-2">
                             <div className="text-xs font-medium">
                               TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100).toFixed(2)}
@@ -850,7 +850,7 @@ const ProductView = () => {
 
                       {/* Código de barras */}
                       <td className="px-2 py-3 text-center" onClick={(e) => e.stopPropagation()}>
-                        {r.comps.barcode ? (
+                        {r.comps?.barcode ? (
                           <div className="space-y-2">
                             <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "barcode")}>
                               <span className="text-xs">✓</span>
@@ -867,7 +867,7 @@ const ProductView = () => {
 
                       {/* Fotos */}
                       <td className="px-2 py-3 text-center" onClick={(e) => e.stopPropagation()}>
-                        {r.comps.photos ? (
+                        {r.comps?.photos ? (
                           <div className="space-y-2">
                             <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "photos")}>
                               <span className="text-xs">✓</span>
@@ -884,7 +884,7 @@ const ProductView = () => {
 
                       {/* Empaque */}
                       <td className="px-2 py-3 text-center" onClick={(e) => e.stopPropagation()}>
-                        {r.comps.packaging ? (
+                        {r.comps?.packaging ? (
                           <div className="space-y-2">
                             <div className="text-xs font-medium">
                               TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100).toFixed(2)}
