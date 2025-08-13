@@ -805,8 +805,14 @@ const ProductView = () => {
                                   changeQty(r.id, diff);
                                 }
                               }}
-                              className="px-2 py-1 min-w-[40px] text-center text-xs border-0 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                              min="0"
+                              className="w-12 px-1 py-1 text-center text-xs border-0 focus:outline-none focus:ring-1 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                              min={(() => {
+                                const priceTiers = (r.variant as any)?.variant_price_tiers || [];
+                                const priceTier = priceTiers.find((tier: any) => 
+                                  tier?.tier === selectedTier && tier?.currency === "CNY"
+                                );
+                                return priceTier?.min_qty || 1;
+                              })()}
                             />
                             <button 
                               className="px-2 py-1 text-xs hover:bg-gray-100" 
