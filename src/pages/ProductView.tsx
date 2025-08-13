@@ -684,13 +684,13 @@ const ProductView = () => {
         {/* Variantes */}
         <section className="mt-8 md:w-3/4">
           <h2 className="text-xl font-semibold mb-3">Variantes</h2>
-          <div className="overflow-x-auto rounded-2xl border bg-card">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border-separate border-spacing-0">
               <thead>
-                <tr className="bg-secondary/40 text-muted-foreground">
-                  <th className="text-left px-3 py-3 font-medium w-[200px]">{content.tableHeaders.product}</th>
-                  <th className="text-center px-2 py-3 font-medium w-[80px]">{content.tableHeaders.units}</th>
-                  <th className="text-center px-2 py-3 font-medium w-[90px]">
+                <tr style={{ backgroundColor: '#f5f5f5' }}>
+                  <th className="text-left px-3 py-3 font-medium w-[200px] rounded-tl-2xl" style={{ color: '#898989' }}>{content.tableHeaders.product}</th>
+                  <th className="text-center px-2 py-3 font-medium w-[80px]" style={{ color: '#898989' }}>{content.tableHeaders.units}</th>
+                  <th className="text-center px-2 py-3 font-medium w-[90px]" style={{ color: '#898989' }}>
                     <div className="flex flex-col items-center gap-1">
                       <span>Precio</span>
                       <span>Unitario</span>
@@ -701,9 +701,9 @@ const ProductView = () => {
                       <span>Complementos</span>
                     </div>
                   </th>
-                  <th className="text-center px-2 py-3 font-medium w-[80px] bg-blue-200 text-blue-900">Precio</th>
+                  <th className="text-center px-2 py-3 font-medium w-[80px] rounded-tr-2xl" style={{ color: '#898989' }}>Precio</th>
                 </tr>
-                <tr className="bg-secondary/20 text-muted-foreground border-t">
+                <tr style={{ backgroundColor: '#f5f5f5' }}>
                   <th className="px-3 py-2"></th>
                   <th className="px-2 py-2"></th>
                   <th className="px-2 py-2"></th>
@@ -754,24 +754,26 @@ const ProductView = () => {
                   
                   const isSelected = selectedVariantId === r.id;
                   
-                  return (
-                     <tr 
-                      key={r.id} 
-                       className={`border-t cursor-pointer hover:bg-muted/30 transition-colors ${
-                         isSelected ? 'bg-white border-2 rounded-3xl' : ''
-                       }`}
-                       style={isSelected ? { 
-                         borderColor: '#abff97',
-                         boxShadow: '0 4px 12px rgba(171, 255, 151, 0.3)'
-                       } : {}}
-                      onClick={() => {
-                        try {
-                          handleVariantSelection(r.id);
-                        } catch (error) {
-                          console.error('Click handler error:', error);
-                        }
-                      }}
-                    >
+                   return (
+                     <tr key={r.id}>
+                       <td colSpan={8} className="p-0">
+                         <div 
+                           className={`m-2 cursor-pointer hover:bg-muted/30 transition-all duration-200 rounded-3xl ${
+                             isSelected ? 'bg-white shadow-lg border-2' : 'border border-transparent'
+                           }`}
+                           style={isSelected ? { 
+                             borderColor: '#abff97',
+                             boxShadow: '0 4px 12px rgba(171, 255, 151, 0.3)'
+                           } : {}}
+                           onClick={() => {
+                             try {
+                               handleVariantSelection(r.id);
+                             } catch (error) {
+                               console.error('Click handler error:', error);
+                             }
+                           }}
+                         >
+                           <div className="grid grid-cols-8 gap-2 p-3 items-center">
                       <td className="px-3 py-3">
                         <div className="flex items-center gap-2">
                           <img src={variantImage} alt={variantName} className="w-10 h-10 rounded object-cover flex-shrink-0" loading="lazy" />
@@ -980,8 +982,11 @@ const ProductView = () => {
                       <td className="px-2 py-3 text-center">
                         <div className="text-sm font-semibold">{content.currencySymbol}{rowTotal(r).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                       </td>
-                    </tr>
-                  );
+                    </div>
+                         </div>
+                       </td>
+                     </tr>
+                   );
                 })}
               </tbody>
             </table>
