@@ -674,7 +674,7 @@ const ProductView = () => {
                         <div className="flex items-center justify-center">
                           <div className="inline-flex items-center border rounded">
                             <button className="px-2 py-1 text-xs" onClick={() => changeQty(r.id, -minQty)} aria-label="Disminuir">-</button>
-                            <span className="px-2 py-1 min-w-[40px] text-center text-xs">{r.qty}</span>
+                            <span className="px-2 py-1 min-w-[40px] text-center text-xs">{minQty}</span>
                             <button className="px-2 py-1 text-xs" onClick={() => changeQty(r.id, minQty)} aria-label="Aumentar">+</button>
                           </div>
                         </div>
