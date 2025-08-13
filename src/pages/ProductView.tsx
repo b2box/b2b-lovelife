@@ -879,7 +879,21 @@ const ProductView = () => {
                               </button>
                               <input
                                 type="number"
-                                value={r.qty || 0}
+                                 value={(() => {
+                                   const tierMap = {
+                                     inicial: "tier1",
+                                     mayorista: "tier2", 
+                                     distribuidor: "tier3"
+                                   } as const;
+                                   
+                                   const dbTier = tierMap[selectedTier as keyof typeof tierMap];
+                                   const priceTiers = (r.variant as any)?.variant_price_tiers || [];
+                                   const priceTier = priceTiers.find((tier: any) => 
+                                     tier?.tier === dbTier && tier?.currency === "CNY"
+                                   );
+                                   const minQty = priceTier?.min_qty || 1;
+                                   return Math.max(r.qty || 0, minQty);
+                                 })()}
                                 onChange={(e) => {
                                   const inputValue = parseInt(e.target.value) || 0;
                                   
