@@ -539,7 +539,7 @@ const ProductView = () => {
                         );
                         
                         if (inicialTier && mayoristaTier) {
-                          return `${inicialTier.min_qty} – ${mayoristaTier.min_qty - 1} unidades`;
+                          return `${inicialTier.min_qty.toLocaleString()} – ${(mayoristaTier.min_qty - 1).toLocaleString()} unidades`;
                         }
                         return content.pricingTiers.inicial.range;
                       })()}
@@ -590,7 +590,7 @@ const ProductView = () => {
                         );
                         
                         if (mayoristaTier && distribuidorTier) {
-                          return `${mayoristaTier.min_qty} – ${distribuidorTier.min_qty - 1} unidades`;
+                          return `${mayoristaTier.min_qty.toLocaleString()} – ${(distribuidorTier.min_qty - 1).toLocaleString()} unidades`;
                         }
                         return content.pricingTiers.mayorista.range;
                       })()}
@@ -638,7 +638,7 @@ const ProductView = () => {
                         );
                         
                         if (distribuidorTier) {
-                          return `+${distribuidorTier.min_qty} unidades`;
+                          return `+${distribuidorTier.min_qty.toLocaleString()} unidades`;
                         }
                         return content.pricingTiers.distribuidor.range;
                       })()}
