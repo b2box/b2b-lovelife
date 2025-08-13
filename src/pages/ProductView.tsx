@@ -88,10 +88,9 @@ const ProductView = () => {
     // Update quantities for all rows based on selected variant
     setRows(prev => prev.map(row => {
        if (row.id === variantId) {
-         // Find the price tier for current tier with correct currency
-         const targetCurrency = market === "CO" ? "COP" : "USD";
+         // Find the price tier for current tier with CNY currency for min_qty
          const priceTier = (row.variant as any).variant_price_tiers?.find((tier: any) => 
-           tier.tier === selectedTier && tier.currency === targetCurrency
+           tier.tier === selectedTier && tier.currency === "CNY"
          );
          const minQty = priceTier?.min_qty || 1;
         
@@ -118,10 +117,9 @@ const ProductView = () => {
   useEffect(() => {
     if (variants.length > 0 && rows.length === 0) {
        const newRows = variants.map(variant => {
-         // Find the price tier for selected tier with correct currency
-         const targetCurrency = market === "CO" ? "COP" : "USD";
+         // Find the price tier for selected tier with CNY currency for min_qty
          const priceTier = (variant as any).variant_price_tiers?.find((tier: any) => 
-           tier.tier === selectedTier && tier.currency === targetCurrency
+           tier.tier === selectedTier && tier.currency === "CNY"
          );
          const fallbackTier = (variant as any).variant_price_tiers?.[0];
          const tierData = priceTier || fallbackTier;
@@ -148,10 +146,9 @@ const ProductView = () => {
   useEffect(() => {
     if (rows.length > 0) {
        setRows(prev => prev.map(row => {
-         // Find the price tier for selected tier with correct currency
-         const targetCurrency = market === "CO" ? "COP" : "USD";
+         // Find the price tier for selected tier with CNY currency for min_qty
          const priceTier = (row.variant as any).variant_price_tiers?.find((tier: any) => 
-           tier.tier === selectedTier && tier.currency === targetCurrency
+           tier.tier === selectedTier && tier.currency === "CNY"
          );
          const fallbackTier = (row.variant as any).variant_price_tiers?.[0];
          const tierData = priceTier || fallbackTier;
@@ -193,12 +190,9 @@ const ProductView = () => {
   
   // Function to determine the appropriate tier based on quantity
   const getTierFromQuantity = (variant: ProductVariant, qty: number): "inicial" | "mayorista" | "distribuidor" => {
-    // Get the currency based on current market
-    const targetCurrency = market === "CO" ? "COP" : "USD";
-    
-    // Get all tiers for this variant with correct currency, sorted by min_qty descending
+    // Use CNY currency to get the correct min_qty values for tier determination
     const tiers = ((variant as any).variant_price_tiers || [])
-      .filter((tier: any) => tier.currency === targetCurrency)
+      .filter((tier: any) => tier.currency === "CNY")
       .sort((a: any, b: any) => (b.min_qty || 0) - (a.min_qty || 0));
     
     // Find the highest tier where quantity meets minimum
@@ -422,18 +416,16 @@ const ProductView = () => {
                           </div>
                           <div className="text-sm text-muted-foreground font-medium">
                             {(() => {
-                              // Get actual min_qty from first variant's price tiers with correct currency
-                              const firstVariant = variants[0];
-                              if (!firstVariant) return content.pricingTiers.inicial.range;
+                              // Get actual min_qty from selected variant's price tiers (not first variant)
+                              const selectedVariant = rows.find(r => r.id === selectedVariantId)?.variant || variants[0];
+                              if (!selectedVariant) return content.pricingTiers.inicial.range;
                               
-                              // Use same currency logic as pricing
-                              const targetCurrency = market === "CO" ? "COP" : "USD";
-                              
-                              const inicialTier = (firstVariant as any).variant_price_tiers?.find((pt: any) => 
-                                pt.tier === "inicial" && pt.currency === targetCurrency
+                              // Use CNY currency to get the correct min_qty values
+                              const inicialTier = (selectedVariant as any).variant_price_tiers?.find((pt: any) => 
+                                pt.tier === "inicial" && pt.currency === "CNY"
                               );
-                              const mayoristaTier = (firstVariant as any).variant_price_tiers?.find((pt: any) => 
-                                pt.tier === "mayorista" && pt.currency === targetCurrency
+                              const mayoristaTier = (selectedVariant as any).variant_price_tiers?.find((pt: any) => 
+                                pt.tier === "mayorista" && pt.currency === "CNY"
                               );
                               
                               if (inicialTier && mayoristaTier) {
@@ -475,18 +467,16 @@ const ProductView = () => {
                           </div>
                           <div className="text-sm text-muted-foreground font-medium">
                             {(() => {
-                              // Get actual min_qty from first variant's price tiers with correct currency
-                              const firstVariant = variants[0];
-                              if (!firstVariant) return content.pricingTiers.mayorista.range;
+                              // Get actual min_qty from selected variant's price tiers (not first variant)
+                              const selectedVariant = rows.find(r => r.id === selectedVariantId)?.variant || variants[0];
+                              if (!selectedVariant) return content.pricingTiers.mayorista.range;
                               
-                              // Use same currency logic as pricing
-                              const targetCurrency = market === "CO" ? "COP" : "USD";
-                              
-                              const mayoristaTier = (firstVariant as any).variant_price_tiers?.find((pt: any) => 
-                                pt.tier === "mayorista" && pt.currency === targetCurrency
+                              // Use CNY currency to get the correct min_qty values
+                              const mayoristaTier = (selectedVariant as any).variant_price_tiers?.find((pt: any) => 
+                                pt.tier === "mayorista" && pt.currency === "CNY"
                               );
-                              const distribuidorTier = (firstVariant as any).variant_price_tiers?.find((pt: any) => 
-                                pt.tier === "distribuidor" && pt.currency === targetCurrency
+                              const distribuidorTier = (selectedVariant as any).variant_price_tiers?.find((pt: any) => 
+                                pt.tier === "distribuidor" && pt.currency === "CNY"
                               );
                               
                               if (mayoristaTier && distribuidorTier) {
@@ -528,15 +518,13 @@ const ProductView = () => {
                           </div>
                           <div className="text-sm text-muted-foreground font-medium">
                             {(() => {
-                              // Get actual min_qty from first variant's price tiers with correct currency
-                              const firstVariant = variants[0];
-                              if (!firstVariant) return content.pricingTiers.distribuidor.range;
+                              // Get actual min_qty from selected variant's price tiers (not first variant)
+                              const selectedVariant = rows.find(r => r.id === selectedVariantId)?.variant || variants[0];
+                              if (!selectedVariant) return content.pricingTiers.distribuidor.range;
                               
-                              // Use same currency logic as pricing
-                              const targetCurrency = market === "CO" ? "COP" : "USD";
-                              
-                              const distribuidorTier = (firstVariant as any).variant_price_tiers?.find((pt: any) => 
-                                pt.tier === "distribuidor" && pt.currency === targetCurrency
+                              // Use CNY currency to get the correct min_qty values
+                              const distribuidorTier = (selectedVariant as any).variant_price_tiers?.find((pt: any) => 
+                                pt.tier === "distribuidor" && pt.currency === "CNY"
                               );
                               
                               if (distribuidorTier) {
@@ -726,10 +714,9 @@ const ProductView = () => {
                   const variantName = r.variant.name || product.name;
                   const variantOption = r.variant.option_name || r.variant.attributes?.color || "Estándar";
                   
-                    // Get units from price tier data with correct currency
-                    const targetCurrency = market === "CO" ? "COP" : "USD";
+                    // Get units from price tier data with CNY currency for min_qty
                     const priceTier = (r.variant as any).variant_price_tiers?.find((tier: any) => 
-                      tier.tier === selectedTier && tier.currency === targetCurrency
+                      tier.tier === selectedTier && tier.currency === "CNY"
                     );
                     const minQty = priceTier?.min_qty || 1;
                   
