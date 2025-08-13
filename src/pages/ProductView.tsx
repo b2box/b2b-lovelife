@@ -367,9 +367,10 @@ const ProductView = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      <main className="container mx-auto py-6 md:py-8">
+    <div className="min-h-screen bg-background flex">
+      <div className="flex-1">
+        <Navbar />
+        <main className="container mx-auto py-6 md:py-8">
         {/* Breadcrumb simple - placeholder para el diseño final */}
         <nav aria-label="breadcrumb" className="text-sm text-muted-foreground mb-4">
           <button onClick={() => navigate("/app")} className="story-link">Productos</button>
@@ -433,21 +434,6 @@ const ProductView = () => {
             </div>
           </div>
           
-          {/* Panel sticky lateral derecho - al nivel de toda la página */}
-          <aside className="hidden md:block w-1/5 flex-shrink-0">
-            <div className="sticky top-6 z-50">
-              <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-                <h3 className="text-lg font-semibold mb-4">Panel Lateral</h3>
-                <div className="space-y-3">
-                  <div className="text-sm text-gray-600">
-                    Contenido del panel lateral
-                  </div>
-                </div>
-              </div>
-            </div>
-          </aside>
-        </div>
-
         {/* Barra de precios por tiers - Posicionada después del contenido principal */}
         <section className="mt-4 md:w-3/4">
           <article className="rounded-xl bg-card text-card-foreground border overflow-hidden shadow-sm">
@@ -1251,9 +1237,24 @@ const ProductView = () => {
             })()}
           </div>
         </section>
-
-      </main>
-      <Footer />
+        </div>
+        </main>
+        <Footer />
+      </div>
+      
+      {/* Panel sticky lateral derecho - al nivel de toda la página */}
+      <aside className="hidden md:block w-1/5 flex-shrink-0">
+        <div className="sticky top-0 z-50 h-screen">
+          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-full overflow-y-auto">
+            <h3 className="text-lg font-semibold mb-4">Panel Lateral</h3>
+            <div className="space-y-3">
+              <div className="text-sm text-gray-600">
+                Contenido del panel lateral
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
     </div>
   );
 };
