@@ -23,16 +23,30 @@ const ProductView = () => {
   
   // Determine the actual product ID (could be from slug or direct ID)
   const productId = useMemo(() => {
-    if (id) return id; // Direct ID access from fallback routes
+    console.log('ProductView: Computing productId', { slug, id, productsLength: products.length });
+    
+    if (id) {
+      console.log('ProductView: Using direct ID', id);
+      return id; // Direct ID access from fallback routes
+    }
+    
     if (slug && products.length > 0) {
       // Find product by slug first, then fallback to ID if slug looks like a UUID
       const productBySlug = products.find(p => p.slug === slug);
-      if (productBySlug) return productBySlug.id;
+      if (productBySlug) {
+        console.log('ProductView: Found product by slug', productBySlug.id);
+        return productBySlug.id;
+      }
       
       // If slug looks like a UUID, treat it as an ID
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-      if (uuidRegex.test(slug)) return slug;
+      if (uuidRegex.test(slug)) {
+        console.log('ProductView: Treating slug as UUID', slug);
+        return slug;
+      }
     }
+    
+    console.log('ProductView: No productId found');
     return undefined;
   }, [slug, id, products]);
 
@@ -876,7 +890,7 @@ const ProductView = () => {
         </section>
 
         {/* Imágenes */}
-        <section className="mt-8 w-4/5">
+        <section className="mt-8 w-3/4">
           <h2 className="text-xl font-semibold mb-3">Imágenes</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {(() => {
