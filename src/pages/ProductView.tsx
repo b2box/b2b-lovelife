@@ -853,12 +853,12 @@ const ProductView = () => {
                         <div className="space-y-2">
                           {/* Precio por unidad - siempre visible */}
                           <div className="text-xs text-muted-foreground">
-                            {content.currencySymbol}{((variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100)).toFixed(3)} P.U
+                            {content.currencySymbol}{((variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100)).toFixed(3)} por unidad
                           </div>
                           
                           {/* Número de artículos - solo si está seleccionado */}
                           {r.comps?.labeling && (
-                            <div className="bg-brand-green/20 text-brand-green text-xs font-medium px-3 py-1 rounded-full">
+                            <div className="bg-green-400 text-black text-xs font-medium px-3 py-1 rounded-full">
                               {r.qty.toLocaleString()} artículos
                             </div>
                           )}
@@ -889,7 +889,7 @@ const ProductView = () => {
                         <div className="space-y-2">
                           {/* Precio fijo - siempre visible */}
                           <div className="text-xs text-muted-foreground">
-                            {content.currencySymbol}{(pricingSettings?.barcode_registration_usd || 1).toFixed(0)} fijo
+                            {content.currencySymbol}{(pricingSettings?.barcode_registration_usd || 1).toFixed(0)} por variante
                           </div>
                           
                           {/* Selector */}
@@ -918,7 +918,7 @@ const ProductView = () => {
                         <div className="space-y-2">
                           {/* Precio fijo - siempre visible */}
                           <div className="text-xs text-muted-foreground">
-                            {content.currencySymbol}{(pricingSettings?.commercial_photos_usd || 45).toFixed(0)} fijo
+                            {content.currencySymbol}{(pricingSettings?.commercial_photos_usd || 45).toFixed(0)} por variante
                           </div>
                           
                           {/* Selector */}
@@ -947,12 +947,12 @@ const ProductView = () => {
                         <div className="space-y-2">
                           {/* Precio por unidad - siempre visible */}
                           <div className="text-xs text-muted-foreground">
-                            {content.currencySymbol}{((variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100)).toFixed(3)} P.U
+                            {content.currencySymbol}{((variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100)).toFixed(3)} por unidad
                           </div>
                           
                           {/* Número de artículos - solo si está seleccionado */}
                           {r.comps?.packaging && (
-                            <div className="bg-brand-green/20 text-brand-green text-xs font-medium px-3 py-1 rounded-full">
+                            <div className="bg-green-400 text-black text-xs font-medium px-3 py-1 rounded-full">
                               {r.qty.toLocaleString()} artículos
                             </div>
                           )}
