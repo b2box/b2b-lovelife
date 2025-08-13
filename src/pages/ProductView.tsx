@@ -424,7 +424,7 @@ const ProductView = () => {
           </section>
 
           {/* Columna derecha (20%): Resumen sticky */}
-          <aside className="hidden md:block sticky top-20 self-start h-max w-full max-w-[460px] mx-auto z-10">
+          <aside className="hidden md:block sticky top-4 self-start h-max w-full max-w-[460px] mx-auto z-10 overflow-visible">
             <div className="bg-white border border-[#E5E7EB] rounded-[24px] p-6 shadow-sm">
               {/* Encabezado con check verde */}
               <div className="flex items-center justify-between mb-4">
