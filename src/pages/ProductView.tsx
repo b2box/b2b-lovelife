@@ -786,42 +786,29 @@ const ProductView = () => {
                         <div className="flex items-center justify-center">
                           <div className="inline-flex items-center border rounded">
                             <button 
-                              className="px-2 py-1 text-xs" 
-                              onClick={() => {
-                                try {
-                                  // Use tier inicial min_qty for this specific variant
-                                  console.log('Decrease - Variant priceTiers:', priceTiers);
-                                  const inicialTier = priceTiers.find((tier: any) => tier?.tier === "inicial");
-                                  console.log('Decrease - Found inicial tier:', inicialTier);
-                                  const variantMinQty = inicialTier?.min_qty || 1;
-                                  console.log('Decrease - Using minQty:', variantMinQty);
-                                  changeQty(r.id, -variantMinQty);
-                                } catch (error) {
-                                  console.error('Decrease button error:', error);
-                                  changeQty(r.id, -1); // fallback
-                                }
-                              }} 
+                              className="px-2 py-1 text-xs hover:bg-gray-100" 
+                              onClick={() => changeQty(r.id, -1)} 
                               aria-label="Disminuir"
                             >
                               -
                             </button>
-                            <span className="px-2 py-1 min-w-[40px] text-center text-xs">{r.qty || 0}</span>
-                            <button 
-                              className="px-2 py-1 text-xs" 
-                              onClick={() => {
-                                try {
-                                  // Use tier inicial min_qty for this specific variant
-                                  console.log('Increase - Variant priceTiers:', priceTiers);
-                                  const inicialTier = priceTiers.find((tier: any) => tier?.tier === "inicial");
-                                  console.log('Increase - Found inicial tier:', inicialTier);
-                                  const variantMinQty = inicialTier?.min_qty || 1;
-                                  console.log('Increase - Using minQty:', variantMinQty);
-                                  changeQty(r.id, variantMinQty);
-                                } catch (error) {
-                                  console.error('Increase button error:', error);
-                                  changeQty(r.id, 1); // fallback
+                            <input
+                              type="number"
+                              value={r.qty || 0}
+                              onChange={(e) => {
+                                const newQty = parseInt(e.target.value) || 0;
+                                const currentQty = r.qty || 0;
+                                const diff = newQty - currentQty;
+                                if (diff !== 0) {
+                                  changeQty(r.id, diff);
                                 }
-                              }} 
+                              }}
+                              className="px-2 py-1 min-w-[40px] text-center text-xs border-0 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                              min="0"
+                            />
+                            <button 
+                              className="px-2 py-1 text-xs hover:bg-gray-100" 
+                              onClick={() => changeQty(r.id, 1)} 
                               aria-label="Aumentar"
                             >
                               +
