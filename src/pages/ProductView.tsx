@@ -898,7 +898,15 @@ const ProductView = () => {
                                     tier?.tier === dbTier && tier?.currency === "CNY"
                                   );
                                   const minQty = priceTier?.min_qty || 1;
-                                  
+                                   
+                                   console.log("Debug minQty validation:", {
+                                     selectedTier,
+                                     dbTier,
+                                     inputValue,
+                                     minQty,
+                                     priceTier,
+                                     allTiers: priceTiers
+                                   });
                                   // Ensure the value is not less than min_qty
                                   const newQty = Math.max(inputValue, minQty);
                                   const currentQty = r.qty || 0;
