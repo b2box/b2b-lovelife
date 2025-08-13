@@ -652,7 +652,6 @@ const ProductView = () => {
                       </td>
                       <td className="px-2 py-3 text-center">
                         <div className="text-sm font-medium">{content.currencySymbol}{variantPrice.toFixed(2)}</div>
-                        <div className="text-xs text-muted-foreground">{content.currencySymbol}0.15 PU</div>
                       </td>
 
                       {/* Etiquetado */}
