@@ -426,7 +426,7 @@ const ProductView = () => {
           {/* Columna derecha: Resumen sticky */}
           <div className="hidden md:block relative">
             <div className="sticky top-6 w-[320px]">
-              <div className="bg-white border border-[#E5E7EB] rounded-[24px] p-6 shadow-sm">
+              <div className="bg-white border border-[#E5E7EB] rounded-[24px] p-3 shadow-sm">
                 {/* Encabezado con check verde */}
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-[22px] font-semibold text-[#0A0A0A]">Orden mínima $100</span>
