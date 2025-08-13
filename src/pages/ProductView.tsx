@@ -1075,8 +1075,8 @@ const ProductView = () => {
           </div>
           <div className="mt-6 grid grid-cols-2 gap-4">
             <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 h-24">
-              <span className="inline-flex items-center justify-center size-10 rounded-xl bg-muted text-muted-foreground flex-shrink-0" aria-hidden="true">
-                <Cog className="size-5" />
+              <span className="inline-flex items-center justify-center size-15 rounded-xl bg-muted text-muted-foreground flex-shrink-0" aria-hidden="true">
+                <Cog className="size-7" />
               </span>
               <div className="flex-1">
                 <h3 className="font-semibold">Opciones de personalización</h3>
