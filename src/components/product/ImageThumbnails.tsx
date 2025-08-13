@@ -17,12 +17,9 @@ const ImageThumbnails = memo(({ variants, product, selectedImageIndex, onImageIn
     })) || []
   ).sort((a, b) => a.sort_order - b.sort_order);
   
-  const displayImages = allImages.slice(0, 5); // Limit to 5 thumbnails max
-  const remainingCount = Math.max(0, allImages.length - 5);
-
   return (
-    <div className="flex items-center gap-2 overflow-hidden">
-      {displayImages.map((image, i) => (
+    <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-2">
+      {allImages.map((image, i) => (
         <button
           key={`${image.variantId}-${image.id}`}
           className={`relative w-12 h-12 flex-shrink-0 overflow-hidden rounded-lg ring-1 bg-muted transition-all ${
@@ -37,12 +34,10 @@ const ImageThumbnails = memo(({ variants, product, selectedImageIndex, onImageIn
             className="w-full h-full object-cover" 
             loading="lazy" 
           />
-          {/* +X indicator for extra images on the last thumbnail */}
-          {i === 4 && remainingCount > 0 && (
-            <div className="absolute inset-0 grid place-items-center bg-black/60 text-white text-sm font-bold rounded-lg">
-              +{remainingCount}
-            </div>
-          )}
+          {/* Variant indicator badge */}
+          <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-xs px-1 py-0.5 truncate">
+            {image.variantName}
+          </div>
         </button>
       ))}
     </div>
