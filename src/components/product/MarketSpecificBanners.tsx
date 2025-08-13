@@ -15,7 +15,7 @@ export function MarketSpecificBanners({ className }: MarketSpecificBannersProps)
         <img 
           src={content.trendBanner.platform.logo} 
           alt={content.trendBanner.platform.name} 
-          className="h-5 w-auto" 
+              className="h-14 w-auto"
           loading="lazy" 
         />
       </div>
