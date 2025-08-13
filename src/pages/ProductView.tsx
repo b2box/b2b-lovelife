@@ -658,6 +658,9 @@ const ProductView = () => {
                       <td className="px-2 py-3 text-center" onClick={(e) => e.stopPropagation()}>
                         {r.comps.labeling ? (
                           <div className="space-y-2">
+                            <div className="text-xs font-medium">
+                              TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100).toFixed(2)}
+                            </div>
                             <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-500 text-white cursor-pointer" onClick={() => toggleComp(r.id, "labeling")}>
                               <span className="text-xs">✓</span>
                             </div>
@@ -666,9 +669,6 @@ const ProductView = () => {
                             </div>
                             <div className="text-xs text-muted-foreground">
                               {content.currencySymbol}{((variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100)).toFixed(3)} por unidad
-                            </div>
-                            <div className="text-xs font-medium">
-                              TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100).toFixed(2)}
                             </div>
                           </div>
                         ) : (
