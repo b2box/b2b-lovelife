@@ -934,68 +934,72 @@ const ProductView = () => {
                         </td>
 
                         {/* Etiquetado para Marketplaces */}
-                         <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
-                           <div className="flex flex-col items-center gap-2 h-24 justify-between">
-                             {/* Precio por unidad - siempre visible */}
-                             <div className="text-[10px]" style={{ color: '#545454' }}>
-                               {content.currencySymbol}{((variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100)).toFixed(3)} por unidad
-                             </div>
-                             
+                          <td className="px-2 py-3 text-center w-[110px] border border-brand-green" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex flex-col items-center h-24 justify-between">
+                              {/* Precio por unidad - siempre visible */}
+                              <div className="text-[10px]" style={{ color: '#545454' }}>
+                                {content.currencySymbol}{((variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100)).toFixed(3)} por unidad
+                              </div>
+                              
+                               {/* Selector */}
+                               <div className="flex justify-center">
+                                 {r.comps?.labeling ? (
+                                   <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "labeling")}>
+                                     <span className="text-xs">✓</span>
+                                   </div>
+                                 ) : (
+                                   <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "labeling")}>
+                                   </div>
+                                 )}
+                               </div>
+                               
+                               {/* Número de artículos - solo si está seleccionado */}
+                               {r.comps?.labeling && (
+                                 <div className="text-black text-xs font-medium px-3 py-1 rounded-full" style={{ backgroundColor: '#abff97' }}>
+                                   10 artículos
+                                 </div>
+                               )}
+                              
+                              {/* Total - solo si está seleccionado */}
+                              <div className="mt-auto">
+                                {r.comps?.labeling && (
+                                  <div className="text-xs font-medium" style={{ color: '#545454' }}>
+                                    TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100).toFixed(2)}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                         </td>
+
+                         {/* Registro de Código de Barras */}
+                          <td className="px-2 py-3 text-center w-[110px] border border-brand-green" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex flex-col items-center h-24 justify-between">
+                              {/* Precio fijo - siempre visible */}
+                              <div className="text-[10px]" style={{ color: '#545454' }}>
+                                {content.currencySymbol}{(pricingSettings?.barcode_registration_usd || 1).toFixed(0)} por variante
+                              </div>
+                              
                               {/* Selector */}
                               <div className="flex justify-center">
-                                {r.comps?.labeling ? (
-                                  <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "labeling")}>
+                                {r.comps?.barcode ? (
+                                  <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "barcode")}>
                                     <span className="text-xs">✓</span>
                                   </div>
                                 ) : (
-                                  <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "labeling")}>
+                                  <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "barcode")}>
                                   </div>
                                 )}
                               </div>
                               
-                              {/* Número de artículos - solo si está seleccionado */}
-                              {r.comps?.labeling && (
-                                <div className="text-black text-xs font-medium px-3 py-1 rounded-full" style={{ backgroundColor: '#abff97' }}>
-                                  10 artículos
-                                </div>
-                              )}
-                             
-                             {/* Total - solo si está seleccionado */}
-                             {r.comps?.labeling && (
-                               <div className="text-xs font-medium" style={{ color: '#545454' }}>
-                                 TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100).toFixed(2)}
-                               </div>
-                             )}
-                           </div>
-                         </td>
-
-                        {/* Registro de Código de Barras */}
-                         <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
-                           <div className="flex flex-col items-center gap-2 h-24 justify-between">
-                             {/* Precio fijo - siempre visible */}
-                             <div className="text-[10px]" style={{ color: '#545454' }}>
-                               {content.currencySymbol}{(pricingSettings?.barcode_registration_usd || 1).toFixed(0)} por variante
-                             </div>
-                             
-                             {/* Selector */}
-                             <div className="flex justify-center">
-                               {r.comps?.barcode ? (
-                                 <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "barcode")}>
-                                   <span className="text-xs">✓</span>
-                                 </div>
-                               ) : (
-                                 <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "barcode")}>
-                                 </div>
-                               )}
-                             </div>
-                             
-                             {/* Total - solo si está seleccionado */}
-                             {r.comps?.barcode && (
-                               <div className="text-xs font-medium" style={{ color: '#545454' }}>
-                                 TOTAL {content.currencySymbol}{(pricingSettings?.barcode_registration_usd || 1).toFixed(0)}
-                               </div>
-                             )}
-                           </div>
+                              {/* Total - solo si está seleccionado */}
+                              <div className="mt-auto">
+                                {r.comps?.barcode && (
+                                  <div className="text-xs font-medium" style={{ color: '#545454' }}>
+                                    TOTAL {content.currencySymbol}{(pricingSettings?.barcode_registration_usd || 1).toFixed(0)}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
                          </td>
 
                         {/* Fotografías Comerciales */}
