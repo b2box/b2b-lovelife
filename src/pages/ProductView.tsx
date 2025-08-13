@@ -844,7 +844,7 @@ const ProductView = () => {
             </table>
           </div>
           <div className="mt-6 grid grid-cols-2 gap-4">
-            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 aspect-square min-h-[120px]">
+            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 h-32">
               <span className="inline-flex items-center justify-center size-10 rounded-xl bg-muted text-muted-foreground flex-shrink-0" aria-hidden="true">
                 <Cog className="size-5" />
               </span>
@@ -853,7 +853,7 @@ const ProductView = () => {
                 <p className="text-sm text-muted-foreground">Si deseas personalizar tus productos, nuestro equipo en China se encargará.</p>
               </div>
             </article>
-            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 aspect-square min-h-[120px]">
+            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 h-32">
               <span className="inline-flex items-center justify-center size-10 rounded-xl bg-muted text-muted-foreground flex-shrink-0" aria-hidden="true">
                 <Cog className="size-5" />
               </span>
@@ -862,7 +862,7 @@ const ProductView = () => {
                 <p className="text-sm text-muted-foreground">Contamos con una logística optimizada para que recibas tus productos lo antes posible.</p>
               </div>
             </article>
-            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 aspect-square min-h-[120px]">
+            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 h-32">
               <span className="inline-flex items-center justify-center size-10 rounded-xl bg-muted text-muted-foreground flex-shrink-0" aria-hidden="true">
                 <Cog className="size-5" />
               </span>
@@ -871,7 +871,7 @@ const ProductView = () => {
                 <p className="text-sm text-muted-foreground">Hoy solo pagas el 30%. El resto lo pagas cuando confirmemos todo desde China.</p>
               </div>
             </article>
-            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 aspect-square min-h-[120px]">
+            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 h-32">
               <span className="inline-flex items-center justify-center size-10 rounded-xl bg-muted text-muted-foreground flex-shrink-0" aria-hidden="true">
                 <Cog className="size-5" />
               </span>
