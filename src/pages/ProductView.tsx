@@ -135,51 +135,52 @@ const ProductView = () => {
     }
   }, [selectedTier, variants, market]);
 
-  // Initialize rows when variants change - stabilized to prevent reloads
+  // Initialize rows when variants change - stabilized with better dependencies
   useEffect(() => {
-    if (variants.length > 0 && rows.length === 0) {
-       const newRows = variants.map(variant => {
-         // Find the price tier for selected tier with CNY currency for min_qty
-         const priceTier = (variant as any).variant_price_tiers?.find((tier: any) => 
-           tier.tier === selectedTier && tier.currency === "CNY"
-         );
-         const fallbackTier = (variant as any).variant_price_tiers?.[0];
-         const tierData = priceTier || fallbackTier;
-         const minQty = tierData?.min_qty || 1;
-        
-        return {
-          id: variant.id,
-          variant,
-          qty: minQty,
-          comps: { labeling: false, barcode: false, photos: false, packaging: false }
-        };
-      });
+    if (!Array.isArray(variants) || variants.length === 0 || rows.length > 0) return;
+    
+    const newRows = variants.map(variant => {
+      // Find the price tier for selected tier with CNY currency for min_qty
+      const priceTiers = (variant as any)?.variant_price_tiers || [];
+      const priceTier = priceTiers.find((tier: any) => 
+        tier?.tier === selectedTier && tier?.currency === "CNY"
+      );
+      const fallbackTier = priceTiers[0];
+      const tierData = priceTier || fallbackTier;
+      const minQty = tierData?.min_qty || 1;
+     
+      return {
+        id: variant.id,
+        variant,
+        qty: minQty,
+        comps: { labeling: false, barcode: false, photos: false, packaging: false }
+      };
+    });
 
-      setRows(newRows);
-      
-      // Set first variant as selected if none selected
-      if (!selectedVariantId && newRows.length > 0) {
-        setSelectedVariantId(newRows[0].id);
-      }
+    setRows(newRows);
+    
+    // Set first variant as selected if none selected
+    if (!selectedVariantId && newRows.length > 0) {
+      setSelectedVariantId(newRows[0].id);
     }
-  }, [variants.length, selectedVariantId, rows.length, selectedTier]); // Remove variants dependency to prevent re-renders
+  }, [variants, selectedTier, rows.length, selectedVariantId]); // Stable dependencies
 
-  // Update quantities when tier changes
+  // Update quantities when tier changes - stabilized
   useEffect(() => {
-    if (rows.length > 0) {
-       setRows(prev => prev.map(row => {
-         // Find the price tier for selected tier with CNY currency for min_qty
-         const priceTier = (row.variant as any).variant_price_tiers?.find((tier: any) => 
-           tier.tier === selectedTier && tier.currency === "CNY"
-         );
-         const fallbackTier = (row.variant as any).variant_price_tiers?.[0];
-         const tierData = priceTier || fallbackTier;
-         const minQty = tierData?.min_qty || 1;
-        
-        return { ...row, qty: minQty };
-      }));
-    }
-  }, [selectedTier]);
+    if (!Array.isArray(rows) || rows.length === 0) return;
+    
+    setRows(prev => prev.map(row => {
+      const priceTiers = (row.variant as any)?.variant_price_tiers || [];
+      const priceTier = priceTiers.find((tier: any) => 
+        tier?.tier === selectedTier && tier?.currency === "CNY"
+      );
+      const fallbackTier = priceTiers[0];
+      const tierData = priceTier || fallbackTier;
+      const minQty = tierData?.min_qty || 1;
+     
+      return { ...row, qty: minQty };
+    }));
+  }, [selectedTier]); // Only depend on selectedTier
 
   const perUnitLabeling = 0.15;
   const perUnitPackaging = 0.04;
@@ -336,13 +337,13 @@ const ProductView = () => {
     script.text = JSON.stringify(jsonLd);
   }, [product]);
 
-  // Redirect to slug-based URL if we're using ID-based URL - stabilized
+  // Redirect to slug-based URL if we're using ID-based URL - stabilized with strict dependencies
   useEffect(() => {
-    if (product?.slug && id && !slug) {
+    if (product?.slug && id && !slug && typeof navigate === 'function') {
       const newPath = `/product/${product.slug}`;
       navigate(newPath, { replace: true });
     }
-  }, [product?.slug, id, slug]); // Removed navigate and location.pathname to prevent re-renders
+  }, [product?.slug, id, slug, navigate]);
 
   if (!product || variantsLoading) {
     return (

@@ -8,18 +8,24 @@ interface ImageThumbnailsProps {
 }
 
 const ImageThumbnails = memo(({ variants, product, selectedImageIndex, onImageIndexChange }: ImageThumbnailsProps) => {
-  // Collect all images from all variants with error handling
+  // Collect all images from all variants with error handling - stabilized
   const allImages = useMemo(() => {
-    if (!variants?.length) return [];
+    if (!Array.isArray(variants) || variants.length === 0) return [];
     
-    return variants.flatMap(variant => 
-      (variant as any)?.product_variant_images?.map((img: any) => ({
-        ...img,
-        variantName: variant?.name || product?.name || "Producto",
+    return variants.flatMap(variant => {
+      const images = variant?.product_variant_images;
+      if (!Array.isArray(images)) return [];
+      
+      return images.map((img: any) => ({
+        id: img?.id,
+        url: img?.url,
+        alt: img?.alt,
+        sort_order: img?.sort_order || 0,
+        variantName: variant?.name || "Producto",
         variantId: variant?.id
-      })) || []
-    ).sort((a, b) => (a?.sort_order || 0) - (b?.sort_order || 0));
-  }, [variants, product?.name]);
+      }));
+    }).sort((a, b) => a.sort_order - b.sort_order);
+  }, [variants]);
   
   // Calculate which images to show based on selected index
   const { displayImages, startIndex } = useMemo(() => {
