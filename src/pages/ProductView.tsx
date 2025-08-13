@@ -401,7 +401,7 @@ const ProductView = () => {
               {/* Detalles + Tramos 75% */}
               <div className="space-y-4">
                 <header>
-                  <h1 className="text-2xl md:text-3xl font-semibold leading-tight">{product.name}</h1>
+                  <h1 className="text-xl md:text-2xl font-semibold leading-tight">{product.name}</h1>
                 </header>
 
                 {/* Descripción del producto */}
