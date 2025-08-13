@@ -19,6 +19,10 @@ export interface PricingSettingsData {
   arPercents: [number, number, number];
   coPercents: [number, number, number];
   cnPercents: [number, number, number];
+  marketplace_labeling_pct: number; // Etiquetado para marketplaces
+  barcode_registration_usd: number; // Registro de código de barras
+  commercial_photos_usd: number; // Fotografías comerciales
+  optimized_packaging_pct: number; // Empaque optimizado
 }
 
 export const defaultPricingSettings: PricingSettingsData = {
@@ -28,6 +32,10 @@ export const defaultPricingSettings: PricingSettingsData = {
   arPercents: [300, 300, 300],
   coPercents: [200, 200, 200],
   cnPercents: [100, 100, 100],
+  marketplace_labeling_pct: 2,
+  barcode_registration_usd: 1,
+  commercial_photos_usd: 45,
+  optimized_packaging_pct: 5,
 };
 
 export function computeMarketPrice(baseCny: number, percent: number, rate: number): number {

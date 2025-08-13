@@ -32,6 +32,10 @@ export function usePricingSettings() {
             Number(data.cn_tier2_pct) || 100,
             Number(data.cn_tier3_pct) || 100,
           ],
+          marketplace_labeling_pct: Number(data.marketplace_labeling_pct) || 2,
+          barcode_registration_usd: Number(data.barcode_registration_usd) || 1,
+          commercial_photos_usd: Number(data.commercial_photos_usd) || 45,
+          optimized_packaging_pct: Number(data.optimized_packaging_pct) || 5,
         } as PricingSettingsData;
       }
       return defaultPricingSettings;

@@ -626,8 +626,13 @@ const ProductView = () => {
                         }`} onClick={() => toggleComp(r.id, "labeling")}>
                           {r.comps.labeling && <div className="text-white text-xs leading-none mt-0.5">✓</div>}
                         </div>
-                        <div className="text-xs text-green-600 mt-1">4.000 artículos</div>
-                        <div className="text-xs text-muted-foreground">TOTAL $1.863</div>
+                        <div className="text-xs text-green-600 mt-1">{r.qty.toLocaleString()} artículos</div>
+                        <div className="text-xs text-muted-foreground">
+                          PU: {content.currencySymbol}{((variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100)).toFixed(3)}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100).toFixed(2)}
+                        </div>
                       </td>
 
                       {/* Código de barras */}
@@ -637,7 +642,9 @@ const ProductView = () => {
                         }`} onClick={() => toggleComp(r.id, "barcode")}>
                           {r.comps.barcode && <div className="text-white text-xs leading-none mt-0.5">✓</div>}
                         </div>
-                        <div className="text-xs text-green-600 mt-1">$40</div>
+                        <div className="text-xs text-green-600 mt-1">
+                          {content.currencySymbol}{(pricingSettings?.barcode_registration_usd || 1).toFixed(2)} fijo
+                        </div>
                       </td>
 
                       {/* Fotos */}
@@ -647,7 +654,9 @@ const ProductView = () => {
                         }`} onClick={() => toggleComp(r.id, "photos")}>
                           {r.comps.photos && <div className="text-white text-xs leading-none mt-0.5">✓</div>}
                         </div>
-                        <div className="text-xs text-green-600 mt-1">$1.863</div>
+                        <div className="text-xs text-green-600 mt-1">
+                          {content.currencySymbol}{(pricingSettings?.commercial_photos_usd || 45).toFixed(2)} fijo
+                        </div>
                       </td>
 
                       {/* Empaque */}
@@ -657,8 +666,13 @@ const ProductView = () => {
                         }`} onClick={() => toggleComp(r.id, "packaging")}>
                           {r.comps.packaging && <div className="text-white text-xs leading-none mt-0.5">✓</div>}
                         </div>
-                        <div className="text-xs text-green-600 mt-1">4.000 artículos</div>
-                        <div className="text-xs text-muted-foreground">TOTAL $1.863</div>
+                        <div className="text-xs text-green-600 mt-1">{r.qty.toLocaleString()} artículos</div>
+                        <div className="text-xs text-muted-foreground">
+                          PU: {content.currencySymbol}{((variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100)).toFixed(3)}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100).toFixed(2)}
+                        </div>
                       </td>
 
                       <td className="px-2 py-3 text-center">
