@@ -700,7 +700,7 @@ const ProductView = () => {
                        <span>Complementos</span>
                      </div>
                    </th>
-                   <th className="text-center px-2 py-3 font-medium bg-brand-blue text-white rounded-tr-2xl">Precio</th>
+                   <th className="text-center px-2 py-3 font-medium text-white rounded-tr-2xl" style={{ backgroundColor: '#46cd8a' }}>Precio</th>
                  </tr>
                  
                  {/* Segunda fila del header */}
@@ -812,7 +812,7 @@ const ProductView = () => {
                         </HoverCardContent>
                       </HoverCard>
                     </th>
-                   <th className="text-center px-2 py-2 font-medium w-[80px] bg-brand-blue text-white text-base">Total</th>
+                   <th className="text-center px-2 py-2 font-medium w-[80px] text-white text-base" style={{ backgroundColor: '#46cd8a' }}>Total</th>
                  </tr>
                </thead>
               <tbody>
