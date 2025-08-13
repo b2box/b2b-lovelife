@@ -21,12 +21,14 @@ const ImageThumbnails = memo(({ variants, product, selectedImageIndex, onImageIn
   const remainingCount = Math.max(0, allImages.length - 5);
 
   return (
-    <div className="flex items-center gap-2 overflow-hidden">
+    <div className="flex items-center gap-2 justify-between w-full max-w-full">
       {displayImages.map((image, i) => (
         <button
           key={`${image.variantId}-${image.id}`}
-          className={`relative w-12 h-12 flex-shrink-0 overflow-hidden rounded-lg ring-1 bg-muted transition-all ${
-            selectedImageIndex === i ? 'ring-primary ring-2 scale-105' : 'ring-border hover:ring-primary/50'
+          className={`relative flex-1 aspect-square max-w-[calc(20%-0.5rem)] overflow-hidden rounded-lg transition-all ${
+            selectedImageIndex === i 
+              ? 'ring-2 ring-primary ring-offset-2 ring-offset-background scale-105 z-10' 
+              : 'ring-1 ring-border hover:ring-primary/50'
           }`}
           onClick={() => onImageIndexChange(i)}
           aria-label={`Ver imagen ${i + 1} de ${image.variantName}`}
