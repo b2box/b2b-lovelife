@@ -1257,7 +1257,7 @@ const ProductView = () => {
               {/* Botón CTA */}
               <button
                 onClick={addToCart}
-                className="w-full h-16 rounded-[24px] bg-[#BBF7D0] text-[#0A0A0A] text-[20px] font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 mb-5"
+                className="w-full h-16 rounded-[24px] bg-[#abff97] text-[#0A0A0A] text-[20px] font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 mb-5"
                 aria-label={content.cartButtonText}
                 disabled={totals.total < minOrder}
               >
