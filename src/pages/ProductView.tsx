@@ -726,7 +726,7 @@ const ProductView = () => {
                     <tr 
                       key={r.id} 
                       className={`border-t cursor-pointer hover:bg-muted/30 transition-colors ${
-                        isSelected ? 'bg-primary/5 border-l-4 border-l-primary' : ''
+                        isSelected ? 'bg-white border-2 border-green-500 rounded-lg shadow-lg shadow-green-500/20' : ''
                       }`}
                       onClick={() => handleVariantSelection(r.id)}
                     >
