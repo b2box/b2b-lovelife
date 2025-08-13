@@ -377,12 +377,13 @@ const ProductView = () => {
           <span className="text-foreground">{product.name}</span>
         </nav>
 
-        <div className="flex flex-col md:flex-row gap-6">
-          {/* Columna izquierda: Galería + Detalles */}
-          <section className="flex-1 min-w-0 flex gap-4">
-            {/* Contenido principal del producto */}
-            <div className="flex-1">
-            <div className="grid grid-cols-1 md:grid-cols-[40%_60%] gap-4">{/* Optimizar proporción galería/detalles */}
+        <div className="flex gap-6">
+          {/* Contenido principal */}
+          <div className="flex-1">
+            <div className="flex flex-col md:flex-row gap-6">
+              {/* Columna izquierda: Galería + Detalles */}
+              <section className="flex-1 min-w-0">
+                <div className="grid grid-cols-1 md:grid-cols-[40%_60%] gap-4">{/* Optimizar proporción galería/detalles */}
               {/* Galería - compacta */}
               <div className="rounded-2xl bg-card p-2 md:p-3 h-fit">
                 <div className="space-y-2">
@@ -427,24 +428,24 @@ const ProductView = () => {
                   <p>🛍 Ideal para: ✅Baños organizados, ✅tocadores prácticos y ✅hogares con estilo.</p>
                 </article>
               </div>
+                </div>
+              </section>
             </div>
-            </div>
-            
-            {/* Bloque sticky lateral derecho */}
-            <aside className="hidden md:block w-1/5 flex-shrink-0">
-              <div className="sticky top-6 z-50">
-                <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-                  <h3 className="text-lg font-semibold mb-4">Panel Lateral</h3>
-                  <div className="space-y-3">
-                    <div className="text-sm text-gray-600">
-                      Contenido del panel lateral
-                    </div>
+          </div>
+          
+          {/* Panel sticky lateral derecho - al nivel de toda la página */}
+          <aside className="hidden md:block w-1/5 flex-shrink-0">
+            <div className="sticky top-6 z-50">
+              <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                <h3 className="text-lg font-semibold mb-4">Panel Lateral</h3>
+                <div className="space-y-3">
+                  <div className="text-sm text-gray-600">
+                    Contenido del panel lateral
                   </div>
                 </div>
               </div>
-            </aside>
-          </section>
-
+            </div>
+          </aside>
         </div>
 
         {/* Barra de precios por tiers - Posicionada después del contenido principal */}
