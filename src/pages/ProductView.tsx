@@ -655,7 +655,7 @@ const ProductView = () => {
 
 
         {/* Variantes */}
-        <section className="mt-8 w-3/4">
+        <section className="mt-8 md:w-3/4">
           <h2 className="text-xl font-semibold mb-3">Variantes</h2>
           <div className="overflow-x-auto rounded-2xl border bg-card">
             <table className="w-full text-sm">
@@ -883,7 +883,7 @@ const ProductView = () => {
           </div>
 
           {/* Detalles técnicos - movido aquí */}
-          <div className="mt-8">
+          <div className="mt-8 md:w-3/4">
             <h2 className="text-xl font-semibold mb-6">Detalles técnicos</h2>
             <div className="bg-white rounded-lg p-6">
               {(() => {
@@ -1053,7 +1053,7 @@ const ProductView = () => {
         </section>
 
         {/* Imágenes */}
-        <section className="mt-8 w-3/4">
+        <section className="mt-8 md:w-3/4">
           <h2 className="text-xl font-semibold mb-3">Imágenes</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {(() => {
