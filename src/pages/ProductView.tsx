@@ -883,10 +883,19 @@ const ProductView = () => {
                                 onChange={(e) => {
                                   const inputValue = parseInt(e.target.value) || 0;
                                   
-                                  // Get the min_qty for this variant and tier using the current market currency
+                                  // Map tier names to database tier values
+                                  const tierMap = {
+                                    inicial: "tier1",
+                                    mayorista: "tier2", 
+                                    distribuidor: "tier3"
+                                  } as const;
+                                  
+                                  const dbTier = tierMap[selectedTier as keyof typeof tierMap];
+                                  
+                                  // Get the min_qty for this variant and tier (always in CNY base tier)
                                   const priceTiers = (r.variant as any)?.variant_price_tiers || [];
                                   const priceTier = priceTiers.find((tier: any) => 
-                                    tier?.tier === selectedTier && tier?.currency === content.currency
+                                    tier?.tier === dbTier && tier?.currency === "CNY"
                                   );
                                   const minQty = priceTier?.min_qty || 1;
                                   
@@ -901,9 +910,16 @@ const ProductView = () => {
                                 }}
                                 className="w-10 px-1 py-0.5 text-center text-xs border-0 focus:outline-none focus:ring-1 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                 min={(() => {
+                                  const tierMap = {
+                                    inicial: "tier1",
+                                    mayorista: "tier2", 
+                                    distribuidor: "tier3"
+                                  } as const;
+                                  
+                                  const dbTier = tierMap[selectedTier as keyof typeof tierMap];
                                   const priceTiers = (r.variant as any)?.variant_price_tiers || [];
                                   const priceTier = priceTiers.find((tier: any) => 
-                                    tier?.tier === selectedTier && tier?.currency === content.currency
+                                    tier?.tier === dbTier && tier?.currency === "CNY"
                                   );
                                   return priceTier?.min_qty || 1;
                                 })()}
