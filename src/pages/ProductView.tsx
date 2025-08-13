@@ -796,8 +796,8 @@ const ProductView = () => {
                 <Cog className="size-5" />
               </span>
               <div className="flex-1">
-                <h3 className="font-semibold">{content.features.customization.title}</h3>
-                <p className="text-sm text-muted-foreground">{content.features.customization.description}</p>
+                <h3 className="font-semibold">Opciones de personalización</h3>
+                <p className="text-sm text-muted-foreground">Si deseas personalizar tus productos, nuestro equipo en China se encargará.</p>
               </div>
             </article>
             <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 aspect-square min-h-[120px]">
@@ -805,8 +805,8 @@ const ProductView = () => {
                 <Cog className="size-5" />
               </span>
               <div className="flex-1">
-                <h3 className="font-semibold">{content.features.shipping.title}</h3>
-                <p className="text-sm text-muted-foreground">{content.features.shipping.description}</p>
+                <h3 className="font-semibold">Entrega confiable</h3>
+                <p className="text-sm text-muted-foreground">Contamos con una logística optimizada para que recibas tus productos lo antes posible.</p>
               </div>
             </article>
             <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 aspect-square min-h-[120px]">
@@ -814,8 +814,8 @@ const ProductView = () => {
                 <Cog className="size-5" />
               </span>
               <div className="flex-1">
-                <h3 className="font-semibold">{content.features.payment.title}</h3>
-                <p className="text-sm text-muted-foreground">{content.features.payment.description}</p>
+                <h3 className="font-semibold">Pago diferido</h3>
+                <p className="text-sm text-muted-foreground">Hoy solo pagas el 30%. El resto lo pagas cuando confirmemos todo desde China.</p>
               </div>
             </article>
             <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 aspect-square min-h-[120px]">
@@ -823,8 +823,8 @@ const ProductView = () => {
                 <Cog className="size-5" />
               </span>
               <div className="flex-1">
-                <h3 className="font-semibold">{content.features.quality.title}</h3>
-                <p className="text-sm text-muted-foreground">{content.features.quality.description}</p>
+                <h3 className="font-semibold">Control de calidad</h3>
+                <p className="text-sm text-muted-foreground">Control de calidad en fábrica con estándares internacionales.</p>
               </div>
             </article>
           </div>
