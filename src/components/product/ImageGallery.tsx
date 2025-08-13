@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ImageGalleryProps {
   variants: any[];
@@ -21,6 +22,16 @@ const ImageGallery = memo(({ variants, product, selectedImageIndex, onImageIndex
   const displayImage = currentImage?.url || product.image;
   const imageCount = allImages.length;
 
+  const handlePrevious = () => {
+    const newIndex = selectedImageIndex > 0 ? selectedImageIndex - 1 : imageCount - 1;
+    onImageIndexChange(newIndex);
+  };
+
+  const handleNext = () => {
+    const newIndex = (selectedImageIndex + 1) % imageCount;
+    onImageIndexChange(newIndex);
+  };
+
   return (
     <>
       <img
@@ -38,7 +49,7 @@ const ImageGallery = memo(({ variants, product, selectedImageIndex, onImageIndex
           loading="lazy"
         />
       )}
-      {/* Contador y flecha */}
+      {/* Contador */}
       <span className="absolute top-3 right-3 rounded-full bg-black/50 text-white text-xs px-2 py-1">
         {selectedImageIndex + 1} de {imageCount || 1}
       </span>
@@ -48,14 +59,24 @@ const ImageGallery = memo(({ variants, product, selectedImageIndex, onImageIndex
           {currentImage.variantName}
         </span>
       )}
+      {/* Navigation arrows */}
       {imageCount > 1 && (
-        <button 
-          className="absolute right-3 top-1/2 -translate-y-1/2 grid size-10 place-items-center rounded-full bg-black/40 text-white hover:bg-black/60" 
-          aria-label="Siguiente imagen"
-          onClick={() => onImageIndexChange((selectedImageIndex + 1) % imageCount)}
-        >
-          ›
-        </button>
+        <>
+          <button 
+            className="absolute left-3 top-1/2 -translate-y-1/2 grid size-10 place-items-center rounded-full bg-black/40 text-white hover:bg-black/60 transition-colors" 
+            aria-label="Imagen anterior"
+            onClick={handlePrevious}
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <button 
+            className="absolute right-3 top-1/2 -translate-y-1/2 grid size-10 place-items-center rounded-full bg-black/40 text-white hover:bg-black/60 transition-colors" 
+            aria-label="Siguiente imagen"
+            onClick={handleNext}
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </>
       )}
     </>
   );
