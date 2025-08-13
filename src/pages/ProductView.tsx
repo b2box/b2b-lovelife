@@ -123,10 +123,12 @@ const ProductView = () => {
   useEffect(() => {
     if (variants.length > 0 && rows.length === 0) {
       const newRows = variants.map(variant => {
-        // Get the minimum quantity for mayorista tier (default)
-        const mayoristaTier = (variant as any).variant_price_tiers?.find((tier: any) => tier.tier === "mayorista");
+        // Get the minimum quantity for selected tier
+        const tierMap = { inicial: "tier1", mayorista: "tier2", distribuidor: "tier3" } as const;
+        const dbTier = tierMap[selectedTier];
+        const priceTier = (variant as any).variant_price_tiers?.find((tier: any) => tier.tier === dbTier);
         const fallbackTier = (variant as any).variant_price_tiers?.[0];
-        const tierData = mayoristaTier || fallbackTier;
+        const tierData = priceTier || fallbackTier;
         const minQty = tierData?.min_qty || 1;
         
         return {
@@ -144,7 +146,23 @@ const ProductView = () => {
         setSelectedVariantId(newRows[0].id);
       }
     }
-  }, [variants, selectedVariantId, rows.length]);
+  }, [variants, selectedVariantId, rows.length, selectedTier]);
+
+  // Update quantities when tier changes
+  useEffect(() => {
+    if (rows.length > 0) {
+      setRows(prev => prev.map(row => {
+        const tierMap = { inicial: "tier1", mayorista: "tier2", distribuidor: "tier3" } as const;
+        const dbTier = tierMap[selectedTier];
+        const priceTier = (row.variant as any).variant_price_tiers?.find((tier: any) => tier.tier === dbTier);
+        const fallbackTier = (row.variant as any).variant_price_tiers?.[0];
+        const tierData = priceTier || fallbackTier;
+        const minQty = tierData?.min_qty || 1;
+        
+        return { ...row, qty: minQty };
+      }));
+    }
+  }, [selectedTier]);
 
   const perUnitLabeling = 0.15;
   const perUnitPackaging = 0.04;
@@ -674,7 +692,7 @@ const ProductView = () => {
                         <div className="flex items-center justify-center">
                           <div className="inline-flex items-center border rounded">
                             <button className="px-2 py-1 text-xs" onClick={() => changeQty(r.id, -minQty)} aria-label="Disminuir">-</button>
-                            <span className="px-2 py-1 min-w-[40px] text-center text-xs">{minQty}</span>
+                            <span className="px-2 py-1 min-w-[40px] text-center text-xs">{r.qty}</span>
                             <button className="px-2 py-1 text-xs" onClick={() => changeQty(r.id, minQty)} aria-label="Aumentar">+</button>
                           </div>
                         </div>
