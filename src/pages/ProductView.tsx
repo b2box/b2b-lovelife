@@ -941,24 +941,24 @@ const ProductView = () => {
                                {content.currencySymbol}{((variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100)).toFixed(3)} por unidad
                              </div>
                              
-                             {/* Número de artículos - solo si está seleccionado */}
-                             {r.comps?.labeling && (
-                               <div className="text-black text-xs font-medium px-3 py-1 rounded-full" style={{ backgroundColor: '#abff97' }}>
-                                 {r.qty.toLocaleString()} artículos
-                               </div>
-                             )}
-                             
-                             {/* Selector */}
-                             <div className="flex justify-center">
-                               {r.comps?.labeling ? (
-                                 <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "labeling")}>
-                                   <span className="text-xs">✓</span>
-                                 </div>
-                               ) : (
-                                 <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "labeling")}>
-                                 </div>
-                               )}
-                             </div>
+                              {/* Selector */}
+                              <div className="flex justify-center">
+                                {r.comps?.labeling ? (
+                                  <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "labeling")}>
+                                    <span className="text-xs">✓</span>
+                                  </div>
+                                ) : (
+                                  <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "labeling")}>
+                                  </div>
+                                )}
+                              </div>
+                              
+                              {/* Número de artículos - solo si está seleccionado */}
+                              {r.comps?.labeling && (
+                                <div className="text-black text-xs font-medium px-3 py-1 rounded-full" style={{ backgroundColor: '#abff97' }}>
+                                  10 artículos
+                                </div>
+                              )}
                              
                              {/* Total - solo si está seleccionado */}
                              {r.comps?.labeling && (
