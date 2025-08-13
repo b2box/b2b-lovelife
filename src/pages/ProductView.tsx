@@ -1027,8 +1027,8 @@ const ProductView = () => {
                            </div>
                          </td>
 
-                        {/* Empaque Optimizado */}
-                         <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()} style={{ backgroundColor: 'white' }}>
+                         {/* Empaque Optimizado */}
+                          <td className="px-2 py-3 text-center w-[110px] bg-white hover:bg-gray-50 transition-colors" onClick={(e) => e.stopPropagation()}>
                            <div className="flex flex-col items-center gap-2 h-24 justify-between">
                              {/* Precio por unidad - siempre visible */}
                               <div className="text-[10px]" style={{ color: '#545454' }}>
