@@ -435,7 +435,7 @@ const ProductView = () => {
             minOrder={minOrder}
             addToCart={addToCart}
           />
-      </div>
+        </div>
 
         {/* Barra de precios por tiers - Posicionada después del contenido principal */}
         <section className="mt-4 md:w-3/4">
