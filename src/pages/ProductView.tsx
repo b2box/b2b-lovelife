@@ -434,7 +434,7 @@ const ProductView = () => {
           </div>
 
           {/* Barra de precios por tiers - Posicionada después del contenido principal */}
-        <section className="mt-4 md:w-3/4">
+        <section className="mt-4 w-full">
           <article className="rounded-xl bg-card text-card-foreground border overflow-hidden shadow-sm">
             <div className="p-2 pb-0">
               <div className="grid grid-cols-3 gap-3">
