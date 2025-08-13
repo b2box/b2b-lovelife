@@ -701,10 +701,10 @@ const ProductView = () => {
                  </tr>
                  
                  {/* Segunda fila del header */}
-                 <tr style={{ backgroundColor: '#f5f5f5' }}>
-                   <th className="text-left px-3 py-3 font-medium w-[200px]" style={{ color: '#898989' }}>{content.tableHeaders.product}</th>
-                   <th className="text-center px-2 py-3 font-medium w-[80px]" style={{ color: '#898989' }}>{content.tableHeaders.units}</th>
-                   <th className="text-center px-2 py-3 font-medium w-[90px] relative" style={{ color: '#898989' }}>
+                 <tr>
+                   <th className="text-left px-3 py-3 font-medium w-[200px] text-xs rounded-tl-2xl" style={{ backgroundColor: '#f5f5f5', color: '#898989' }}>{content.tableHeaders.product}</th>
+                   <th className="text-center px-2 py-3 font-medium w-[80px] text-xs" style={{ backgroundColor: '#f5f5f5', color: '#898989' }}>{content.tableHeaders.units}</th>
+                   <th className="text-center px-2 py-3 font-medium w-[90px] relative text-xs" style={{ backgroundColor: '#f5f5f5', color: '#898989' }}>
                      <div className="flex flex-col items-center gap-1">
                        <span>Precio</span>
                        <span>Unitario</span>
@@ -725,7 +725,7 @@ const ProductView = () => {
                        </HoverCardContent>
                      </HoverCard>
                    </th>
-                    <th className="text-center px-2 py-2 font-medium w-[110px] relative bg-brand-blue text-white">
+                    <th className="text-center px-2 py-2 font-medium w-[110px] relative bg-brand-blue text-white text-xs">
                       <div className="flex flex-col items-center gap-1">
                         <span className="text-[10px]">Etiquetado para</span>
                         <span className="text-[10px]">Marketplaces</span>
@@ -746,7 +746,7 @@ const ProductView = () => {
                         </HoverCardContent>
                       </HoverCard>
                     </th>
-                    <th className="text-center px-2 py-2 font-medium w-[110px] relative bg-brand-blue text-white">
+                    <th className="text-center px-2 py-2 font-medium w-[110px] relative bg-brand-blue text-white text-xs">
                       <div className="flex flex-col items-center gap-1">
                         <span className="text-[10px]">Registro de</span>
                         <span className="text-[10px]">Código de Barras</span>
@@ -767,7 +767,7 @@ const ProductView = () => {
                         </HoverCardContent>
                       </HoverCard>
                     </th>
-                    <th className="text-center px-2 py-2 font-medium w-[110px] relative bg-brand-blue text-white">
+                    <th className="text-center px-2 py-2 font-medium w-[110px] relative bg-brand-blue text-white text-xs">
                       <div className="flex flex-col items-center gap-1">
                         <span className="text-[10px]">Fotografías</span>
                         <span className="text-[10px]">Comerciales</span>
@@ -788,7 +788,7 @@ const ProductView = () => {
                         </HoverCardContent>
                       </HoverCard>
                     </th>
-                    <th className="text-center px-2 py-2 font-medium w-[110px] relative bg-brand-blue text-white">
+                    <th className="text-center px-2 py-2 font-medium w-[110px] relative bg-brand-blue text-white text-xs">
                       <div className="flex flex-col items-center gap-1">
                         <span className="text-[10px]">Empaque</span>
                         <span className="text-[10px]">Optimizado</span>
@@ -809,7 +809,7 @@ const ProductView = () => {
                         </HoverCardContent>
                       </HoverCard>
                     </th>
-                   <th className="text-center px-2 py-2 font-medium w-[80px] bg-brand-blue text-white">Total</th>
+                   <th className="text-center px-2 py-2 font-medium w-[80px] bg-brand-blue text-white text-base">Total</th>
                  </tr>
                </thead>
               <tbody>
