@@ -880,71 +880,41 @@ const ProductView = () => {
                               <input
                                 type="number"
                                  value={(() => {
-                                   const tierMap = {
-                                     inicial: "tier1",
-                                     mayorista: "tier2", 
-                                     distribuidor: "tier3"
-                                   } as const;
-                                   
-                                   const dbTier = tierMap[selectedTier as keyof typeof tierMap];
+                                   // Always use tier1 as minimum regardless of selected tier
                                    const priceTiers = (r.variant as any)?.variant_price_tiers || [];
-                                   const priceTier = priceTiers.find((tier: any) => 
-                                     tier?.tier === dbTier && tier?.currency === "CNY"
+                                   const tier1PriceTier = priceTiers.find((tier: any) => 
+                                     tier?.tier === "tier1" && tier?.currency === "CNY"
                                    );
-                                   const minQty = priceTier?.min_qty || 1;
-                                   return Math.max(r.qty || 0, minQty);
+                                   const minQtyTier1 = tier1PriceTier?.min_qty || 1;
+                                   return Math.max(r.qty || 0, minQtyTier1);
                                  })()}
-                                onChange={(e) => {
-                                  const inputValue = parseInt(e.target.value) || 0;
-                                  
-                                  // Map tier names to database tier values
-                                  const tierMap = {
-                                    inicial: "tier1",
-                                    mayorista: "tier2", 
-                                    distribuidor: "tier3"
-                                  } as const;
-                                  
-                                  const dbTier = tierMap[selectedTier as keyof typeof tierMap];
-                                  
-                                  // Get the min_qty for this variant and tier (always in CNY base tier)
-                                  const priceTiers = (r.variant as any)?.variant_price_tiers || [];
-                                  const priceTier = priceTiers.find((tier: any) => 
-                                    tier?.tier === dbTier && tier?.currency === "CNY"
-                                  );
-                                  const minQty = priceTier?.min_qty || 1;
+                                 onChange={(e) => {
+                                   const inputValue = parseInt(e.target.value) || 0;
                                    
-                                   console.log("Debug minQty validation:", {
-                                     selectedTier,
-                                     dbTier,
-                                     inputValue,
-                                     minQty,
-                                     priceTier,
-                                     allTiers: priceTiers
-                                   });
-                                  // Ensure the value is not less than min_qty
-                                  const newQty = Math.max(inputValue, minQty);
-                                  const currentQty = r.qty || 0;
-                                  const diff = newQty - currentQty;
-                                  
-                                  if (diff !== 0) {
-                                    changeQty(r.id, diff);
-                                  }
+                                   // Always use tier1 minimum regardless of selected tier
+                                   const priceTiers = (r.variant as any)?.variant_price_tiers || [];
+                                   const tier1PriceTier = priceTiers.find((tier: any) => 
+                                     tier?.tier === "tier1" && tier?.currency === "CNY"
+                                   );
+                                   const minQtyTier1 = tier1PriceTier?.min_qty || 1;
+                                   
+                                   const newQty = Math.max(inputValue, minQtyTier1);
+                                   const currentQty = r.qty || 0;
+                                   const diff = newQty - currentQty;
+                                   
+                                   if (diff !== 0) {
+                                     changeQty(r.id, diff);
+                                 }
                                 }}
                                 className="w-10 px-1 py-0.5 text-center text-xs border-0 focus:outline-none focus:ring-1 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                min={(() => {
-                                  const tierMap = {
-                                    inicial: "tier1",
-                                    mayorista: "tier2", 
-                                    distribuidor: "tier3"
-                                  } as const;
-                                  
-                                  const dbTier = tierMap[selectedTier as keyof typeof tierMap];
-                                  const priceTiers = (r.variant as any)?.variant_price_tiers || [];
-                                  const priceTier = priceTiers.find((tier: any) => 
-                                    tier?.tier === dbTier && tier?.currency === "CNY"
-                                  );
-                                  return priceTier?.min_qty || 1;
-                                })()}
+                                 min={(() => {
+                                   // Always use tier1 minimum regardless of selected tier
+                                   const priceTiers = (r.variant as any)?.variant_price_tiers || [];
+                                   const tier1PriceTier = priceTiers.find((tier: any) => 
+                                     tier?.tier === "tier1" && tier?.currency === "CNY"
+                                   );
+                                   return tier1PriceTier?.min_qty || 1;
+                                 })()}
                               />
                               <button 
                                 className="px-1 py-0.5 text-xs hover:bg-gray-100" 
