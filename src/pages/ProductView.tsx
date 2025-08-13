@@ -407,7 +407,21 @@ const ProductView = () => {
                                return "0.00";
                              })()}
                           </div>
-                          <div className="text-sm text-muted-foreground font-medium">{content.pricingTiers.inicial.range}</div>
+                          <div className="text-sm text-muted-foreground font-medium">
+                            {(() => {
+                              // Get actual min_qty from first variant's price tiers
+                              const firstVariant = variants[0];
+                              if (!firstVariant) return content.pricingTiers.inicial.range;
+                              
+                              const inicialTier = (firstVariant as any).variant_price_tiers?.find((pt: any) => pt.tier === "inicial");
+                              const mayoristaTier = (firstVariant as any).variant_price_tiers?.find((pt: any) => pt.tier === "mayorista");
+                              
+                              if (inicialTier && mayoristaTier) {
+                                return `${inicialTier.min_qty} – ${mayoristaTier.min_qty - 1} unidades`;
+                              }
+                              return content.pricingTiers.inicial.range;
+                            })()}
+                          </div>
                         </div>
                       </button>
 
@@ -439,7 +453,21 @@ const ProductView = () => {
                                return "0.00";
                              })()}
                           </div>
-                          <div className="text-sm text-muted-foreground font-medium">{content.pricingTiers.mayorista.range}</div>
+                          <div className="text-sm text-muted-foreground font-medium">
+                            {(() => {
+                              // Get actual min_qty from first variant's price tiers
+                              const firstVariant = variants[0];
+                              if (!firstVariant) return content.pricingTiers.mayorista.range;
+                              
+                              const mayoristaTier = (firstVariant as any).variant_price_tiers?.find((pt: any) => pt.tier === "mayorista");
+                              const distribuidorTier = (firstVariant as any).variant_price_tiers?.find((pt: any) => pt.tier === "distribuidor");
+                              
+                              if (mayoristaTier && distribuidorTier) {
+                                return `${mayoristaTier.min_qty} – ${distribuidorTier.min_qty - 1} unidades`;
+                              }
+                              return content.pricingTiers.mayorista.range;
+                            })()}
+                          </div>
                         </div>
                       </button>
 
@@ -471,7 +499,20 @@ const ProductView = () => {
                                return "0.00";
                              })()}
                           </div>
-                          <div className="text-sm text-muted-foreground font-medium">{content.pricingTiers.distribuidor.range}</div>
+                          <div className="text-sm text-muted-foreground font-medium">
+                            {(() => {
+                              // Get actual min_qty from first variant's price tiers
+                              const firstVariant = variants[0];
+                              if (!firstVariant) return content.pricingTiers.distribuidor.range;
+                              
+                              const distribuidorTier = (firstVariant as any).variant_price_tiers?.find((pt: any) => pt.tier === "distribuidor");
+                              
+                              if (distribuidorTier) {
+                                return `+${distribuidorTier.min_qty} unidades`;
+                              }
+                              return content.pricingTiers.distribuidor.range;
+                            })()}
+                          </div>
                         </div>
                       </button>
                     </div>
