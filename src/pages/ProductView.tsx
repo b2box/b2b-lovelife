@@ -445,27 +445,27 @@ const ProductView = () => {
                   className="text-center group transition-all duration-200"
                   aria-pressed={selectedTier === "inicial"}
                 >
-                  <div className="text-base font-bold mb-1 text-foreground">{content.pricingTiers.inicial.name}</div>
-                  <div className={`
-                    rounded-xl border-2 px-4 py-4 transition-all duration-200 bg-white/50
-                    ${selectedTier === "inicial" 
-                      ? "border-foreground shadow-lg scale-105 bg-white" 
-                      : "border-border/50 hover:border-border group-hover:scale-102"
-                    }
-                  `}>
-                    <div className={`
-                      text-2xl font-black mb-1 transition-opacity duration-200
-                      ${selectedTier === "inicial" ? "text-foreground" : "text-muted-foreground"}
-                    `}>
-                       {content.currencySymbol}{(() => {
-                         // Calculate dynamic price for inicial tier using selected variant
-                         const selectedVariant = variants.find(v => v.id === selectedVariantId) || variants[0];
-                         if (selectedVariant) {
-                           return getVariantPrice(selectedVariant, "inicial").toFixed(2);
-                         }
-                         return "0.00";
-                       })()}
-                    </div>
+                   <div className="text-lg font-bold mb-2 text-foreground">{content.pricingTiers.inicial.name}</div>
+                   <div className={`
+                     rounded-[18px] border-2 px-6 py-6 transition-all duration-200 bg-white/50
+                     ${selectedTier === "inicial" 
+                       ? "border-foreground shadow-lg scale-105 bg-white" 
+                       : "border-border/50 hover:border-border group-hover:scale-102"
+                     }
+                   `}>
+                     <div className={`
+                       text-3xl font-black mb-1 transition-opacity duration-200
+                       ${selectedTier === "inicial" ? "text-foreground" : "text-muted-foreground"}
+                     `}>
+                        {content.currencySymbol}{(() => {
+                          // Calculate dynamic price for inicial tier using selected variant
+                          const selectedVariant = variants.find(v => v.id === selectedVariantId) || variants[0];
+                          if (selectedVariant) {
+                            return getVariantPrice(selectedVariant, "inicial").toFixed(2);
+                          }
+                          return "0.00";
+                        })()}
+                     </div>
                     <div className="text-sm text-muted-foreground font-medium">
                       {(() => {
                         // Get actual min_qty from selected variant's price tiers (not first variant)
@@ -547,27 +547,27 @@ const ProductView = () => {
                   className="text-center group transition-all duration-200"
                   aria-pressed={selectedTier === "distribuidor"}
                 >
-                  <div className="text-lg font-bold mb-2 text-foreground">{content.pricingTiers.distribuidor.name}</div>
-                  <div className={`
-                    rounded-[18px] border-2 px-6 py-6 transition-all duration-200 bg-white/50
-                    ${selectedTier === "distribuidor" 
-                      ? "border-foreground shadow-lg scale-105 bg-white" 
-                      : "border-border/50 hover:border-border group-hover:scale-102"
-                    }
-                  `}>
-                    <div className={`
-                      text-3xl font-black mb-1 transition-opacity duration-200
-                      ${selectedTier === "distribuidor" ? "text-foreground" : "text-muted-foreground"}
-                    `}>
-                       {content.currencySymbol}{(() => {
-                         // Calculate dynamic price for distribuidor tier using selected variant
-                         const selectedVariant = variants.find(v => v.id === selectedVariantId) || variants[0];
-                         if (selectedVariant) {
-                           return getVariantPrice(selectedVariant, "distribuidor").toFixed(2);
-                         }
-                         return "0.00";
-                       })()}
-                    </div>
+                   <div className="text-lg font-bold mb-2 text-foreground">{content.pricingTiers.distribuidor.name}</div>
+                   <div className={`
+                     rounded-[18px] border-2 px-6 py-6 transition-all duration-200 bg-white/50
+                     ${selectedTier === "distribuidor" 
+                       ? "border-foreground shadow-lg scale-105 bg-white" 
+                       : "border-border/50 hover:border-border group-hover:scale-102"
+                     }
+                   `}>
+                     <div className={`
+                       text-3xl font-black mb-1 transition-opacity duration-200
+                       ${selectedTier === "distribuidor" ? "text-foreground" : "text-muted-foreground"}
+                     `}>
+                        {content.currencySymbol}{(() => {
+                          // Calculate dynamic price for distribuidor tier using selected variant
+                          const selectedVariant = variants.find(v => v.id === selectedVariantId) || variants[0];
+                          if (selectedVariant) {
+                            return getVariantPrice(selectedVariant, "distribuidor").toFixed(2);
+                          }
+                          return "0.00";
+                        })()}
+                     </div>
                     <div className="text-sm text-muted-foreground font-medium">
                       {(() => {
                         // Get actual min_qty from selected variant's price tiers (not first variant)
