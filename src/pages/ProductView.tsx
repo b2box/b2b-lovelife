@@ -432,8 +432,8 @@ const ProductView = () => {
             
             {/* Bloque sticky lateral derecho */}
             <aside className="hidden md:block w-1/5 flex-shrink-0">
-              <div className="sticky top-0 h-screen">
-                <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-full overflow-y-auto">
+              <div className="sticky top-6 z-50">
+                <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
                   <h3 className="text-lg font-semibold mb-4">Panel Lateral</h3>
                   <div className="space-y-3">
                     <div className="text-sm text-gray-600">
