@@ -9,7 +9,7 @@ export function MarketSpecificBanners({ className }: MarketSpecificBannersProps)
   const { content } = useProductMarketContent();
 
   return (
-    <div className={`flex items-center justify-between gap-3 px-4 py-3 bg-brand-yellow rounded-b-[28px] ${className || ""}`}>
+    <div className={`flex items-center justify-between gap-3 px-4 py-3 bg-brand-yellow rounded-b-xl ${className || ""}`}>
       <div className="flex items-center gap-2 text-sm font-medium">
         <span>{content.trendBanner.text}</span>
         <img 
