@@ -53,6 +53,7 @@ All colors MUST be HSL.
     --brand: 28 92% 54%; /* warm orange */
     --brand-2: 286 77% 55%; /* vibrant violet */
     --brand-green: 108 100% 80%; /* B2BOX green #ABFF97 */
+    --brand-blue: 207 100% 76%; /* Table blue #85CAFF */
     --brand-yellow: 53 96% 64%; /* #FBE74D */
     --brand-violet-soft: 260 100% 88%; /* light lavender for surfaces */
 
@@ -141,11 +142,13 @@ All colors MUST be HSL.
 @layer components {
   .bg-gradient-primary { background: var(--gradient-primary); }
   .bg-brand-green { background-color: hsl(var(--brand-green)); }
+  .bg-brand-blue { background-color: hsl(var(--brand-blue)); }
   .bg-brand-yellow { background-color: hsl(var(--brand-yellow)); }
   .bg-brand-violet { background-color: hsl(var(--brand-2)); color: hsl(var(--primary-foreground)); }
   .bg-brand-violet-soft { background-color: hsl(var(--brand-violet-soft)); color: hsl(var(--primary-foreground)); }
   .bg-gradient-trends-animated { background: var(--gradient-trends); background-size: 300% 300%; animation: gradient-shift 10s ease infinite; }
   .text-brand-green { color: hsl(var(--brand-green)); }
+  .text-brand-blue { color: hsl(var(--brand-blue)); }
   .text-brand-2 { color: hsl(var(--brand-2)); }
   .shadow-elevate { box-shadow: var(--shadow-elevate); }
   .shadow-elevate-green { box-shadow: var(--shadow-elevate-green); }
