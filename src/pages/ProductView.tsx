@@ -373,9 +373,9 @@ const ProductView = () => {
           <span className="text-foreground">{product.name}</span>
         </nav>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-[1fr_auto]">
+        <div className="flex flex-col md:flex-row gap-6">
           {/* Columna izquierda: Galería + Detalles */}
-          <section>
+          <section className="flex-1 min-w-0">
             <div className="grid grid-cols-1 md:grid-cols-[40%_60%] gap-4">{/* Optimizar proporción galería/detalles */}
               {/* Galería - compacta */}
               <div className="rounded-2xl bg-card p-2 md:p-3 h-fit">
@@ -425,9 +425,10 @@ const ProductView = () => {
           </section>
 
           {/* Columna derecha: Resumen sticky */}
-          <div className="hidden md:block">
-            <div className="sticky top-6 w-[320px] h-fit">
-              <div className="bg-white border border-[#E5E7EB] rounded-[24px] p-3 shadow-sm">
+          <aside className="hidden md:block w-[320px] flex-shrink-0">
+            <div className="sticky top-6 z-10" style={{ position: 'sticky' }}>
+              <div className="max-h-[calc(100vh-4rem)] overflow-y-auto">
+                <div className="bg-white border border-[#E5E7EB] rounded-[24px] p-3 shadow-sm">
                 {/* Encabezado con check verde */}
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-[22px] font-semibold text-[#0A0A0A]">Orden mínima $100</span>
