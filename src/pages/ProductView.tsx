@@ -851,86 +851,86 @@ const ProductView = () => {
                            <div className="grid grid-cols-8 gap-2 p-3 items-center">
                       <td className="px-3 py-3">
                         <div className="flex items-center gap-2">
-                          <img src={variantImage} alt={variantName} className="w-10 h-10 rounded object-cover flex-shrink-0" loading="lazy" />
-                          <div className="min-w-0">
-                            <div className="font-medium leading-tight text-sm truncate">{variantName}</div>
-                            {variantOption !== "Estándar" && (
-                              <div className="text-xs text-muted-foreground truncate">{variantOption}</div>
-                            )}
-                          </div>
+                           <img src={variantImage} alt={variantName} className="w-16 h-16 rounded object-cover flex-shrink-0" loading="lazy" />
+                           <div className="min-w-0">
+                             <div className="font-medium leading-tight text-base truncate">{variantName}</div>
+                             {variantOption !== "Estándar" && (
+                               <div className="text-sm text-muted-foreground truncate">{variantOption}</div>
+                             )}
+                           </div>
                         </div>
                       </td>
                       <td className="px-2 py-3" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-center">
-                          <div className="inline-flex items-center border rounded">
-                            <button 
-                              className="px-2 py-1 text-xs hover:bg-gray-100" 
-                              onClick={() => changeQty(r.id, -1)} 
-                              aria-label="Disminuir"
-                            >
-                              -
-                            </button>
-                            <input
-                              type="number"
-                              value={r.qty || 0}
-                              onChange={(e) => {
-                                const inputValue = parseInt(e.target.value) || 0;
-                                
-                                // Map tier names to database tier values
-                                const tierMap = {
-                                  inicial: "tier1",
-                                  mayorista: "tier2", 
-                                  distribuidor: "tier3"
-                                } as const;
-                                
-                                const dbTier = tierMap[selectedTier as keyof typeof tierMap];
-                                
-                                // Get the min_qty for this variant and tier
-                                const priceTiers = (r.variant as any)?.price_tiers || [];
-                                const priceTier = priceTiers.find((tier: any) => 
-                                  tier?.tier === dbTier
-                                );
-                                const minQty = priceTier?.min_qty || 1;
-                                
-                                // Ensure the value is not less than min_qty
-                                const newQty = Math.max(inputValue, minQty);
-                                const currentQty = r.qty || 0;
-                                const diff = newQty - currentQty;
-                                
-                                if (diff !== 0) {
-                                  changeQty(r.id, diff);
-                                }
-                              }}
-                              className="w-12 px-1 py-1 text-center text-xs border-0 focus:outline-none focus:ring-1 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                              min={(() => {
-                                const priceTiers = (r.variant as any)?.variant_price_tiers || [];
-                                const priceTier = priceTiers.find((tier: any) => 
-                                  tier?.tier === selectedTier && tier?.currency === "CNY"
-                                );
-                                return priceTier?.min_qty || 1;
-                              })()}
-                            />
-                            <button 
-                              className="px-2 py-1 text-xs hover:bg-gray-100" 
-                              onClick={() => changeQty(r.id, 1)} 
-                              aria-label="Aumentar"
-                            >
-                              +
-                            </button>
-                          </div>
+                           <div className="inline-flex items-center border rounded">
+                             <button 
+                               className="px-1 py-0.5 text-xs hover:bg-gray-100" 
+                               onClick={() => changeQty(r.id, -1)} 
+                               aria-label="Disminuir"
+                             >
+                               -
+                             </button>
+                             <input
+                               type="number"
+                               value={r.qty || 0}
+                               onChange={(e) => {
+                                 const inputValue = parseInt(e.target.value) || 0;
+                                 
+                                 // Map tier names to database tier values
+                                 const tierMap = {
+                                   inicial: "tier1",
+                                   mayorista: "tier2", 
+                                   distribuidor: "tier3"
+                                 } as const;
+                                 
+                                 const dbTier = tierMap[selectedTier as keyof typeof tierMap];
+                                 
+                                 // Get the min_qty for this variant and tier
+                                 const priceTiers = (r.variant as any)?.price_tiers || [];
+                                 const priceTier = priceTiers.find((tier: any) => 
+                                   tier?.tier === dbTier
+                                 );
+                                 const minQty = priceTier?.min_qty || 1;
+                                 
+                                 // Ensure the value is not less than min_qty
+                                 const newQty = Math.max(inputValue, minQty);
+                                 const currentQty = r.qty || 0;
+                                 const diff = newQty - currentQty;
+                                 
+                                 if (diff !== 0) {
+                                   changeQty(r.id, diff);
+                                 }
+                               }}
+                               className="w-10 px-1 py-0.5 text-center text-xs border-0 focus:outline-none focus:ring-1 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                               min={(() => {
+                                 const priceTiers = (r.variant as any)?.variant_price_tiers || [];
+                                 const priceTier = priceTiers.find((tier: any) => 
+                                   tier?.tier === selectedTier && tier?.currency === "CNY"
+                                 );
+                                 return priceTier?.min_qty || 1;
+                               })()}
+                             />
+                             <button 
+                               className="px-1 py-0.5 text-xs hover:bg-gray-100" 
+                               onClick={() => changeQty(r.id, 1)} 
+                               aria-label="Aumentar"
+                             >
+                               +
+                             </button>
+                           </div>
                         </div>
                       </td>
                       <td className="px-2 py-3 text-center">
-                        <div className="text-sm font-medium">{content.currencySymbol}{variantPrice.toFixed(2)}</div>
+                        <div className="text-xs font-medium">{content.currencySymbol}{variantPrice.toFixed(2)}</div>
                       </td>
 
                       {/* Etiquetado */}
                       <td className="px-2 py-3 text-center" onClick={(e) => e.stopPropagation()}>
                         <div className="space-y-2">
-                          {/* Precio por unidad - siempre visible */}
-                          <div className="text-xs text-muted-foreground">
-                            {content.currencySymbol}{((variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100)).toFixed(3)} por unidad
-                          </div>
+                           {/* Precio por unidad - siempre visible */}
+                           <div className="text-[10px] text-muted-foreground">
+                             {content.currencySymbol}{((variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100)).toFixed(3)} por unidad
+                           </div>
                           
                           {/* Número de artículos - solo si está seleccionado */}
                           {r.comps?.labeling && (
