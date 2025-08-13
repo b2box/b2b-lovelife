@@ -57,6 +57,7 @@ export type AdminVariant = {
   has_individual_packaging?: boolean;
   individual_packaging_price_cny?: number | null;
   individual_packaging_required?: boolean;
+  is_highlighted?: boolean;
 };
 
 interface SortableVariantRowProps {
@@ -64,6 +65,7 @@ interface SortableVariantRowProps {
   onEdit: (variant: AdminVariant) => void;
   onDuplicate: (variant: AdminVariant) => void;
   onDelete: (variant: AdminVariant) => void;
+  onToggleHighlight: (variant: AdminVariant) => void;
 }
 
 const SortableVariantRow: React.FC<SortableVariantRowProps> = ({
@@ -71,6 +73,7 @@ const SortableVariantRow: React.FC<SortableVariantRowProps> = ({
   onEdit,
   onDuplicate,
   onDelete,
+  onToggleHighlight,
 }) => {
   const [thumbnail, setThumbnail] = useState<string | null>(null);
   const [deleteText, setDeleteText] = useState("");
@@ -105,7 +108,11 @@ const SortableVariantRow: React.FC<SortableVariantRowProps> = ({
   }, [variant.id]);
 
   return (
-    <TableRow ref={setNodeRef} style={style}>
+    <TableRow 
+      ref={setNodeRef} 
+      style={style}
+      className={variant.is_highlighted ? "border-l-4 border-l-green-500 bg-green-50/50" : ""}
+    >
       <TableCell>
         <div 
           {...attributes}
@@ -133,6 +140,14 @@ const SortableVariantRow: React.FC<SortableVariantRowProps> = ({
       <TableCell>{variant.sku ?? "-"}</TableCell>
       <TableCell>
         <div className="flex gap-2">
+          <Button 
+            size="sm" 
+            variant={variant.is_highlighted ? "default" : "outline"}
+            onClick={() => onToggleHighlight(variant)}
+            className={variant.is_highlighted ? "bg-green-600 hover:bg-green-700" : ""}
+          >
+            {variant.is_highlighted ? "✓" : "○"}
+          </Button>
           <Button size="sm" variant="outline" onClick={() => onEdit(variant)}>
             Editar
           </Button>
@@ -377,6 +392,16 @@ export const DraggableVariantsEditor: React.FC<DraggableVariantsEditorProps> = (
     toast({ title: 'Eliminado', description: 'Variante eliminada correctamente.' });
   };
 
+  const toggleVariantHighlight = (variant: AdminVariant) => {
+    setVariants((prev) => 
+      prev.map((v) => 
+        v.id === variant.id 
+          ? { ...v, is_highlighted: !v.is_highlighted }
+          : v
+      )
+    );
+  };
+
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -446,7 +471,7 @@ export const DraggableVariantsEditor: React.FC<DraggableVariantsEditorProps> = (
                   <TableHead className="w-[80px]">Imagen</TableHead>
                   <TableHead>Título</TableHead>
                   <TableHead>PA Code</TableHead>
-                  <TableHead className="w-[160px]">Acciones</TableHead>
+                  <TableHead className="w-[200px]">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -461,6 +486,7 @@ export const DraggableVariantsEditor: React.FC<DraggableVariantsEditorProps> = (
                       onEdit={onVariantEdit}
                       onDuplicate={duplicateVariant}
                       onDelete={deleteVariant}
+                      onToggleHighlight={toggleVariantHighlight}
                     />
                   ))}
                 </SortableContext>
