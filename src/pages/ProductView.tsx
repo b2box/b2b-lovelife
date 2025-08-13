@@ -179,10 +179,10 @@ const ProductView = () => {
     const variantPrice = getVariantPrice(r.variant, selectedTier);
     const base = r.qty * variantPrice;
     const comps =
-      (r.comps.labeling ? r.qty * perUnitLabeling : 0) +
-      (r.comps.packaging ? r.qty * perUnitPackaging : 0) +
-      (r.comps.barcode ? fixedBarcode : 0) +
-      (r.comps.photos ? fixedPhotos : 0);
+      (r.comps.labeling ? r.qty * variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100 : 0) +
+      (r.comps.packaging ? r.qty * variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100 : 0) +
+      (r.comps.barcode ? (pricingSettings?.barcode_registration_usd || 1) : 0) +
+      (r.comps.photos ? (pricingSettings?.commercial_photos_usd || 45) : 0);
     return base + comps;
   };
 
