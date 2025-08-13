@@ -875,36 +875,15 @@ const ProductView = () => {
           </div>
         </section>
 
-        {/* Imágenes de todas las variantes */}
+        {/* Imágenes */}
         <section className="mt-8 w-full md:w-3/5">
           <h2 className="text-xl font-semibold mb-3">Imágenes</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {(() => {
-              // Collect all images from all variants
-              const allImages = variants.flatMap(variant => 
-                (variant as any).product_variant_images?.map((img: any) => ({
-                  ...img,
-                  variantName: variant.name || product.name,
-                  variantId: variant.id
-                })) || []
-              ).sort((a, b) => a.sort_order - b.sort_order);
-
-              return allImages.map((image, i) => (
-                <div key={`${image.variantId}-${image.id}`} className="relative rounded-2xl border overflow-hidden bg-muted aspect-square group cursor-pointer hover:scale-105 transition-transform">
-                  <img 
-                    src={image.url} 
-                    alt={image.alt || `${image.variantName} imagen ${i + 1}`} 
-                    className="w-full h-full object-cover" 
-                    loading="lazy" 
-                    onClick={() => setSelectedImageIndex(i)}
-                  />
-                  {/* Variant label */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-sm px-3 py-2 group-hover:bg-black/80 transition-colors">
-                    {image.variantName}
-                  </div>
-                </div>
-              ));
-            })()}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {Array.from({ length: 2 }).map((_, i) => (
+              <div key={i} className="rounded-2xl border overflow-hidden bg-muted">
+                <img src={product.image} alt={`${product.name} imagen ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
+              </div>
+            ))}
           </div>
         </section>
 
