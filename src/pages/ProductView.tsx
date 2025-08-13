@@ -447,10 +447,10 @@ const ProductView = () => {
                 >
                    <div className="text-lg font-bold mb-2 text-foreground">{content.pricingTiers.inicial.name}</div>
                    <div className={`
-                     rounded-[18px] border-2 px-6 py-6 transition-all duration-200 bg-white/50
+                     rounded-[18px] border-2 px-6 transition-all duration-200 bg-white/50
                      ${selectedTier === "inicial" 
-                       ? "border-foreground shadow-lg scale-105 bg-white" 
-                       : "border-border/50 hover:border-border group-hover:scale-102"
+                       ? "border-foreground shadow-lg scale-105 bg-white py-6" 
+                       : "border-border/50 hover:border-border group-hover:scale-102 py-4"
                      }
                    `}>
                      <div className={`
@@ -497,13 +497,13 @@ const ProductView = () => {
                   aria-pressed={selectedTier === "mayorista"}
                 >
                   <div className="text-lg font-bold mb-2 text-foreground">{content.pricingTiers.mayorista.name}</div>
-                  <div className={`
-                    relative rounded-[18px] border-2 px-6 py-6 transition-all duration-200 bg-white/50
-                    ${selectedTier === "mayorista" 
-                      ? "border-foreground shadow-xl scale-105 bg-white" 
-                      : "border-border/50 hover:border-border group-hover:scale-102"
-                    }
-                  `}>
+                   <div className={`
+                     relative rounded-[18px] border-2 px-6 transition-all duration-200 bg-white/50
+                     ${selectedTier === "mayorista" 
+                       ? "border-foreground shadow-xl scale-105 bg-white py-6" 
+                       : "border-border/50 hover:border-border group-hover:scale-102 py-4"
+                     }
+                   `}>
                     <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-foreground text-background text-xs font-bold px-4 py-1 shadow-lg">
                       {content.pricingTiers.mayorista.badge}
                     </span>
@@ -549,10 +549,10 @@ const ProductView = () => {
                 >
                    <div className="text-lg font-bold mb-2 text-foreground">{content.pricingTiers.distribuidor.name}</div>
                    <div className={`
-                     rounded-[18px] border-2 px-6 py-6 transition-all duration-200 bg-white/50
+                     rounded-[18px] border-2 px-6 transition-all duration-200 bg-white/50
                      ${selectedTier === "distribuidor" 
-                       ? "border-foreground shadow-lg scale-105 bg-white" 
-                       : "border-border/50 hover:border-border group-hover:scale-102"
+                       ? "border-foreground shadow-lg scale-105 bg-white py-6" 
+                       : "border-border/50 hover:border-border group-hover:scale-102 py-4"
                      }
                    `}>
                      <div className={`
