@@ -1037,9 +1037,9 @@ const ProductView = () => {
                              
                              {/* Número de artículos - solo si está seleccionado */}
                              {r.comps?.packaging && (
-                               <div className="bg-green-400 text-black text-xs font-medium px-3 py-1 rounded-full">
-                                 {r.qty.toLocaleString()} artículos
-                               </div>
+                                <div className="text-black text-xs font-medium px-3 py-1 rounded-full" style={{ backgroundColor: '#abff97' }}>
+                                  {r.qty.toLocaleString()} artículos
+                                </div>
                              )}
                              
                              {/* Selector */}
