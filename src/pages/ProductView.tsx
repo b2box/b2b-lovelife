@@ -934,134 +934,134 @@ const ProductView = () => {
                         </td>
 
                         {/* Etiquetado para Marketplaces */}
-                        <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
-                          <div className="space-y-2">
-                            {/* Precio por unidad - siempre visible */}
-                            <div className="text-[10px] text-muted-foreground">
-                              {content.currencySymbol}{((variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100)).toFixed(3)} por unidad
-                            </div>
-                            
-                            {/* Número de artículos - solo si está seleccionado */}
-                            {r.comps?.labeling && (
-                              <div className="text-black text-xs font-medium px-3 py-1 rounded-full" style={{ backgroundColor: '#abff97' }}>
-                                {r.qty.toLocaleString()} artículos
-                              </div>
-                            )}
-                            
-                            {/* Selector */}
-                            <div className="flex justify-center">
-                              {r.comps?.labeling ? (
-                                <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "labeling")}>
-                                  <span className="text-xs">✓</span>
-                                </div>
-                              ) : (
-                                <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "labeling")}>
-                                </div>
-                              )}
-                            </div>
-                            
-                            {/* Total - solo si está seleccionado */}
-                            {r.comps?.labeling && (
-                              <div className="text-xs font-medium text-muted-foreground">
-                                TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100).toFixed(2)}
-                              </div>
-                            )}
-                          </div>
-                        </td>
+                         <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
+                           <div className="flex flex-col items-center gap-2 h-24 justify-between">
+                             {/* Precio por unidad - siempre visible */}
+                             <div className="text-[10px]" style={{ color: '#545454' }}>
+                               {content.currencySymbol}{((variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100)).toFixed(3)} por unidad
+                             </div>
+                             
+                             {/* Número de artículos - solo si está seleccionado */}
+                             {r.comps?.labeling && (
+                               <div className="text-black text-xs font-medium px-3 py-1 rounded-full" style={{ backgroundColor: '#abff97' }}>
+                                 {r.qty.toLocaleString()} artículos
+                               </div>
+                             )}
+                             
+                             {/* Selector */}
+                             <div className="flex justify-center">
+                               {r.comps?.labeling ? (
+                                 <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "labeling")}>
+                                   <span className="text-xs">✓</span>
+                                 </div>
+                               ) : (
+                                 <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "labeling")}>
+                                 </div>
+                               )}
+                             </div>
+                             
+                             {/* Total - solo si está seleccionado */}
+                             {r.comps?.labeling && (
+                               <div className="text-xs font-medium" style={{ color: '#545454' }}>
+                                 TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100).toFixed(2)}
+                               </div>
+                             )}
+                           </div>
+                         </td>
 
                         {/* Registro de Código de Barras */}
-                        <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
-                          <div className="space-y-2">
-                            {/* Precio fijo - siempre visible */}
-                             <div className="text-[10px] text-muted-foreground">
-                              {content.currencySymbol}{(pricingSettings?.barcode_registration_usd || 1).toFixed(0)} por variante
-                            </div>
-                            
-                            {/* Selector */}
-                            <div className="flex justify-center">
-                              {r.comps?.barcode ? (
-                                <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "barcode")}>
-                                  <span className="text-xs">✓</span>
-                                </div>
-                              ) : (
-                                <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "barcode")}>
-                                </div>
-                              )}
-                            </div>
-                            
-                            {/* Total - solo si está seleccionado */}
-                            {r.comps?.barcode && (
-                              <div className="bg-brand-green/20 text-brand-green text-xs font-medium px-3 py-1 rounded-full">
-                                {content.currencySymbol}{(pricingSettings?.barcode_registration_usd || 1).toFixed(0)}
-                              </div>
-                            )}
-                          </div>
-                        </td>
+                         <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
+                           <div className="flex flex-col items-center gap-2 h-24 justify-between">
+                             {/* Precio fijo - siempre visible */}
+                             <div className="text-[10px]" style={{ color: '#545454' }}>
+                               {content.currencySymbol}{(pricingSettings?.barcode_registration_usd || 1).toFixed(0)} por variante
+                             </div>
+                             
+                             {/* Selector */}
+                             <div className="flex justify-center">
+                               {r.comps?.barcode ? (
+                                 <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "barcode")}>
+                                   <span className="text-xs">✓</span>
+                                 </div>
+                               ) : (
+                                 <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "barcode")}>
+                                 </div>
+                               )}
+                             </div>
+                             
+                             {/* Total - solo si está seleccionado */}
+                             {r.comps?.barcode && (
+                               <div className="text-xs font-medium" style={{ color: '#545454' }}>
+                                 TOTAL {content.currencySymbol}{(pricingSettings?.barcode_registration_usd || 1).toFixed(0)}
+                               </div>
+                             )}
+                           </div>
+                         </td>
 
                         {/* Fotografías Comerciales */}
-                        <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
-                          <div className="space-y-2">
-                            {/* Precio fijo - siempre visible */}
-                             <div className="text-[10px] text-muted-foreground">
-                              {content.currencySymbol}{(pricingSettings?.commercial_photos_usd || 45).toFixed(0)} por variante
-                            </div>
-                            
-                            {/* Selector */}
-                            <div className="flex justify-center">
-                              {r.comps?.photos ? (
-                                <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "photos")}>
-                                  <span className="text-xs">✓</span>
-                                </div>
-                              ) : (
-                                <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "photos")}>
-                                </div>
-                              )}
-                            </div>
-                            
-                            {/* Total - solo si está seleccionado */}
-                            {r.comps?.photos && (
-                              <div className="bg-brand-green/20 text-brand-green text-xs font-medium px-3 py-1 rounded-full">
-                                {content.currencySymbol}{(pricingSettings?.commercial_photos_usd || 45).toFixed(0)}
-                              </div>
-                            )}
-                          </div>
-                        </td>
+                         <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
+                           <div className="flex flex-col items-center gap-2 h-24 justify-between">
+                             {/* Precio fijo - siempre visible */}
+                             <div className="text-[10px]" style={{ color: '#545454' }}>
+                               {content.currencySymbol}{(pricingSettings?.commercial_photos_usd || 45).toFixed(0)} por variante
+                             </div>
+                             
+                             {/* Selector */}
+                             <div className="flex justify-center">
+                               {r.comps?.photos ? (
+                                 <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "photos")}>
+                                   <span className="text-xs">✓</span>
+                                 </div>
+                               ) : (
+                                 <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "photos")}>
+                                 </div>
+                               )}
+                             </div>
+                             
+                             {/* Total - solo si está seleccionado */}
+                             {r.comps?.photos && (
+                               <div className="text-xs font-medium" style={{ color: '#545454' }}>
+                                 TOTAL {content.currencySymbol}{(pricingSettings?.commercial_photos_usd || 45).toFixed(0)}
+                               </div>
+                             )}
+                           </div>
+                         </td>
 
                         {/* Empaque Optimizado */}
-                        <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
-                          <div className="space-y-2">
-                            {/* Precio por unidad - siempre visible */}
-                            <div className="text-[10px] text-muted-foreground">
-                              {content.currencySymbol}{((variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100)).toFixed(3)} por unidad
-                            </div>
-                            
-                            {/* Número de artículos - solo si está seleccionado */}
-                            {r.comps?.packaging && (
-                              <div className="bg-green-400 text-black text-xs font-medium px-3 py-1 rounded-full">
-                                {r.qty.toLocaleString()} artículos
-                              </div>
-                            )}
-                            
-                            {/* Selector */}
-                            <div className="flex justify-center">
-                              {r.comps?.packaging ? (
-                                <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "packaging")}>
-                                  <span className="text-xs">✓</span>
-                                </div>
-                              ) : (
-                                <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "packaging")}>
-                                </div>
-                              )}
-                            </div>
-                            
-                            {/* Total - solo si está seleccionado */}
-                            {r.comps?.packaging && (
-                              <div className="text-xs font-medium text-muted-foreground">
-                                TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100).toFixed(2)}
-                              </div>
-                            )}
-                          </div>
-                        </td>
+                         <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()} style={{ backgroundColor: '#abff97' }}>
+                           <div className="flex flex-col items-center gap-2 h-24 justify-between">
+                             {/* Precio por unidad - siempre visible */}
+                             <div className="text-[10px]" style={{ color: '#545454' }}>
+                               {content.currencySymbol}{((variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100)).toFixed(3)} por unidad
+                             </div>
+                             
+                             {/* Número de artículos - solo si está seleccionado */}
+                             {r.comps?.packaging && (
+                               <div className="bg-green-400 text-black text-xs font-medium px-3 py-1 rounded-full">
+                                 {r.qty.toLocaleString()} artículos
+                               </div>
+                             )}
+                             
+                             {/* Selector */}
+                             <div className="flex justify-center">
+                               {r.comps?.packaging ? (
+                                 <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "packaging")}>
+                                   <span className="text-xs">✓</span>
+                                 </div>
+                               ) : (
+                                 <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "packaging")}>
+                                 </div>
+                               )}
+                             </div>
+                             
+                             {/* Total - solo si está seleccionado */}
+                             {r.comps?.packaging && (
+                               <div className="text-xs font-medium" style={{ color: '#545454' }}>
+                                 TOTAL {content.currencySymbol}{(r.qty * variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100).toFixed(2)}
+                               </div>
+                             )}
+                           </div>
+                         </td>
 
                         {/* Total */}
                         <td className="px-2 py-3 text-center w-[80px]">
