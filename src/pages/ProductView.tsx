@@ -21,7 +21,7 @@ const ProductView = () => {
   const { slug, id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { products } = useProducts();
+  const { products, loading: productsLoading, error: productsError } = useProducts();
   
   // Determine the actual product ID (could be from slug or direct ID)
   const productId = useMemo(() => {
@@ -385,12 +385,44 @@ const ProductView = () => {
     }
   }, [product?.slug, id, slug, navigate, products.length, location.pathname]);
 
+  // Show loading while products are being fetched
+  if (productsLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <main className="container mx-auto py-8">
+          <p className="text-muted-foreground">Cargando productos...</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Show error if products failed to load
+  if (productsError) {
+    console.error('Products loading error:', productsError);
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <main className="container mx-auto py-8">
+          <p className="text-muted-foreground">Error al cargar productos. Por favor, recarga la página.</p>
+          <button className="mt-4 underline" onClick={() => window.location.reload()} aria-label="Recargar">
+            Recargar página
+          </button>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Show loading/not found only after products have loaded
   if (!product || variantsLoading || !productId) {
     console.log('ProductView: Rendering loading/not found state', { 
       hasProduct: !!product, 
       variantsLoading, 
       productId,
-      productsLength: products?.length 
+      productsLength: products?.length,
+      productsLoading 
     });
     return (
       <div className="min-h-screen bg-background">
@@ -1395,7 +1427,7 @@ const ProductView = () => {
                               </span>
                             )}
                           </span>
-                          <span className="font-medium text-[14px]">{content.currencySymbol}{itemTotal.toFixed(0)}</span>
+                          <span className="font-medium text-[14px]">{content.currencySymbol}{itemTotal.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
                         </div>
                       </div>
                     );
@@ -1410,7 +1442,7 @@ const ProductView = () => {
                   {rows.filter(r => r.addToCart !== false).length > 0 && (
                     <div className="flex justify-between text-[22px] font-bold text-[#0A0A0A] pt-2 border-t">
                       <span>Total</span>
-                      <span>{content.currencySymbol}{totals.total.toFixed(0)}</span>
+                      <span>{content.currencySymbol}{totals.total.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
                     </div>
                   )}
                 </div>
