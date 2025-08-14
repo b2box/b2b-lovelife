@@ -780,7 +780,7 @@ const ProductView = () => {
                     return (
                       <tr 
                         key={r.id}
-                        className={`cursor-pointer hover:bg-muted/30 transition-all duration-200 border-b border-border/20 ${
+                        className={`cursor-pointer hover:bg-muted/30 transition-all duration-200 border-b border-border ${
                           isSelected ? 'bg-white shadow-lg' : ''
                         }`}
                         style={isSelected ? { 
