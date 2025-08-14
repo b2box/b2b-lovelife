@@ -139,6 +139,7 @@ const ProductView = () => {
 
   // Initialize rows when variants change - stabilized with better dependencies
   useEffect(() => {
+    console.log('Initializing rows with variants:', variants?.length, 'current rows:', rows.length);
     if (!Array.isArray(variants) || variants.length === 0) return;
     
     // Only initialize if we don't have rows yet
@@ -158,7 +159,8 @@ const ProductView = () => {
         id: variant.id,
         variant,
         qty: minQty,
-        comps: { labeling: false, barcode: false, photos: false, packaging: false }
+        comps: { labeling: false, barcode: false, photos: false, packaging: false },
+        addToCart: true
       };
     });
 
@@ -351,6 +353,12 @@ const ProductView = () => {
   }, [product?.slug, id, slug, navigate]);
 
   if (!product || variantsLoading) {
+    console.log('ProductView: Rendering loading/not found state', { 
+      hasProduct: !!product, 
+      variantsLoading, 
+      productId,
+      productsLength: products?.length 
+    });
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
@@ -367,19 +375,20 @@ const ProductView = () => {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      
-      {/* Layout de 2 columnas: 75% contenido + 25% columna derecha */}
-      <div className="flex gap-6">
-        {/* Columna principal: 75% */}
-        <main className="w-3/4 container mx-auto py-6 md:py-8">
-          {/* Breadcrumb simple - placeholder para el diseño final */}
-          <nav aria-label="breadcrumb" className="text-sm text-muted-foreground mb-4">
-            <button onClick={() => navigate("/app")} className="story-link">Productos</button>
-            <span className="mx-2">/</span>
-            <span className="text-foreground">{product.name}</span>
+  try {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        
+        {/* Layout de 2 columnas: 75% contenido + 25% columna derecha */}
+        <div className="flex gap-6">
+          {/* Columna principal: 75% */}
+          <main className="w-3/4 container mx-auto py-6 md:py-8">
+            {/* Breadcrumb simple - placeholder para el diseño final */}
+            <nav aria-label="breadcrumb" className="text-sm text-muted-foreground mb-4">
+              <button onClick={() => navigate("/app")} className="story-link">Productos</button>
+              <span className="mx-2">/</span>
+              <span className="text-foreground">{product?.name || 'Producto'}</span>
           </nav>
 
           <div className="flex flex-col md:flex-row gap-6">
@@ -1358,6 +1367,21 @@ const ProductView = () => {
       <Footer />
     </div>
   );
+  } catch (error) {
+    console.error('ProductView rendering error:', error);
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <main className="container mx-auto py-8">
+          <p className="text-muted-foreground">Error al cargar el producto.</p>
+          <button className="mt-4 underline" onClick={() => navigate(-1)} aria-label="Volver">
+            Volver
+          </button>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 };
 
 export default ProductView;
