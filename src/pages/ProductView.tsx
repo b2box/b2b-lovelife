@@ -685,11 +685,11 @@ const ProductView = () => {
                        </HoverCardContent>
                      </HoverCard>
                    </th>
-                     <th className="text-left px-2 py-2 font-medium w-[110px] relative text-white text-xs" style={{ backgroundColor: '#3c82f6' }}>
-                       <div className="flex flex-col items-start gap-1">
-                         <span className="text-[10px]">Etiquetado para</span>
-                         <span className="text-[10px]">Marketplaces</span>
-                       </div>
+                      <th className="text-left px-2 py-2 font-medium w-[110px] relative text-white text-[10px]" style={{ backgroundColor: '#3c82f6' }}>
+                        <div className="flex flex-col items-start gap-1">
+                          <span className="text-[9px]">Etiquetado para</span>
+                          <span className="text-[9px]">Marketplaces</span>
+                        </div>
                       <HoverCard>
                         <HoverCardTrigger asChild>
                           <button className="absolute top-1 right-1 w-4 h-4 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-[10px] text-white">
@@ -706,11 +706,11 @@ const ProductView = () => {
                         </HoverCardContent>
                       </HoverCard>
                     </th>
-                     <th className="text-left px-2 py-2 font-medium w-[110px] relative text-white text-xs" style={{ backgroundColor: '#3c82f6' }}>
-                       <div className="flex flex-col items-start gap-1">
-                         <span className="text-[10px]">Registro de</span>
-                         <span className="text-[10px]">Código de Barras</span>
-                       </div>
+                      <th className="text-left px-2 py-2 font-medium w-[110px] relative text-white text-[10px]" style={{ backgroundColor: '#3c82f6' }}>
+                        <div className="flex flex-col items-start gap-1">
+                          <span className="text-[9px]">Registro de</span>
+                          <span className="text-[9px]">Código de Barras</span>
+                        </div>
                       <HoverCard>
                         <HoverCardTrigger asChild>
                           <button className="absolute top-1 right-1 w-4 h-4 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-[10px] text-white">
@@ -727,11 +727,11 @@ const ProductView = () => {
                         </HoverCardContent>
                       </HoverCard>
                     </th>
-                     <th className="text-left px-2 py-2 font-medium w-[110px] relative text-white text-xs" style={{ backgroundColor: '#3c82f6' }}>
-                       <div className="flex flex-col items-start gap-1">
-                         <span className="text-[10px]">Fotografías</span>
-                         <span className="text-[10px]">Comerciales</span>
-                       </div>
+                      <th className="text-left px-2 py-2 font-medium w-[110px] relative text-white text-[10px]" style={{ backgroundColor: '#3c82f6' }}>
+                        <div className="flex flex-col items-start gap-1">
+                          <span className="text-[9px]">Fotografías</span>
+                          <span className="text-[9px]">Comerciales</span>
+                        </div>
                       <HoverCard>
                         <HoverCardTrigger asChild>
                           <button className="absolute top-1 right-1 w-4 h-4 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-[10px] text-white">
@@ -748,11 +748,11 @@ const ProductView = () => {
                         </HoverCardContent>
                       </HoverCard>
                     </th>
-                     <th className="text-left px-2 py-2 font-medium w-[110px] relative text-white text-xs" style={{ backgroundColor: '#3c82f6' }}>
-                       <div className="flex flex-col items-start gap-1">
-                         <span className="text-[10px]">Empaque</span>
-                         <span className="text-[10px]">Optimizado</span>
-                       </div>
+                      <th className="text-left px-2 py-2 font-medium w-[110px] relative text-white text-[10px]" style={{ backgroundColor: '#3c82f6' }}>
+                        <div className="flex flex-col items-start gap-1">
+                          <span className="text-[9px]">Empaque</span>
+                          <span className="text-[9px]">Optimizado</span>
+                        </div>
                       <HoverCard>
                         <HoverCardTrigger asChild>
                           <button className="absolute top-1 right-1 w-4 h-4 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-[10px] text-white">
