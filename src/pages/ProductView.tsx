@@ -1076,7 +1076,7 @@ const ProductView = () => {
             </table>
           </div>
           <div className="mt-8 grid grid-cols-2 gap-6">
-            <article className="rounded-2xl border bg-card text-card-foreground p-6 flex items-start gap-4 h-40">
+            <article className="rounded-2xl border bg-card text-card-foreground px-6 py-4 flex items-start gap-4 h-40">
               <span className="inline-flex items-center justify-center rounded-xl flex-shrink-0" aria-hidden="true">
                 <img src="/lovable-uploads/91be58a9-70b1-4f0e-86d3-9e026f516983.png" alt="Personalización" className="w-12 h-24 object-contain" />
               </span>
