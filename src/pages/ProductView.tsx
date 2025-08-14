@@ -74,6 +74,7 @@ const ProductView = () => {
     variant: ProductVariant;
     qty: number;
     comps: { labeling: boolean; barcode: boolean; photos: boolean; packaging: boolean };
+    addToCart?: boolean;
   };
 
   const [selectedTier, setSelectedTier] = useState<"inicial" | "mayorista" | "distribuidor">("mayorista");
@@ -725,6 +726,7 @@ const ProductView = () => {
                       </HoverCard>
                     </th>
                    <th className="text-center px-2 py-2 font-medium w-[80px] text-white text-base" style={{ backgroundColor: '#46cd8a' }}>Total</th>
+                   <th className="text-center px-2 py-2 font-medium w-[70px] bg-border text-foreground text-xs">Agregar al Carrito</th>
                  </tr>
                </thead>
               <tbody>
@@ -987,10 +989,32 @@ const ProductView = () => {
                             </div>
                           </td>
 
-                        {/* Total */}
-                        <td className="px-2 py-3 text-center w-[80px]">
-                          <div className="text-sm font-semibold">{content.currencySymbol}{rowTotal(r).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                        </td>
+                         {/* Total */}
+                         <td className="px-2 py-3 text-center w-[80px]">
+                           <div className="text-sm font-semibold">{content.currencySymbol}{rowTotal(r).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                         </td>
+
+                         {/* Agregar al Carrito */}
+                         <td className="px-2 py-3 text-center w-[70px]" onClick={(e) => e.stopPropagation()}>
+                           <div className="flex justify-center">
+                             {r.addToCart !== false ? (
+                               <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => {
+                                 setRows(prevRows => prevRows.map(row => 
+                                   row.id === r.id ? { ...row, addToCart: false } : row
+                                 ));
+                               }}>
+                                 <span className="text-xs">✓</span>
+                               </div>
+                             ) : (
+                               <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => {
+                                 setRows(prevRows => prevRows.map(row => 
+                                   row.id === r.id ? { ...row, addToCart: true } : row
+                                 ));
+                               }}>
+                               </div>
+                             )}
+                           </div>
+                         </td>
                       </tr>
                     );
                 })}
