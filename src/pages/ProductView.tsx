@@ -992,19 +992,40 @@ const ProductView = () => {
                          <td className="px-2 py-3 text-center w-[70px]" onClick={(e) => e.stopPropagation()}>
                            <div className="flex justify-center">
                              {r.addToCart !== false ? (
-                               <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => {
-                                 setRows(prevRows => prevRows.map(row => 
-                                   row.id === r.id ? { ...row, addToCart: false } : row
-                                 ));
-                               }}>
-                                 <span className="text-xs">✓</span>
-                               </div>
-                             ) : (
-                               <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => {
-                                 setRows(prevRows => prevRows.map(row => 
-                                   row.id === r.id ? { ...row, addToCart: true } : row
-                                 ));
-                               }}>
+                                <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => {
+                                  // Remove from cart logic here
+                                  setRows(prevRows => prevRows.map(row => 
+                                    row.id === r.id ? { ...row, addToCart: false } : row
+                                  ));
+                                  toast({ 
+                                    title: "Removido del carrito", 
+                                    description: `${r.variant.name} removido del carrito.` 
+                                  });
+                                }}>
+                                  <span className="text-xs">✓</span>
+                                </div>
+                              ) : (
+                                <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => {
+                                  // Add to cart logic here
+                                  setRows(prevRows => prevRows.map(row => 
+                                    row.id === r.id ? { ...row, addToCart: true } : row
+                                  ));
+                                  
+                                  // Calculate item details for cart
+                                  const variantPrice = getVariantPrice(r.variant, selectedTier);
+                                  const rowTotal = r.qty * variantPrice;
+                                  const labeling = r.comps?.labeling ? (r.qty * variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100) : 0;
+                                  const packaging = r.comps?.packaging ? (r.qty * variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100) : 0;
+                                  const photos = r.comps?.photos ? convertUsdToMarketCurrency(pricingSettings?.commercial_photos_usd || 45) : 0;
+                                  const barcode = r.comps?.barcode ? convertUsdToMarketCurrency(pricingSettings?.barcode_registration_usd || 1) : 0;
+                                  
+                                  const totalWithAddons = rowTotal + labeling + packaging + photos + barcode;
+                                  
+                                  toast({ 
+                                    title: "Añadido al carrito", 
+                                    description: `${r.qty} × ${r.variant.name} - ${content.currencySymbol}${totalWithAddons.toFixed(2)}` 
+                                  });
+                                }}>
                                </div>
                              )}
                            </div>
