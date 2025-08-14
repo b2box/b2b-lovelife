@@ -143,6 +143,9 @@ const ProductView = () => {
     console.log('Initializing rows with variants:', variants?.length, 'current rows:', rows.length);
     if (!Array.isArray(variants) || variants.length === 0) return;
     
+    // Only initialize if we don't have rows yet OR if the number of variants changed
+    if (rows.length > 0 && rows.length === variants.length) return;
+    
     const newRows = variants.map(variant => {
       // Find the price tier for selected tier with CNY currency for min_qty
       const priceTiers = (variant as any)?.variant_price_tiers || [];
@@ -168,7 +171,7 @@ const ProductView = () => {
     if (!selectedVariantId && newRows.length > 0) {
       setSelectedVariantId(newRows[0].id);
     }
-  }, [variants, selectedTier, selectedVariantId]); // Fixed dependencies
+  }, [variants, selectedTier]); // Removed selectedVariantId from dependencies
 
   // Update quantities when tier changes - stabilized
   useEffect(() => {
