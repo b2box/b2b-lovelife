@@ -5,6 +5,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import type { Product } from "@/components/landing/ProductCard";
 import { ArrowUpRight, CheckCircle2, Cog, Hash, Box, Package, Battery, Ruler, Scale, ArrowLeftRight, ArrowUpDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 import { useProducts } from "@/hooks/useProducts";
 import { useProductMarketContent } from "@/hooks/useProductMarketContent";
@@ -989,47 +990,58 @@ const ProductView = () => {
                          </td>
 
                          {/* Agregar al Carrito */}
-                         <td className="px-2 py-3 text-center w-[70px]" onClick={(e) => e.stopPropagation()}>
-                           <div className="flex justify-center">
-                             {r.addToCart !== false ? (
-                                <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => {
-                                  // Remove from cart logic here
-                                  setRows(prevRows => prevRows.map(row => 
-                                    row.id === r.id ? { ...row, addToCart: false } : row
-                                  ));
-                                  toast({ 
-                                    title: "Removido del carrito", 
-                                    description: `${r.variant.name} removido del carrito.` 
-                                  });
-                                }}>
-                                  <span className="text-xs">✓</span>
-                                </div>
+                          <td className="px-2 py-3 text-center" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex justify-center">
+                              {r.addToCart !== false ? (
+                                <Button 
+                                  variant="destructive" 
+                                  size="sm" 
+                                  className="h-8 px-3 text-xs"
+                                  onClick={() => {
+                                    // Remove from cart logic here
+                                    setRows(prevRows => prevRows.map(row => 
+                                      row.id === r.id ? { ...row, addToCart: false } : row
+                                    ));
+                                    toast({ 
+                                      title: "Removido del carrito", 
+                                      description: `${r.variant.name} removido del carrito.` 
+                                    });
+                                  }}
+                                >
+                                  Remover
+                                </Button>
                               ) : (
-                                <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => {
-                                  // Add to cart logic here
-                                  setRows(prevRows => prevRows.map(row => 
-                                    row.id === r.id ? { ...row, addToCart: true } : row
-                                  ));
-                                  
-                                  // Calculate item details for cart
-                                  const variantPrice = getVariantPrice(r.variant, selectedTier);
-                                  const rowTotal = r.qty * variantPrice;
-                                  const labeling = r.comps?.labeling ? (r.qty * variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100) : 0;
-                                  const packaging = r.comps?.packaging ? (r.qty * variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100) : 0;
-                                  const photos = r.comps?.photos ? convertUsdToMarketCurrency(pricingSettings?.commercial_photos_usd || 45) : 0;
-                                  const barcode = r.comps?.barcode ? convertUsdToMarketCurrency(pricingSettings?.barcode_registration_usd || 1) : 0;
-                                  
-                                  const totalWithAddons = rowTotal + labeling + packaging + photos + barcode;
-                                  
-                                  toast({ 
-                                    title: "Añadido al carrito", 
-                                    description: `${r.qty} × ${r.variant.name} - ${content.currencySymbol}${totalWithAddons.toFixed(2)}` 
-                                  });
-                                }}>
-                               </div>
-                             )}
-                           </div>
-                         </td>
+                                <Button 
+                                  variant="default" 
+                                  size="sm" 
+                                  className="h-8 px-3 text-xs"
+                                  onClick={() => {
+                                    // Add to cart logic here
+                                    setRows(prevRows => prevRows.map(row => 
+                                      row.id === r.id ? { ...row, addToCart: true } : row
+                                    ));
+                                    
+                                    // Calculate item details for cart
+                                    const variantPrice = getVariantPrice(r.variant, selectedTier);
+                                    const rowTotal = r.qty * variantPrice;
+                                    const labeling = r.comps?.labeling ? (r.qty * variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100) : 0;
+                                    const packaging = r.comps?.packaging ? (r.qty * variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100) : 0;
+                                    const photos = r.comps?.photos ? convertUsdToMarketCurrency(pricingSettings?.commercial_photos_usd || 45) : 0;
+                                    const barcode = r.comps?.barcode ? convertUsdToMarketCurrency(pricingSettings?.barcode_registration_usd || 1) : 0;
+                                    
+                                    const totalWithAddons = rowTotal + labeling + packaging + photos + barcode;
+                                    
+                                    toast({ 
+                                      title: "Añadido al carrito", 
+                                      description: `${r.qty} × ${r.variant.name} - ${content.currencySymbol}${totalWithAddons.toFixed(2)}` 
+                                    });
+                                  }}
+                                >
+                                  + Carrito
+                                </Button>
+                              )}
+                            </div>
+                          </td>
                       </tr>
                     );
                 })}
