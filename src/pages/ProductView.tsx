@@ -1009,7 +1009,7 @@ const ProductView = () => {
                                 <Button 
                                   variant="destructive" 
                                   size="sm" 
-                                  className="h-8 px-3 text-xs"
+                                  className="h-8 px-3 text-xs w-[85px]"
                                   onClick={() => {
                                     // Remove from cart logic here
                                     setRows(prevRows => prevRows.map(row => 
@@ -1028,7 +1028,7 @@ const ProductView = () => {
                                 <Button 
                                   variant="default" 
                                   size="sm" 
-                                  className="h-8 px-3 text-xs bg-[#46cd8a] hover:bg-[#3db674] text-white border-none"
+                                  className="h-8 px-3 text-xs w-[85px] bg-[#46cd8a] hover:bg-[#3db674] text-white border-none"
                                   onClick={() => {
                                     // Add to cart logic here
                                     setRows(prevRows => prevRows.map(row => 
