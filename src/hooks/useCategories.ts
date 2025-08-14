@@ -58,7 +58,7 @@ export const useCategoriesWithProductCount = () => {
       setLoading(true);
       setError(null);
 
-      // First get all categories
+      // Get all categories first
       const { data: categoriesData, error: categoriesError } = await supabase
         .from('categories')
         .select('*')
@@ -66,22 +66,36 @@ export const useCategoriesWithProductCount = () => {
 
       if (categoriesError) throw categoriesError;
 
-      // Then get product count for each category
-      const categoriesWithCount = await Promise.all(
-        (categoriesData || []).map(async (category) => {
-          const { count, error: countError } = await supabase
-            .from('product_categories')
-            .select('product_id', { count: 'exact', head: true })
-            .eq('category_id', category.id);
+      if (!categoriesData || categoriesData.length === 0) {
+        setCategories([]);
+        return;
+      }
 
-          if (countError) {
-            console.error('Error counting products for category:', category.name, countError);
-            return { ...category, productCount: 0 };
-          }
+      // Get product counts for all categories in a single query
+      const { data: productCounts, error: countError } = await supabase
+        .from('product_categories')
+        .select('category_id')
+        .in('category_id', categoriesData.map(c => c.id));
 
-          return { ...category, productCount: count || 0 };
-        })
-      );
+      if (countError) {
+        console.error('Error getting product counts:', countError);
+        // Fallback: set all categories with 0 count
+        setCategories(categoriesData.map(cat => ({ ...cat, productCount: 0 })));
+        return;
+      }
+
+      // Count products per category
+      const countMap = new Map<string, number>();
+      (productCounts || []).forEach(pc => {
+        const count = countMap.get(pc.category_id) || 0;
+        countMap.set(pc.category_id, count + 1);
+      });
+
+      // Combine categories with their counts
+      const categoriesWithCount = categoriesData.map(category => ({
+        ...category,
+        productCount: countMap.get(category.id) || 0
+      }));
 
       // Filter out categories with no products
       const activeCategories = categoriesWithCount.filter(cat => cat.productCount > 0);
