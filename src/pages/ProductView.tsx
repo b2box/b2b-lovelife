@@ -158,7 +158,7 @@ const ProductView = () => {
         variant,
         qty: minQty,
         comps: { labeling: false, barcode: false, photos: false, packaging: false },
-        addToCart: true
+        addToCart: false
       };
     });
 
