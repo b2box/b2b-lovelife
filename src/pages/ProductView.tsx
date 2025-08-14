@@ -1075,40 +1075,40 @@ const ProductView = () => {
               </tbody>
             </table>
           </div>
-          <div className="mt-6 grid grid-cols-2 gap-4">
-            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 h-32">
+          <div className="mt-8 grid grid-cols-2 gap-6">
+            <article className="rounded-2xl border bg-card text-card-foreground p-6 flex items-start gap-4 h-40">
               <span className="inline-flex items-center justify-center rounded-xl flex-shrink-0" aria-hidden="true">
-                <img src="/lovable-uploads/91be58a9-70b1-4f0e-86d3-9e026f516983.png" alt="Personalización" className="w-10 h-20 object-contain" />
+                <img src="/lovable-uploads/91be58a9-70b1-4f0e-86d3-9e026f516983.png" alt="Personalización" className="w-12 h-24 object-contain" />
               </span>
               <div className="flex-1">
-                <h3 className="font-semibold">Opciones de personalización</h3>
+                <h3 className="font-semibold text-lg mb-2">Opciones de personalización</h3>
                 <p className="text-sm text-foreground">Si deseas personalizar tus productos, nuestro equipo en China se encargará.</p>
               </div>
             </article>
-            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 h-32">
+            <article className="rounded-2xl border bg-card text-card-foreground p-6 flex items-start gap-4 h-40">
               <span className="inline-flex items-center justify-center rounded-xl flex-shrink-0" aria-hidden="true">
-                <img src="/lovable-uploads/574f7d3f-9d34-4a70-936e-8025b876c89f.png" alt="Entrega" className="w-10 h-20 object-contain" />
+                <img src="/lovable-uploads/574f7d3f-9d34-4a70-936e-8025b876c89f.png" alt="Entrega" className="w-12 h-24 object-contain" />
               </span>
               <div className="flex-1">
-                <h3 className="font-semibold">Entrega confiable</h3>
+                <h3 className="font-semibold text-lg mb-2">Entrega confiable</h3>
                 <p className="text-sm text-foreground">Contamos con una logística optimizada para que recibas tus productos lo antes posible.</p>
               </div>
             </article>
-            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 h-32">
+            <article className="rounded-2xl border bg-card text-card-foreground p-6 flex items-start gap-4 h-40">
               <span className="inline-flex items-center justify-center rounded-xl flex-shrink-0" aria-hidden="true">
-                <img src="/lovable-uploads/f7109894-c44a-4ff4-bc09-b9b6b983fce6.png" alt="Pago" className="w-10 h-20 object-contain" />
+                <img src="/lovable-uploads/f7109894-c44a-4ff4-bc09-b9b6b983fce6.png" alt="Pago" className="w-12 h-24 object-contain" />
               </span>
               <div className="flex-1">
-                <h3 className="font-semibold">Pago diferido</h3>
+                <h3 className="font-semibold text-lg mb-2">Pago diferido</h3>
                 <p className="text-sm text-foreground">Hoy solo pagas el 30%. El resto lo pagas cuando confirmemos todo desde China.</p>
               </div>
             </article>
-            <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 h-32">
+            <article className="rounded-2xl border bg-card text-card-foreground p-6 flex items-start gap-4 h-40">
               <span className="inline-flex items-center justify-center rounded-xl flex-shrink-0" aria-hidden="true">
-                <img src="/lovable-uploads/69b7b2dc-9b1d-4dd5-b248-2e3345fd83c0.png" alt="Calidad" className="w-10 h-20 object-contain" />
+                <img src="/lovable-uploads/69b7b2dc-9b1d-4dd5-b248-2e3345fd83c0.png" alt="Calidad" className="w-12 h-24 object-contain" />
               </span>
               <div className="flex-1">
-                <h3 className="font-semibold">Control de calidad</h3>
+                <h3 className="font-semibold text-lg mb-2">Control de calidad</h3>
                 <p className="text-sm text-foreground">Control de calidad en fábrica con estándares internacionales.</p>
               </div>
             </article>
