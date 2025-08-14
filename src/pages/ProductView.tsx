@@ -693,7 +693,7 @@ const ProductView = () => {
                  
                   {/* Segunda fila del header */}
                   <tr>
-                    <th className="text-center px-2 py-3 font-medium w-[40px] text-xs rounded-tl-lg" style={{ backgroundColor: '#f5f5f5', color: '#898989' }}></th>
+                    <th className="text-center px-2 py-3 font-medium w-[20px] text-xs rounded-tl-lg" style={{ backgroundColor: '#f5f5f5', color: '#898989' }}></th>
                     <th className="text-left px-3 py-3 font-medium w-[200px] text-xs" style={{ backgroundColor: '#f5f5f5', color: '#898989' }}>{content.tableHeaders.product}</th>
                    <th className="text-center px-2 py-3 font-medium w-[80px] text-xs" style={{ backgroundColor: '#f5f5f5', color: '#898989' }}>{content.tableHeaders.units}</th>
                    <th className="text-center px-2 py-3 font-medium w-[90px] relative text-xs" style={{ backgroundColor: '#f5f5f5', color: '#898989' }}>
@@ -844,7 +844,7 @@ const ProductView = () => {
                         }}
                       >
                         {/* Selection indicator */}
-                        <td className="px-2 py-3 w-[40px]">
+                        <td className="px-2 py-3 w-[20px]">
                           <div className="flex justify-center">
                             {isSelected ? (
                               <div className="w-3 h-3 rounded-full bg-[#46cd8a] ring-2 ring-white shadow-sm"></div>
