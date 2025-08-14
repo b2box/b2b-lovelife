@@ -1178,7 +1178,7 @@ const ProductView = () => {
                       
                       <div className="space-y-4">
                         <div className="flex items-center gap-3">
-                          <ArrowLeftRight className="size-4 text-coral" />
+                          <img src="/lovable-uploads/7e836688-77f1-4785-a2cb-f2919801a187.png" alt="Ancho" className="size-4" />
                           <div>
                             <div className="text-gray-400 text-sm">Ancho de la caja</div>
                             <div className="text-black font-medium">
@@ -1188,7 +1188,7 @@ const ProductView = () => {
                         </div>
                         
                         <div className="flex items-center gap-3">
-                          <ArrowUpDown className="size-4 text-coral" />
+                          <img src="/lovable-uploads/33c78ae8-e72a-4c29-9b8d-b8d2be5242cc.png" alt="Largo" className="size-4" />
                           <div>
                             <div className="text-gray-400 text-sm">Largo de la caja</div>
                             <div className="text-black font-medium">
@@ -1198,7 +1198,7 @@ const ProductView = () => {
                         </div>
                         
                         <div className="flex items-center gap-3">
-                          <ArrowUpDown className="size-4 text-coral rotate-90" />
+                          <img src="/lovable-uploads/554a3511-80b0-4303-8f2f-08a3963b89c9.png" alt="Alto" className="size-4" />
                           <div>
                             <div className="text-gray-400 text-sm">Alto de la caja</div>
                             <div className="text-black font-medium">
@@ -1208,7 +1208,7 @@ const ProductView = () => {
                         </div>
                         
                         <div className="flex items-center gap-3">
-                          <Scale className="size-4 text-coral" />
+                          <img src="/lovable-uploads/c7bfcc93-452e-412b-a1f6-c6027f33ec3a.png" alt="Peso" className="size-4" />
                           <div>
                             <div className="text-gray-400 text-sm">Peso de la caja</div>
                             <div className="text-black font-medium">
@@ -1228,7 +1228,7 @@ const ProductView = () => {
                       
                       <div className="space-y-4">
                         <div className="flex items-center gap-3">
-                          <ArrowLeftRight className="size-4 text-coral" />
+                          <img src="/lovable-uploads/7e836688-77f1-4785-a2cb-f2919801a187.png" alt="Ancho" className="size-4" />
                           <div>
                             <div className="text-gray-400 text-sm">Ancho del producto</div>
                             <div className="text-black font-medium">
@@ -1238,7 +1238,7 @@ const ProductView = () => {
                         </div>
                         
                         <div className="flex items-center gap-3">
-                          <ArrowUpDown className="size-4 text-coral" />
+                          <img src="/lovable-uploads/33c78ae8-e72a-4c29-9b8d-b8d2be5242cc.png" alt="Largo" className="size-4" />
                           <div>
                             <div className="text-gray-400 text-sm">Largo del producto</div>
                             <div className="text-black font-medium">
@@ -1248,7 +1248,7 @@ const ProductView = () => {
                         </div>
                         
                         <div className="flex items-center gap-3">
-                          <ArrowUpDown className="size-4 text-coral rotate-90" />
+                          <img src="/lovable-uploads/554a3511-80b0-4303-8f2f-08a3963b89c9.png" alt="Alto" className="size-4" />
                           <div>
                             <div className="text-gray-400 text-sm">Alto del producto</div>
                             <div className="text-black font-medium">
@@ -1258,7 +1258,7 @@ const ProductView = () => {
                         </div>
                         
                         <div className="flex items-center gap-3">
-                          <Scale className="size-4 text-coral" />
+                          <img src="/lovable-uploads/c7bfcc93-452e-412b-a1f6-c6027f33ec3a.png" alt="Peso" className="size-4" />
                           <div>
                             <div className="text-gray-400 text-sm">Peso del producto</div>
                             <div className="text-black font-medium">
