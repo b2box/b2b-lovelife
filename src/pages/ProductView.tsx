@@ -649,7 +649,7 @@ const ProductView = () => {
                  
                   {/* Segunda fila del header */}
                   <tr>
-                    <th className="text-center px-2 py-3 font-medium w-[40px] text-xs" style={{ backgroundColor: '#f5f5f5', color: '#898989' }}></th>
+                    <th className="text-center px-2 py-3 font-medium w-[40px] text-xs rounded-tl-lg" style={{ backgroundColor: '#f5f5f5', color: '#898989' }}></th>
                     <th className="text-left px-3 py-3 font-medium w-[200px] text-xs" style={{ backgroundColor: '#f5f5f5', color: '#898989' }}>{content.tableHeaders.product}</th>
                    <th className="text-center px-2 py-3 font-medium w-[80px] text-xs" style={{ backgroundColor: '#f5f5f5', color: '#898989' }}>{content.tableHeaders.units}</th>
                    <th className="text-center px-2 py-3 font-medium w-[90px] relative text-xs" style={{ backgroundColor: '#f5f5f5', color: '#898989' }}>
