@@ -143,9 +143,6 @@ const ProductView = () => {
     console.log('Initializing rows with variants:', variants?.length, 'current rows:', rows.length);
     if (!Array.isArray(variants) || variants.length === 0) return;
     
-    // Only initialize if we don't have rows yet
-    if (rows.length > 0) return;
-    
     const newRows = variants.map(variant => {
       // Find the price tier for selected tier with CNY currency for min_qty
       const priceTiers = (variant as any)?.variant_price_tiers || [];
@@ -171,7 +168,7 @@ const ProductView = () => {
     if (!selectedVariantId && newRows.length > 0) {
       setSelectedVariantId(newRows[0].id);
     }
-  }, [variants, selectedTier]); // Removed rows.length and selectedVariantId from dependencies
+  }, [variants, selectedTier, selectedVariantId]); // Fixed dependencies
 
   // Update quantities when tier changes - stabilized
   useEffect(() => {
@@ -267,21 +264,23 @@ const ProductView = () => {
     return base + comps;
   };
 
-  const totals = rows
-    .filter(r => r.addToCart !== false) // Only include items added to cart
-    .reduce(
-      (acc, r) => {
-        const variantPrice = getVariantPrice(r.variant, selectedTier);
-        const base = r.qty * variantPrice;
-        const comps = rowTotal(r) - base;
-        acc.items += r.qty;
-        acc.products += base;
-        acc.complements += comps;
-        acc.total += base + comps;
-        return acc;
-      },
-      { items: 0, products: 0, complements: 0, total: 0 }
-    );
+  const totals = useMemo(() => {
+    return rows
+      .filter(r => r.addToCart !== false) // Only include items added to cart
+      .reduce(
+        (acc, r) => {
+          const variantPrice = getVariantPrice(r.variant, selectedTier);
+          const base = r.qty * variantPrice;
+          const comps = rowTotal(r) - base;
+          acc.items += r.qty;
+          acc.products += base;
+          acc.complements += comps;
+          acc.total += base + comps;
+          return acc;
+        },
+        { items: 0, products: 0, complements: 0, total: 0 }
+      );
+  }, [rows, selectedTier, pricingSettings]);
 
   const changeQty = (id: string, delta: number) => {
     setRows((prev) =>
@@ -1330,9 +1329,26 @@ const ProductView = () => {
 
               {/* Tarjetas de features */}
               <div className="grid grid-cols-3 gap-2">
-                <img src="/lovable-uploads/5c098f1d-9e25-4952-a9fe-c0717ca06e81.png" alt="Método de envío" className="w-full h-[80px] rounded-[20px] object-cover" loading="lazy" />
-                <img src="/lovable-uploads/e1c5b592-a961-4184-9814-ed40a457c3dc.png" alt="Personalizar producto" className="w-full h-[80px] rounded-[20px] object-cover" loading="lazy" />
-                <img src="/lovable-uploads/4ed195be-8175-4133-a8f1-8e9e8cf3cf39.png" alt="Precios sin sorpresas" className="w-full h-[80px] rounded-[20px] object-cover" loading="lazy" />
+                {/* Método de envío */}
+                <div className="relative w-full h-[80px] rounded-[20px] border border-[#E5E7EB] bg-white p-3 flex flex-col items-center justify-center text-center">
+                  <img src="/lovable-uploads/bcaad47c-1390-4a6e-a192-4c5279337cf3.png" alt="Método de envío" className="h-6 w-auto mb-2" loading="lazy" />
+                  <span className="text-[12px] text-[#6B7280] leading-tight">Método de envío</span>
+                  <div className="absolute top-2 right-2 w-4 h-4 bg-[#6B7280] text-white rounded-full flex items-center justify-center text-[10px] font-bold">?</div>
+                </div>
+
+                {/* Personalizar producto */}
+                <div className="relative w-full h-[80px] rounded-[20px] border border-[#E5E7EB] bg-white p-3 flex flex-col items-center justify-center text-center">
+                  <img src="/lovable-uploads/e176248e-ec33-4374-8df2-39c6d1d81194.png" alt="Personalizar producto" className="h-6 w-auto mb-2" loading="lazy" />
+                  <span className="text-[12px] text-[#6B7280] leading-tight">Personalizar producto</span>
+                  <div className="absolute top-2 right-2 w-4 h-4 bg-[#6B7280] text-white rounded-full flex items-center justify-center text-[10px] font-bold">?</div>
+                </div>
+
+                {/* Precios sin sorpresas */}
+                <div className="relative w-full h-[80px] rounded-[20px] border border-[#E5E7EB] bg-white p-3 flex flex-col items-center justify-center text-center">
+                  <img src="/lovable-uploads/6a45e477-73d7-45a9-9eda-470e2c37a6cb.png" alt="Precios sin sorpresas" className="h-6 w-auto mb-2" loading="lazy" />
+                  <span className="text-[12px] text-[#6B7280] leading-tight">Precios sin sorpresas</span>
+                  <div className="absolute top-2 right-2 w-4 h-4 bg-[#6B7280] text-white rounded-full flex items-center justify-center text-[10px] font-bold">?</div>
+                </div>
               </div>
             </div>
           </div>
