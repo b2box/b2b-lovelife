@@ -754,7 +754,7 @@ const ProductView = () => {
                       </HoverCard>
                     </th>
                    <th className="text-center px-2 py-2 font-medium w-[80px] text-white text-base" style={{ backgroundColor: '#46cd8a' }}>Total</th>
-                   <th className="text-center px-2 py-2 font-medium w-[70px] bg-border text-foreground text-xs">Agregar al Carrito</th>
+                   <th className="text-center px-2 py-2 font-medium w-[70px] bg-border text-foreground text-xs rounded-tr-lg">Agregar al Carrito</th>
                  </tr>
                </thead>
               <tbody>
