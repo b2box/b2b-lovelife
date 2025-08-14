@@ -1327,7 +1327,7 @@ const ProductView = () => {
                 <div 
                   className={`h-full bg-[#46cd8a] rounded-full transition-all duration-300 ease-out ${
                     totals.total >= minOrder 
-                      ? 'animate-pulse shadow-lg shadow-[#46cd8a]/50' 
+                      ? 'animate-pulse shadow-xl shadow-[#46cd8a]/60' 
                       : ''
                   }`}
                   style={{
@@ -1335,7 +1335,7 @@ const ProductView = () => {
                   }}
                 ></div>
                 {totals.total >= minOrder && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-[shimmer_2s_ease-in-out_infinite] rounded-full"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-[celebration-shimmer_2s_ease-in-out] rounded-full"></div>
                 )}
               </div>
 
