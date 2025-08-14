@@ -236,14 +236,33 @@ const ProductView = () => {
     return "inicial"; // fallback
   };
 
+  // Convert USD values to local market currency
+  const convertUsdToMarketCurrency = (usdValue: number) => {
+    if (!pricingSettings) return usdValue;
+    
+    switch (market) {
+      case "CO":
+        // For Colombia, convert USD to COP using the COP rate
+        return usdValue * (pricingSettings.coRate || 1);
+      case "AR":
+      case "CN":
+      default:
+        // For Argentina and China, keep USD
+        return usdValue;
+    }
+  };
+
   const rowTotal = (r: VariantRow) => {
     const variantPrice = getVariantPrice(r.variant, selectedTier);
     const base = r.qty * variantPrice;
-    const comps =
-      (r.comps.labeling ? r.qty * variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100 : 0) +
-      (r.comps.packaging ? r.qty * variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100 : 0) +
-      (r.comps.barcode ? (pricingSettings?.barcode_registration_usd || 1) : 0) +
-      (r.comps.photos ? (pricingSettings?.commercial_photos_usd || 45) : 0);
+    
+    // Calculate complement costs with proper currency conversion
+    const labelingCost = r.comps.labeling ? r.qty * variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100 : 0;
+    const packagingCost = r.comps.packaging ? r.qty * variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100 : 0;
+    const barcodeCost = r.comps.barcode ? convertUsdToMarketCurrency(pricingSettings?.barcode_registration_usd || 1) : 0;
+    const photosCost = r.comps.photos ? convertUsdToMarketCurrency(pricingSettings?.commercial_photos_usd || 45) : 0;
+    
+    const comps = labelingCost + packagingCost + barcodeCost + photosCost;
     return base + comps;
   };
 
@@ -908,10 +927,10 @@ const ProductView = () => {
                               {r.comps?.barcode ? (
                                 <div className="text-center">
                                   <div className="text-xs text-gray-600">Por producto</div>
-                                  <div className="text-xs font-semibold">{content.currencySymbol}{((pricingSettings?.barcode_registration_usd || 0) * (pricingSettings?.[market === 'AR' ? 'arRate' : market === 'CO' ? 'coRate' : 'cnRate'] || 1)).toFixed(2)}</div>
+                                  <div className="text-xs font-semibold">{content.currencySymbol}{convertUsdToMarketCurrency(pricingSettings?.barcode_registration_usd || 1).toFixed(2)}</div>
                                 </div>
                               ) : (
-                                <div className="text-xs text-gray-500">{content.currencySymbol}{((pricingSettings?.barcode_registration_usd || 0) * (pricingSettings?.[market === 'AR' ? 'arRate' : market === 'CO' ? 'coRate' : 'cnRate'] || 1)).toFixed(2)} por producto</div>
+                                <div className="text-xs text-gray-500">{content.currencySymbol}{convertUsdToMarketCurrency(pricingSettings?.barcode_registration_usd || 1).toFixed(2)} por producto</div>
                               )}
                             </div>
                           </td>
@@ -932,10 +951,10 @@ const ProductView = () => {
                               {r.comps?.photos ? (
                                 <div className="text-center">
                                   <div className="text-xs text-gray-600">Por producto</div>
-                                  <div className="text-xs font-semibold">{content.currencySymbol}{((pricingSettings?.commercial_photos_usd || 0) * (pricingSettings?.[market === 'AR' ? 'arRate' : market === 'CO' ? 'coRate' : 'cnRate'] || 1)).toFixed(2)}</div>
+                                  <div className="text-xs font-semibold">{content.currencySymbol}{convertUsdToMarketCurrency(pricingSettings?.commercial_photos_usd || 45).toFixed(2)}</div>
                                 </div>
                               ) : (
-                                <div className="text-xs text-gray-500">{content.currencySymbol}{((pricingSettings?.commercial_photos_usd || 0) * (pricingSettings?.[market === 'AR' ? 'arRate' : market === 'CO' ? 'coRate' : 'cnRate'] || 1)).toFixed(2)} por producto</div>
+                                <div className="text-xs text-gray-500">{content.currencySymbol}{convertUsdToMarketCurrency(pricingSettings?.commercial_photos_usd || 45).toFixed(2)} por producto</div>
                               )}
                             </div>
                           </td>
