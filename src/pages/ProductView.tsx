@@ -1312,13 +1312,22 @@ const ProductView = () => {
               {/* Encabezado con check verde */}
               <div className="flex items-center justify-between mb-4">
                 <span className="text-[22px] font-semibold text-[#0A0A0A]">Orden mínima $500</span>
-                <div className="w-6 h-6 bg-[#22C55E] rounded-full flex items-center justify-center">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                  totals.total >= minOrder ? 'bg-[#22C55E]' : 'bg-gray-400'
+                }`}>
                   <CheckCircle2 className="w-4 h-4 text-white" />
                 </div>
               </div>
 
-              {/* Barra de progreso verde */}
-              <div className="h-[6px] bg-[#46cd8a] rounded-full mb-4"></div>
+              {/* Barra de progreso dinámica */}
+              <div className="relative h-[6px] bg-gray-200 rounded-full mb-4">
+                <div 
+                  className="h-full bg-[#46cd8a] rounded-full transition-all duration-300 ease-out"
+                  style={{
+                    width: `${Math.min((totals.total / minOrder) * 100, 100)}%`
+                  }}
+                ></div>
+              </div>
 
 
               {/* Bloque de totales */}
