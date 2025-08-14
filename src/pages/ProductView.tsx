@@ -1370,6 +1370,63 @@ const ProductView = () => {
                 </div>
               </div>
 
+              {/* Feature cards with hover information */}
+              <div className="grid grid-cols-3 gap-2 mt-6">
+                {/* Método de envío */}
+                <HoverCard>
+                  <HoverCardTrigger asChild>
+                    <div className="relative w-full h-[80px] rounded-[20px] border border-[#E5E7EB] bg-white p-3 flex flex-col items-center justify-center text-center cursor-pointer hover:shadow-md transition-all duration-200">
+                      <img src="/lovable-uploads/6433d444-166b-4cb1-b449-b0093f185ff7.png" alt="Método de envío" className="h-8 w-auto mb-2" loading="lazy" />
+                      <span className="text-[11px] text-[#6B7280] leading-tight">Método de envío</span>
+                    </div>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-64">
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-semibold">Método de envío</h4>
+                      <p className="text-xs text-muted-foreground">
+                        Enviamos por tierra, mar o aire según las necesidades de tu pedido. Optimizamos costos y tiempos de entrega para cada destino.
+                      </p>
+                    </div>
+                  </HoverCardContent>
+                </HoverCard>
+
+                {/* Personalizar producto */}
+                <HoverCard>
+                  <HoverCardTrigger asChild>
+                    <div className="relative w-full h-[80px] rounded-[20px] border border-[#E5E7EB] bg-white p-3 flex flex-col items-center justify-center text-center cursor-pointer hover:shadow-md transition-all duration-200">
+                      <img src="/lovable-uploads/edbaadf4-2130-4a5b-8646-b1077dc2fe7a.png" alt="Personalizar producto" className="h-8 w-auto mb-2" loading="lazy" />
+                      <span className="text-[11px] text-[#6B7280] leading-tight">Personalizar producto</span>
+                    </div>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-64">
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-semibold">Personalizar producto</h4>
+                      <p className="text-xs text-muted-foreground">
+                        Personaliza colores, logos, etiquetas y packaging según tus necesidades. Nuestro equipo en China se encarga del proceso completo.
+                      </p>
+                    </div>
+                  </HoverCardContent>
+                </HoverCard>
+
+                {/* Precios sin sorpresas */}
+                <HoverCard>
+                  <HoverCardTrigger asChild>
+                    <div className="relative w-full h-[80px] rounded-[20px] border border-[#E5E7EB] bg-white p-3 flex flex-col items-center justify-center text-center cursor-pointer hover:shadow-md transition-all duration-200">
+                      <img src="/lovable-uploads/5821116c-5b69-46dc-9879-f33489a2dd42.png" alt="Precios sin sorpresas" className="h-8 w-auto mb-2" loading="lazy" />
+                      <span className="text-[11px] text-[#6B7280] leading-tight">Precios sin sorpresas</span>
+                    </div>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-64">
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-semibold">Precios sin sorpresas</h4>
+                      <p className="text-xs text-muted-foreground">
+                        El precio que ves incluye todos los costos: producto, logística, aranceles y gestión. Sin costos ocultos ni sorpresas al final.
+                      </p>
+                    </div>
+                  </HoverCardContent>
+                </HoverCard>
+              </div>
+
             </div>
           </div>
         </aside>
