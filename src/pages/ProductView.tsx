@@ -1294,7 +1294,7 @@ const ProductView = () => {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" 
                     loading="lazy" 
                   />
-                  <div className="absolute bottom-2 left-2 rounded-full bg-black/70 text-white text-xs px-2 py-1">
+                  <div className="absolute bottom-2 right-2 rounded-full bg-black/70 text-white text-xs px-2 py-1">
                     {image.variantName}
                   </div>
                 </div>
