@@ -858,7 +858,7 @@ const ProductView = () => {
                           <div className="flex items-center gap-2">
                             <img src={variantImage} alt={variantName} className="w-16 h-16 rounded object-cover flex-shrink-0" loading="lazy" />
                             <div className="min-w-0">
-                              <div className="font-medium leading-tight text-base truncate">{variantName}</div>
+                              <div className="font-medium leading-tight text-base line-clamp-3">{variantName}</div>
                               {variantOption !== "Estándar" && (
                                 <div className="text-sm text-muted-foreground truncate">{variantOption}</div>
                               )}
