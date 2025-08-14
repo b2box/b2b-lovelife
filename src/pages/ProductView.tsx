@@ -1284,7 +1284,7 @@ const ProductView = () => {
         </section>
 
         {/* Imágenes */}
-        <section className="mt-8 md:w-3/4">
+        <section className="mt-8 w-full">
           <h2 className="text-xl font-semibold mb-3">Imágenes</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-none">
             {(() => {
