@@ -385,7 +385,7 @@ const ProductView = () => {
     }
   }, [product?.slug, id, slug, navigate, products.length, location.pathname]);
 
-  if (!product || variantsLoading) {
+  if (!product || variantsLoading || !productId) {
     console.log('ProductView: Rendering loading/not found state', { 
       hasProduct: !!product, 
       variantsLoading, 
@@ -1318,7 +1318,7 @@ const ProductView = () => {
         
         {/* Columna derecha: 25% */}
         <aside className="w-1/4 flex-shrink-0">
-          <div className="sticky top-[113px]">
+          <div className="sticky top-[128px]">
             <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm ml-0 mr-5">
               {/* Encabezado con check verde */}
               <div className="flex items-center justify-between mb-4">
