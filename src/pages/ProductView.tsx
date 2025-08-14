@@ -909,7 +909,7 @@ const ProductView = () => {
                                   <div className="text-xs font-semibold">{content.currencySymbol}{(r.qty * getVariantPrice(r.variant, selectedTier) * (pricingSettings?.marketplace_labeling_pct || 2) / 100).toFixed(2)}</div>
                                 </div>
                               ) : (
-                                <div className="text-xs text-gray-500">{content.currencySymbol}{(getVariantPrice(r.variant, selectedTier) * (pricingSettings?.marketplace_labeling_pct || 2) / 100).toFixed(2)} por producto</div>
+                                <div className="text-xs text-gray-500">{content.currencySymbol}{(getVariantPrice(r.variant, selectedTier) * (pricingSettings?.marketplace_labeling_pct || 2) / 100).toFixed(2)} por unidad</div>
                               )}
                             </div>
                           </td>
@@ -981,7 +981,7 @@ const ProductView = () => {
                                   <div className="text-xs font-semibold">{content.currencySymbol}{(r.qty * getVariantPrice(r.variant, selectedTier) * (pricingSettings?.optimized_packaging_pct || 5) / 100).toFixed(2)}</div>
                                 </div>
                               ) : (
-                                <div className="text-xs text-gray-500">{content.currencySymbol}{(getVariantPrice(r.variant, selectedTier) * (pricingSettings?.optimized_packaging_pct || 5) / 100).toFixed(2)} por producto</div>
+                                <div className="text-xs text-gray-500">{content.currencySymbol}{(getVariantPrice(r.variant, selectedTier) * (pricingSettings?.optimized_packaging_pct || 5) / 100).toFixed(2)} por unidad</div>
                               )}
                             </div>
                           </td>
