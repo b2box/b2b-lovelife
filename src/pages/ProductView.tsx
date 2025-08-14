@@ -639,7 +639,7 @@ const ProductView = () => {
                     <th className="px-3 py-2" style={{ backgroundColor: 'white' }}></th>
                     <th className="px-2 py-2" style={{ backgroundColor: 'white' }}></th>
                     <th className="px-2 py-2" style={{ backgroundColor: 'white' }}></th>
-                   <th className="text-center px-2 py-3 font-medium bg-brand-blue text-white rounded-tl-2xl" colSpan={4}>
+                   <th className="text-center px-2 py-3 font-medium bg-brand-blue text-white rounded-t-2xl" colSpan={4}>
                      <div className="flex items-center justify-center gap-2">
                        <span>Complementos</span>
                      </div>
