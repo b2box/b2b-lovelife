@@ -191,7 +191,7 @@ const ProductView = () => {
   const perUnitPackaging = 0.04;
   const fixedBarcode = 40;
   const fixedPhotos = 1863;
-  const minOrder = 100;
+  const minOrder = 500;
 
   // Get pricing settings and market content for calculations
   const { data: pricingSettings } = usePricingSettings();
@@ -1311,7 +1311,7 @@ const ProductView = () => {
             <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm ml-0">
               {/* Encabezado con check verde */}
               <div className="flex items-center justify-between mb-4">
-                <span className="text-[22px] font-semibold text-[#0A0A0A]">Orden mínima $100</span>
+                <span className="text-[22px] font-semibold text-[#0A0A0A]">Orden mínima $500</span>
                 <div className="w-6 h-6 bg-[#22C55E] rounded-full flex items-center justify-center">
                   <CheckCircle2 className="w-4 h-4 text-white" />
                 </div>
