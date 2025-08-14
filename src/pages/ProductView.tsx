@@ -414,7 +414,7 @@ const ProductView = () => {
         <Navbar />
         
         {/* Layout de 2 columnas: 75% contenido + 25% columna derecha */}
-        <div className="flex gap-6">
+        <div className="container mx-auto flex gap-6">
           {/* Columna principal: 75% */}
           <main className="w-3/4 px-6 py-6 md:py-8">
             {/* Breadcrumb simple - placeholder para el diseño final */}
