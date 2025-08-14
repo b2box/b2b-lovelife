@@ -651,7 +651,7 @@ const ProductView = () => {
                     <th className="px-3 py-2" style={{ backgroundColor: 'white' }}></th>
                     <th className="px-2 py-2" style={{ backgroundColor: 'white' }}></th>
                     <th className="px-2 py-2" style={{ backgroundColor: 'white' }}></th>
-                   <th className="text-center px-2 py-3 font-medium bg-brand-blue text-white rounded-t-2xl" colSpan={4}>
+                   <th className="text-center px-2 py-3 font-medium text-white rounded-t-2xl" style={{ backgroundColor: '#3c82f6' }} colSpan={4}>
                      <div className="flex items-center justify-center gap-2">
                        <span>Complementos</span>
                      </div>
@@ -685,7 +685,7 @@ const ProductView = () => {
                        </HoverCardContent>
                      </HoverCard>
                    </th>
-                     <th className="text-left px-2 py-2 font-medium w-[110px] relative bg-brand-blue text-white text-xs">
+                     <th className="text-left px-2 py-2 font-medium w-[110px] relative text-white text-xs" style={{ backgroundColor: '#3c82f6' }}>
                        <div className="flex flex-col items-start gap-1">
                          <span className="text-[10px]">Etiquetado para</span>
                          <span className="text-[10px]">Marketplaces</span>
@@ -706,7 +706,7 @@ const ProductView = () => {
                         </HoverCardContent>
                       </HoverCard>
                     </th>
-                     <th className="text-left px-2 py-2 font-medium w-[110px] relative bg-brand-blue text-white text-xs">
+                     <th className="text-left px-2 py-2 font-medium w-[110px] relative text-white text-xs" style={{ backgroundColor: '#3c82f6' }}>
                        <div className="flex flex-col items-start gap-1">
                          <span className="text-[10px]">Registro de</span>
                          <span className="text-[10px]">Código de Barras</span>
@@ -727,7 +727,7 @@ const ProductView = () => {
                         </HoverCardContent>
                       </HoverCard>
                     </th>
-                     <th className="text-left px-2 py-2 font-medium w-[110px] relative bg-brand-blue text-white text-xs">
+                     <th className="text-left px-2 py-2 font-medium w-[110px] relative text-white text-xs" style={{ backgroundColor: '#3c82f6' }}>
                        <div className="flex flex-col items-start gap-1">
                          <span className="text-[10px]">Fotografías</span>
                          <span className="text-[10px]">Comerciales</span>
@@ -748,7 +748,7 @@ const ProductView = () => {
                         </HoverCardContent>
                       </HoverCard>
                     </th>
-                     <th className="text-left px-2 py-2 font-medium w-[110px] relative bg-brand-blue text-white text-xs">
+                     <th className="text-left px-2 py-2 font-medium w-[110px] relative text-white text-xs" style={{ backgroundColor: '#3c82f6' }}>
                        <div className="flex flex-col items-start gap-1">
                          <span className="text-[10px]">Empaque</span>
                          <span className="text-[10px]">Optimizado</span>
