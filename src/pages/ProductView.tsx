@@ -1358,7 +1358,7 @@ const ProductView = () => {
               {/* Tarjetas de features */}
               <div className="grid grid-cols-3 gap-2">
                 {/* Método de envío */}
-                <div className="relative w-full h-[80px] rounded-[20px] border border-[#E5E7EB] bg-white p-3 flex flex-col items-center justify-center text-center">
+                <div className="relative w-full h-[100px] rounded-[20px] border border-[#E5E7EB] bg-white p-3 flex flex-col items-center justify-center text-center">
                   <img src="/lovable-uploads/bcaad47c-1390-4a6e-a192-4c5279337cf3.png" alt="Método de envío" className="h-6 w-auto mb-2" loading="lazy" />
                   <span className="text-[12px] text-[#6B7280] leading-tight">Método de envío</span>
                   <div className="absolute top-2 right-2 w-4 h-4 bg-[#6B7280] text-white rounded-full flex items-center justify-center text-[10px] font-bold">?</div>
