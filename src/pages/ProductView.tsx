@@ -427,7 +427,7 @@ const ProductView = () => {
           <div className="flex flex-col md:flex-row gap-6">
             {/* Columna izquierda: Galería + Detalles */}
             <section className="flex-1 min-w-0">
-              <div className="grid grid-cols-1 md:grid-cols-[40%_60%] gap-4">{/* Optimizar proporción galería/detalles */}
+              <div className="grid grid-cols-1 md:grid-cols-[30%_70%] gap-4">{/* Optimizar proporción galería/detalles */}
                 {/* Galería - compacta */}
                 <div className="rounded-2xl bg-card p-2 md:p-3 h-fit">
                   <div className="space-y-2">
