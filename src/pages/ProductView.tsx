@@ -1131,13 +1131,12 @@ const ProductView = () => {
                     {/* Columna 1: Producto */}
                     <div className="space-y-6">
                       <div className="flex items-center gap-3 mb-6">
-                        <Package className="size-5 text-coral" />
                         <h3 className="text-lg font-semibold">Producto</h3>
                       </div>
                       
                       <div className="space-y-4">
                         <div className="flex items-center gap-3">
-                          <img src="/lovable-uploads/b0dee0d7-69b7-461b-8014-3688a772b345.png" alt="Código" className="w-4 h-4 object-contain" />
+                          <img src="/lovable-uploads/b0dee0d7-69b7-461b-8014-3688a772b345.png" alt="Código" className="w-4 h-4 object-contain flex-shrink-0" />
                           <div>
                             <div className="text-gray-400 text-sm">Código PA</div>
                             <div className="text-black font-medium">{selectedVariant.sku || "—"}</div>
@@ -1145,7 +1144,7 @@ const ProductView = () => {
                         </div>
                         
                         <div className="flex items-center gap-3">
-                          <img src="/lovable-uploads/f12df0af-8683-40d7-9f68-a93e4199cfc1.png" alt="Categoría" className="w-4 h-4 object-contain" />
+                          <img src="/lovable-uploads/f12df0af-8683-40d7-9f68-a93e4199cfc1.png" alt="Categoría" className="w-4 h-4 object-contain flex-shrink-0" />
                           <div>
                             <div className="text-gray-400 text-sm">Categoría</div>
                             <div className="text-black font-medium">{mainCategory?.name || "—"}</div>
@@ -1153,7 +1152,7 @@ const ProductView = () => {
                         </div>
                         
                         <div className="flex items-center gap-3">
-                          <img src="/lovable-uploads/998b5bad-132f-4d7d-b161-6ebf1f4b313d.png" alt="Subcategoría" className="w-4 h-4 object-contain" />
+                          <img src="/lovable-uploads/998b5bad-132f-4d7d-b161-6ebf1f4b313d.png" alt="Subcategoría" className="w-4 h-4 object-contain flex-shrink-0" />
                           <div>
                             <div className="text-gray-400 text-sm">Subcategoría</div>
                             <div className="text-black font-medium">{subCategory?.name || "—"}</div>
@@ -1161,7 +1160,7 @@ const ProductView = () => {
                         </div>
                         
                         <div className="flex items-center gap-3">
-                          <img src="/lovable-uploads/503dc8af-bb6e-4904-b7e9-98969f529e12.png" alt="Material" className="w-4 h-4 object-contain" />
+                          <img src="/lovable-uploads/503dc8af-bb6e-4904-b7e9-98969f529e12.png" alt="Material" className="w-4 h-4 object-contain flex-shrink-0" />
                           <div>
                             <div className="text-gray-400 text-sm">Material</div>
                             <div className="text-black font-medium">Plástico</div>
@@ -1169,7 +1168,7 @@ const ProductView = () => {
                         </div>
                         
                         <div className="flex items-center gap-3">
-                          <img src="/lovable-uploads/3747256a-5d93-42ba-9292-c8abec88ba9a.png" alt="Batería" className="w-4 h-4 object-contain" />
+                          <img src="/lovable-uploads/3747256a-5d93-42ba-9292-c8abec88ba9a.png" alt="Batería" className="w-4 h-4 object-contain flex-shrink-0" />
                           <div>
                             <div className="text-gray-400 text-sm">¿Contiene batería?</div>
                             <div className="text-black font-medium">{selectedVariant.has_battery ? "Sí" : "No"}</div>
@@ -1181,13 +1180,13 @@ const ProductView = () => {
                     {/* Columna 2: Detalles caja */}
                     <div className="space-y-6">
                       <div className="flex items-center gap-3 mb-6">
-                        <Package className="size-5 text-coral" />
+                        <img src="/lovable-uploads/eb34aad9-382c-4bc0-8f2f-9ad5594f46be.png" alt="Detalles caja" className="size-5" />
                         <h3 className="text-lg font-semibold">Detalles caja</h3>
                       </div>
                       
                       <div className="space-y-4">
                         <div className="flex items-center gap-3">
-                          <img src="/lovable-uploads/7e836688-77f1-4785-a2cb-f2919801a187.png" alt="Ancho" className="size-4" />
+                          <img src="/lovable-uploads/7e836688-77f1-4785-a2cb-f2919801a187.png" alt="Ancho" className="w-4 h-4 object-contain flex-shrink-0" />
                           <div>
                             <div className="text-gray-400 text-sm">Ancho de la caja</div>
                             <div className="text-black font-medium">
@@ -1197,7 +1196,7 @@ const ProductView = () => {
                         </div>
                         
                         <div className="flex items-center gap-3">
-                          <img src="/lovable-uploads/33c78ae8-e72a-4c29-9b8d-b8d2be5242cc.png" alt="Largo" className="size-4" />
+                          <img src="/lovable-uploads/33c78ae8-e72a-4c29-9b8d-b8d2be5242cc.png" alt="Largo" className="w-4 h-4 object-contain flex-shrink-0" />
                           <div>
                             <div className="text-gray-400 text-sm">Largo de la caja</div>
                             <div className="text-black font-medium">
@@ -1207,7 +1206,7 @@ const ProductView = () => {
                         </div>
                         
                         <div className="flex items-center gap-3">
-                          <img src="/lovable-uploads/554a3511-80b0-4303-8f2f-08a3963b89c9.png" alt="Alto" className="size-4" />
+                          <img src="/lovable-uploads/554a3511-80b0-4303-8f2f-08a3963b89c9.png" alt="Alto" className="w-4 h-4 object-contain flex-shrink-0" />
                           <div>
                             <div className="text-gray-400 text-sm">Alto de la caja</div>
                             <div className="text-black font-medium">
@@ -1217,7 +1216,7 @@ const ProductView = () => {
                         </div>
                         
                         <div className="flex items-center gap-3">
-                          <img src="/lovable-uploads/c7bfcc93-452e-412b-a1f6-c6027f33ec3a.png" alt="Peso" className="size-4" />
+                          <img src="/lovable-uploads/c7bfcc93-452e-412b-a1f6-c6027f33ec3a.png" alt="Peso" className="w-4 h-4 object-contain flex-shrink-0" />
                           <div>
                             <div className="text-gray-400 text-sm">Peso de la caja</div>
                             <div className="text-black font-medium">
@@ -1231,13 +1230,13 @@ const ProductView = () => {
                     {/* Columna 3: Detalles producto */}
                     <div className="space-y-6">
                       <div className="flex items-center gap-3 mb-6">
-                        <Package className="size-5 text-coral" />
+                        <img src="/lovable-uploads/244cb112-2fb8-462d-8f6e-0dec504f2b4c.png" alt="Detalles producto" className="size-5" />
                         <h3 className="text-lg font-semibold">Detalles producto</h3>
                       </div>
                       
                       <div className="space-y-4">
                         <div className="flex items-center gap-3">
-                          <img src="/lovable-uploads/7e836688-77f1-4785-a2cb-f2919801a187.png" alt="Ancho" className="size-4" />
+                          <img src="/lovable-uploads/7e836688-77f1-4785-a2cb-f2919801a187.png" alt="Ancho" className="w-4 h-4 object-contain flex-shrink-0" />
                           <div>
                             <div className="text-gray-400 text-sm">Ancho del producto</div>
                             <div className="text-black font-medium">
@@ -1247,7 +1246,7 @@ const ProductView = () => {
                         </div>
                         
                         <div className="flex items-center gap-3">
-                          <img src="/lovable-uploads/33c78ae8-e72a-4c29-9b8d-b8d2be5242cc.png" alt="Largo" className="size-4" />
+                          <img src="/lovable-uploads/33c78ae8-e72a-4c29-9b8d-b8d2be5242cc.png" alt="Largo" className="w-4 h-4 object-contain flex-shrink-0" />
                           <div>
                             <div className="text-gray-400 text-sm">Largo del producto</div>
                             <div className="text-black font-medium">
@@ -1257,7 +1256,7 @@ const ProductView = () => {
                         </div>
                         
                         <div className="flex items-center gap-3">
-                          <img src="/lovable-uploads/554a3511-80b0-4303-8f2f-08a3963b89c9.png" alt="Alto" className="size-4" />
+                          <img src="/lovable-uploads/554a3511-80b0-4303-8f2f-08a3963b89c9.png" alt="Alto" className="w-4 h-4 object-contain flex-shrink-0" />
                           <div>
                             <div className="text-gray-400 text-sm">Alto del producto</div>
                             <div className="text-black font-medium">
@@ -1267,7 +1266,7 @@ const ProductView = () => {
                         </div>
                         
                         <div className="flex items-center gap-3">
-                          <img src="/lovable-uploads/c7bfcc93-452e-412b-a1f6-c6027f33ec3a.png" alt="Peso" className="size-4" />
+                          <img src="/lovable-uploads/c7bfcc93-452e-412b-a1f6-c6027f33ec3a.png" alt="Peso" className="w-4 h-4 object-contain flex-shrink-0" />
                           <div>
                             <div className="text-gray-400 text-sm">Peso del producto</div>
                             <div className="text-black font-medium">
