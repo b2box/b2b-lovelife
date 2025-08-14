@@ -1335,7 +1335,7 @@ const ProductView = () => {
                 <div 
                   className={`h-full rounded-full transition-all duration-300 ease-out ${
                     totals.total >= minOrder 
-                      ? 'animate-pulse shadow-xl shadow-[#46cd8a]/60' 
+                      ? 'animate-[celebration-shimmer_2s_ease-in-out_1]' 
                       : ''
                   }`}
                   style={{
@@ -1355,7 +1355,7 @@ const ProductView = () => {
                   }}
                 ></div>
                 {totals.total >= minOrder && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-[celebration-shimmer_2s_ease-in-out] rounded-full"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-[celebration-shimmer_2s_ease-in-out_1] rounded-full"></div>
                 )}
               </div>
 
@@ -1383,17 +1383,19 @@ const ProductView = () => {
                     if (row.comps?.packaging) complements.push("Empaque");
                     
                     return (
-                      <div key={row.id} className="text-[16px] text-[#0A0A0A]">
+                      <div key={row.id} className="text-[14px] text-[#0A0A0A]">
                         <div className="flex justify-between items-start mb-1">
                           <span className="flex-1 pr-2">
-                            {row.variant.name || product?.name} ({row.qty})
+                            <div className="font-bold text-[12px] leading-tight">{product?.name}</div>
+                            <div className="text-[11px] text-muted-foreground leading-tight">{row.variant.name}</div>
+                            <div className="text-[11px] text-muted-foreground">Cantidad: {row.qty}</div>
                             {complements.length > 0 && (
-                              <span className="text-sm text-muted-foreground block">
+                              <span className="text-[10px] text-muted-foreground block">
                                 + {complements.join(", ")}
                               </span>
                             )}
                           </span>
-                          <span className="font-medium">{content.currencySymbol}{itemTotal.toFixed(0)}</span>
+                          <span className="font-medium text-[14px]">{content.currencySymbol}{itemTotal.toFixed(0)}</span>
                         </div>
                       </div>
                     );
