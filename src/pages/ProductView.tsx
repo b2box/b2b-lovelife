@@ -868,50 +868,81 @@ const ProductView = () => {
                           <div className="text-xs font-medium">{content.currencySymbol}{variantPrice.toFixed(2)}</div>
                         </td>
 
-                         {/* Etiquetado para Marketplaces */}
+                          {/* Etiquetado para Marketplaces */}
                           <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex justify-center">
+                            <div className="flex flex-col items-center gap-2 h-24 justify-center">
+                              <div className="flex justify-center">
+                                {r.comps?.labeling ? (
+                                  <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "labeling")}>
+                                    <span className="text-xs">✓</span>
+                                  </div>
+                                ) : (
+                                  <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "labeling")}>
+                                  </div>
+                                )}
+                              </div>
                               {r.comps?.labeling ? (
-                                <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "labeling")}>
-                                  <span className="text-xs">✓</span>
+                                <div className="text-center">
+                                  <div className="text-xs text-gray-600">Unidades: {r.qty}</div>
+                                  <div className="text-xs font-semibold">{content.currencySymbol}{(r.qty * getVariantPrice(r.variant, selectedTier) * (pricingSettings.marketplace_labeling_pct || 2) / 100).toFixed(2)}</div>
                                 </div>
                               ) : (
-                                <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "labeling")}>
-                                </div>
+                                <div className="text-xs text-gray-500">{(pricingSettings.marketplace_labeling_pct || 2)}% precio unit.</div>
                               )}
                             </div>
                           </td>
 
-                         {/* Registro de Código de Barras */}
+                          {/* Registro de Código de Barras */}
                           <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex justify-center">
+                            <div className="flex flex-col items-center gap-2 h-24 justify-center">
+                              <div className="flex justify-center">
+                                {r.comps?.barcode ? (
+                                  <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "barcode")}>
+                                    <span className="text-xs">✓</span>
+                                  </div>
+                                ) : (
+                                  <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "barcode")}>
+                                  </div>
+                                )}
+                              </div>
                               {r.comps?.barcode ? (
-                                <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "barcode")}>
-                                  <span className="text-xs">✓</span>
+                                <div className="text-center">
+                                  <div className="text-xs text-gray-600">Por producto</div>
+                                  <div className="text-xs font-semibold">{content.currencySymbol}{(pricingSettings.barcode_registration_usd * (pricingSettings[market === 'AR' ? 'arRate' : market === 'CO' ? 'coRate' : 'cnRate'] || 1)).toFixed(2)}</div>
                                 </div>
                               ) : (
-                                <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "barcode")}>
-                                </div>
+                                <div className="text-xs text-gray-500">{content.currencySymbol}{(pricingSettings.barcode_registration_usd * (pricingSettings[market === 'AR' ? 'arRate' : market === 'CO' ? 'coRate' : 'cnRate'] || 1)).toFixed(2)} por producto</div>
                               )}
                             </div>
                           </td>
 
-                         {/* Fotografías Comerciales */}
+                          {/* Fotografías Comerciales */}
                           <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex justify-center">
+                            <div className="flex flex-col items-center gap-2 h-24 justify-center">
+                              <div className="flex justify-center">
+                                {r.comps?.photos ? (
+                                  <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "photos")}>
+                                    <span className="text-xs">✓</span>
+                                  </div>
+                                ) : (
+                                  <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "photos")}>
+                                  </div>
+                                )}
+                              </div>
                               {r.comps?.photos ? (
-                                <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "photos")}>
-                                  <span className="text-xs">✓</span>
+                                <div className="text-center">
+                                  <div className="text-xs text-gray-600">Por producto</div>
+                                  <div className="text-xs font-semibold">{content.currencySymbol}{(pricingSettings.commercial_photos_usd * (pricingSettings[market === 'AR' ? 'arRate' : market === 'CO' ? 'coRate' : 'cnRate'] || 1)).toFixed(2)}</div>
                                 </div>
                               ) : (
-                                <div className="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-brand-green cursor-pointer transition-all" onClick={() => toggleComp(r.id, "photos")}>
-                                </div>
+                                <div className="text-xs text-gray-500">{content.currencySymbol}{(pricingSettings.commercial_photos_usd * (pricingSettings[market === 'AR' ? 'arRate' : market === 'CO' ? 'coRate' : 'cnRate'] || 1)).toFixed(2)} por producto</div>
                               )}
                             </div>
                           </td>
 
-                            {/* Empaque Optimizado */}
-                             <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
+                          {/* Empaque Optimizado */}
+                          <td className="px-2 py-3 text-center w-[110px]" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex flex-col items-center gap-2 h-24 justify-center">
                               <div className="flex justify-center">
                                 {r.comps?.packaging ? (
                                   <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-green text-white cursor-pointer" onClick={() => toggleComp(r.id, "packaging")}>
@@ -922,7 +953,16 @@ const ProductView = () => {
                                   </div>
                                 )}
                               </div>
-                             </td>
+                              {r.comps?.packaging ? (
+                                <div className="text-center">
+                                  <div className="text-xs text-gray-600">Unidades: {r.qty}</div>
+                                  <div className="text-xs font-semibold">{content.currencySymbol}{(r.qty * getVariantPrice(r.variant, selectedTier) * (pricingSettings.optimized_packaging_pct || 5) / 100).toFixed(2)}</div>
+                                </div>
+                              ) : (
+                                <div className="text-xs text-gray-500">{(pricingSettings.optimized_packaging_pct || 5)}% precio unit.</div>
+                              )}
+                            </div>
+                          </td>
 
                          {/* Total */}
                          <td className="px-2 py-3 text-center w-[80px]">
