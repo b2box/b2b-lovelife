@@ -1360,21 +1360,57 @@ const ProductView = () => {
               </div>
 
 
-              {/* Bloque de totales */}
+              {/* Bloque de productos individuales */}
               <div className="px-0 py-5 mb-5">
                 <div className="space-y-3">
-                  <div className="flex justify-between text-[18px] text-[#0A0A0A]">
-                    <span>Productos ({totals.items})</span>
-                    <span>{content.currencySymbol}{totals.products.toFixed(0)}</span>
-                  </div>
-                  <div className="flex justify-between text-[18px] text-[#0A0A0A]">
-                    <span>Complementos</span>
-                    <span>{content.currencySymbol}{totals.complements.toFixed(0)}</span>
-                  </div>
-                  <div className="flex justify-between text-[22px] font-bold text-[#0A0A0A] pt-2">
-                    <span>Total</span>
-                    <span>{content.currencySymbol}{totals.total.toFixed(0)}</span>
-                  </div>
+                  {rows.filter(r => r.addToCart !== false).map((row) => {
+                    const variantPrice = getVariantPrice(row.variant, selectedTier);
+                    const baseTotal = row.qty * variantPrice;
+                    
+                    // Calculate individual complement costs
+                    const labelingCost = row.comps?.labeling ? (row.qty * variantPrice * (pricingSettings?.marketplace_labeling_pct || 2) / 100) : 0;
+                    const packagingCost = row.comps?.packaging ? (row.qty * variantPrice * (pricingSettings?.optimized_packaging_pct || 5) / 100) : 0;
+                    const barcodeCost = row.comps?.barcode ? convertUsdToMarketCurrency(pricingSettings?.barcode_registration_usd || 1) : 0;
+                    const photosCost = row.comps?.photos ? convertUsdToMarketCurrency(pricingSettings?.commercial_photos_usd || 45) : 0;
+                    
+                    const itemTotal = baseTotal + labelingCost + packagingCost + barcodeCost + photosCost;
+                    
+                    // Build complement list
+                    const complements = [];
+                    if (row.comps?.labeling) complements.push("Etiquetado");
+                    if (row.comps?.barcode) complements.push("Código de barras");
+                    if (row.comps?.photos) complements.push("Fotografías");
+                    if (row.comps?.packaging) complements.push("Empaque");
+                    
+                    return (
+                      <div key={row.id} className="text-[16px] text-[#0A0A0A]">
+                        <div className="flex justify-between items-start mb-1">
+                          <span className="flex-1 pr-2">
+                            {row.variant.name || product?.name} ({row.qty})
+                            {complements.length > 0 && (
+                              <span className="text-sm text-muted-foreground block">
+                                + {complements.join(", ")}
+                              </span>
+                            )}
+                          </span>
+                          <span className="font-medium">{content.currencySymbol}{itemTotal.toFixed(0)}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  
+                  {rows.filter(r => r.addToCart !== false).length === 0 && (
+                    <div className="text-[16px] text-muted-foreground text-center py-4">
+                      No hay productos en el carrito
+                    </div>
+                  )}
+                  
+                  {rows.filter(r => r.addToCart !== false).length > 0 && (
+                    <div className="flex justify-between text-[22px] font-bold text-[#0A0A0A] pt-2 border-t">
+                      <span>Total</span>
+                      <span>{content.currencySymbol}{totals.total.toFixed(0)}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
