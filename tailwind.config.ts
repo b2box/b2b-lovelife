@@ -66,8 +66,8 @@ export default {
 				"ad-viral": 'hsl(var(--ad-viral))'
 			},
 			fontFamily: {
-				display: ["Playfair Display", "serif"],
-				 sans: ["-apple-system", "SF Pro Text", "SF Pro Display", "Inter", "DM Sans", "ui-sans-serif", "system-ui", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "Noto Sans", "sans-serif"],
+				display: ["DM Sans", "ui-sans-serif", "system-ui", "sans-serif"],
+				 sans: ["DM Sans", "ui-sans-serif", "system-ui", "sans-serif"],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
