@@ -1330,9 +1330,9 @@ const ProductView = () => {
 
               {/* Tarjetas de features */}
               <div className="grid grid-cols-3 gap-2">
-                <img src="/lovable-uploads/5c098f1d-9e25-4952-a9fe-c0717ca06e81.png" alt="Método de envío" className="w-full h-[100px] rounded-[20px] object-cover" loading="lazy" />
-                <img src="/lovable-uploads/e1c5b592-a961-4184-9814-ed40a457c3dc.png" alt="Personalizar producto" className="w-full h-[100px] rounded-[20px] object-cover" loading="lazy" />
-                <img src="/lovable-uploads/4ed195be-8175-4133-a8f1-8e9e8cf3cf39.png" alt="Precios sin sorpresas" className="w-full h-[100px] rounded-[20px] object-cover" loading="lazy" />
+                <img src="/lovable-uploads/5c098f1d-9e25-4952-a9fe-c0717ca06e81.png" alt="Método de envío" className="w-full h-[80px] rounded-[20px] object-cover" loading="lazy" />
+                <img src="/lovable-uploads/e1c5b592-a961-4184-9814-ed40a457c3dc.png" alt="Personalizar producto" className="w-full h-[80px] rounded-[20px] object-cover" loading="lazy" />
+                <img src="/lovable-uploads/4ed195be-8175-4133-a8f1-8e9e8cf3cf39.png" alt="Precios sin sorpresas" className="w-full h-[80px] rounded-[20px] object-cover" loading="lazy" />
               </div>
             </div>
           </div>
