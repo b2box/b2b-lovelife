@@ -1,9 +1,7 @@
 
 import React from "react";
-import { useAdminGuard } from "@/hooks/useAdminGuard";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { toast } from "sonner";
 import { Package, ShoppingCart, Boxes, Users, Percent, Tag, Settings as SettingsIcon, FolderTree, Layers3 } from "lucide-react";
 import ProductsPanel from "@/components/admin/ProductsPanel";
 import OrdersPanel from "@/components/admin/OrdersPanel";
@@ -40,54 +38,18 @@ const MENU: { key: AdminSection; label: string; icon: React.ReactNode; adminOnly
 ];
 
 const Admin: React.FC = () => {
-  const { loading, allowed, userRole } = useAdminGuard();
   const [section, setSection] = React.useState<AdminSection>("products");
 
-  // Filtrar menú según el rol del usuario
-  const availableMenu = React.useMemo(() => {
-    if (userRole === 'admin') {
-      return MENU; // Admin ve todo
-    }
-    // Agentes solo ven productos
-    return MENU.filter(item => !item.adminOnly);
-  }, [userRole]);
-
-  React.useEffect(() => {
-    if (!loading && !allowed) {
-      toast.error("No tenés permisos para acceder al panel de administración.");
-    }
-  }, [loading, allowed]);
-
-  if (loading) {
-    return (
-      <div className="container mx-auto p-6">
-        <Card className="p-8 card-glass">Verificando permisos…</Card>
-      </div>
-    );
-  }
-
-  if (!allowed) {
-    return (
-      <div className="container mx-auto p-6">
-        <Card className="p-8 card-glass">
-          <p className="text-sm text-muted-foreground">
-            Acceso denegado. Inicia sesión con una cuenta administradora.
-          </p>
-        </Card>
-      </div>
-    );
-  }
+  // Show all menu items without restrictions
+  const availableMenu = MENU;
 
   return (
     <div className="container mx-auto p-4 md:p-6 font-sans">
       <header className="sticky top-2 z-10 mb-4 rounded-xl card-glass px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <h1 className="text-lg font-semibold tracking-tight">
-            Panel de {userRole === 'admin' ? 'administración' : 'agente'}
+            Panel de administración
           </h1>
-          <span className="text-sm text-muted-foreground capitalize px-2 py-1 bg-secondary/50 rounded-md">
-            {userRole === 'admin' ? 'Administrador' : 'Agente'}
-          </span>
         </div>
         <UserHeader />
       </header>
@@ -119,12 +81,12 @@ const Admin: React.FC = () => {
           {section === "products" && <ProductsPanel />}
           {section === "categories" && <CategoriesPanel />}
           {section === "collections" && <CollectionsPanel />}
-          {section === "orders" && userRole === 'admin' && <OrdersPanel />}
-          {section === "inventory" && userRole === 'admin' && <InventoryPanel />}
-          {section === "customers" && userRole === 'admin' && <CustomersPanel />}
-          {section === "promotions" && userRole === 'admin' && <PromotionsPanel />}
-          {section === "pricelists" && userRole === 'admin' && <PriceListsPanel />}
-          {section === "settings" && userRole === 'admin' && <SettingsPanel />}
+          {section === "orders" && <OrdersPanel />}
+          {section === "inventory" && <InventoryPanel />}
+          {section === "customers" && <CustomersPanel />}
+          {section === "promotions" && <PromotionsPanel />}
+          {section === "pricelists" && <PriceListsPanel />}
+          {section === "settings" && <SettingsPanel />}
         </main>
       </div>
     </div>

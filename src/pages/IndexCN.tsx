@@ -21,23 +21,7 @@ const IndexCN = () => {
   const isApp = location.pathname.startsWith("/app");
   useSEOByMarket("CN");
 
-  useEffect(() => {
-    // Check if user is already authenticated
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session?.user) {
-        navigate("/app", { replace: true });
-      }
-    });
-
-    // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        navigate("/app", { replace: true });
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+  // Remove authentication requirement
 
   return (
     <div className="min-h-screen bg-background">

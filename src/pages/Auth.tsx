@@ -19,52 +19,7 @@ const Auth = () => {
     document.title = mode === "login" ? "Iniciar sesión – B2BOX" : "Registrarse – B2BOX";
   }, [mode]);
 
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        // Check if user is admin first
-        supabase.rpc('is_admin_or_agent', { _user_id: session.user.id }).then(({ data: isAdmin }) => {
-          if (isAdmin) {
-            navigate("/app/admin", { replace: true });
-          } else {
-            // Get market from localStorage to redirect to correct app
-            const market = localStorage.getItem("market") || "CN";
-            if (market === "AR") {
-              navigate("/app/ar", { replace: true });
-            } else if (market === "CO") {
-              navigate("/app/co", { replace: true });
-            } else {
-              navigate("/app", { replace: true });
-            }
-          }
-        });
-      }
-    });
-
-    // Check existing session
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session?.user) {
-        supabase.rpc('is_admin_or_agent', { _user_id: data.session.user.id }).then(({ data: isAdmin }) => {
-          if (isAdmin) {
-            navigate("/app/admin", { replace: true });
-          } else {
-            const market = localStorage.getItem("market") || "CN";
-            if (market === "AR") {
-              navigate("/app/ar", { replace: true });
-            } else if (market === "CO") {
-              navigate("/app/co", { replace: true });
-            } else {
-              navigate("/app", { replace: true });
-            }
-          }
-        });
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [navigate]);
+  // Remove authentication redirects
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
