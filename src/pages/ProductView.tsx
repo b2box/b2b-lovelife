@@ -3,7 +3,7 @@ import Footer from "@/components/landing/Footer";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import type { Product } from "@/components/landing/ProductCard";
-import { ArrowUpRight, CheckCircle2, Cog, Hash, Box, Package, Battery, Ruler, Scale, ArrowLeftRight, ArrowUpDown } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, Cog, Hash, Box, Package, Battery, Ruler, Scale, ArrowLeftRight, ArrowUpDown, ShoppingCart, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
@@ -267,19 +267,21 @@ const ProductView = () => {
     return base + comps;
   };
 
-  const totals = rows.reduce(
-    (acc, r) => {
-      const variantPrice = getVariantPrice(r.variant, selectedTier);
-      const base = r.qty * variantPrice;
-      const comps = rowTotal(r) - base;
-      acc.items += r.qty;
-      acc.products += base;
-      acc.complements += comps;
-      acc.total += base + comps;
-      return acc;
-    },
-    { items: 0, products: 0, complements: 0, total: 0 }
-  );
+  const totals = rows
+    .filter(r => r.addToCart !== false) // Only include items added to cart
+    .reduce(
+      (acc, r) => {
+        const variantPrice = getVariantPrice(r.variant, selectedTier);
+        const base = r.qty * variantPrice;
+        const comps = rowTotal(r) - base;
+        acc.items += r.qty;
+        acc.products += base;
+        acc.complements += comps;
+        acc.total += base + comps;
+        return acc;
+      },
+      { items: 0, products: 0, complements: 0, total: 0 }
+    );
 
   const changeQty = (id: string, delta: number) => {
     setRows((prev) =>
@@ -1008,13 +1010,14 @@ const ProductView = () => {
                                     });
                                   }}
                                 >
+                                  <Trash2 className="w-3 h-3 mr-1" />
                                   Remover
                                 </Button>
                               ) : (
                                 <Button 
                                   variant="default" 
                                   size="sm" 
-                                  className="h-8 px-3 text-xs"
+                                  className="h-8 px-3 text-xs bg-[#46cd8a] hover:bg-[#3db674] text-white border-none"
                                   onClick={() => {
                                     // Add to cart logic here
                                     setRows(prevRows => prevRows.map(row => 
@@ -1037,7 +1040,8 @@ const ProductView = () => {
                                     });
                                   }}
                                 >
-                                  + Carrito
+                                  <ShoppingCart className="w-3 h-3 mr-1" />
+                                  Carrito
                                 </Button>
                               )}
                             </div>
@@ -1305,15 +1309,6 @@ const ProductView = () => {
               {/* Barra de progreso verde */}
               <div className="h-[6px] bg-[#46cd8a] rounded-full mb-4"></div>
 
-              {/* Botón CTA */}
-              <button
-                onClick={addToCart}
-                className="w-full h-16 rounded-[24px] bg-[#abff97] text-[#0A0A0A] text-[20px] font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 mb-5"
-                aria-label={content.cartButtonText}
-                disabled={totals.total < minOrder}
-              >
-                Añadir al carrito
-              </button>
 
               {/* Bloque de totales */}
               <div className="px-0 py-5 mb-5">
