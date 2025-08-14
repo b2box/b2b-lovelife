@@ -1082,7 +1082,7 @@ const ProductView = () => {
               </span>
               <div className="flex-1">
                 <h3 className="font-semibold">Opciones de personalización</h3>
-                <p className="text-sm text-muted-foreground">Si deseas personalizar tus productos, nuestro equipo en China se encargará.</p>
+                <p className="text-sm text-foreground">Si deseas personalizar tus productos, nuestro equipo en China se encargará.</p>
               </div>
             </article>
             <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 h-32">
@@ -1091,7 +1091,7 @@ const ProductView = () => {
               </span>
               <div className="flex-1">
                 <h3 className="font-semibold">Entrega confiable</h3>
-                <p className="text-sm text-muted-foreground">Contamos con una logística optimizada para que recibas tus productos lo antes posible.</p>
+                <p className="text-sm text-foreground">Contamos con una logística optimizada para que recibas tus productos lo antes posible.</p>
               </div>
             </article>
             <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 h-32">
@@ -1100,7 +1100,7 @@ const ProductView = () => {
               </span>
               <div className="flex-1">
                 <h3 className="font-semibold">Pago diferido</h3>
-                <p className="text-sm text-muted-foreground">Hoy solo pagas el 30%. El resto lo pagas cuando confirmemos todo desde China.</p>
+                <p className="text-sm text-foreground">Hoy solo pagas el 30%. El resto lo pagas cuando confirmemos todo desde China.</p>
               </div>
             </article>
             <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 h-32">
@@ -1109,7 +1109,7 @@ const ProductView = () => {
               </span>
               <div className="flex-1">
                 <h3 className="font-semibold">Control de calidad</h3>
-                <p className="text-sm text-muted-foreground">Control de calidad en fábrica con estándares internacionales.</p>
+                <p className="text-sm text-foreground">Control de calidad en fábrica con estándares internacionales.</p>
               </div>
             </article>
           </div>
