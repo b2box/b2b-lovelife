@@ -368,13 +368,22 @@ const ProductView = () => {
     script.text = JSON.stringify(jsonLd);
   }, [product]);
 
-  // Redirect to slug-based URL if we're using ID-based URL - stabilized with strict dependencies
+  // Redirect to slug-based URL if we're using ID-based URL - with prevent loop safeguard
   useEffect(() => {
-    if (product?.slug && id && !slug && typeof navigate === 'function') {
-      const newPath = `/product/${product.slug}`;
-      navigate(newPath, { replace: true });
+    // Only redirect if we have a valid product with slug, we have an ID route, 
+    // no slug in URL, and products are loaded (to prevent loops during loading)
+    if (product?.slug && id && !slug && products.length > 0 && typeof navigate === 'function') {
+      // Additional check: only redirect if current URL is actually ID-based
+      const currentPath = location.pathname;
+      const isIdBasedUrl = currentPath.includes(`/product/${id}`);
+      
+      if (isIdBasedUrl) {
+        const newPath = `/product/${product.slug}`;
+        console.log('Redirecting from ID to slug URL:', currentPath, '->', newPath);
+        navigate(newPath, { replace: true });
+      }
     }
-  }, [product?.slug, id, slug, navigate]);
+  }, [product?.slug, id, slug, navigate, products.length, location.pathname]);
 
   if (!product || variantsLoading) {
     console.log('ProductView: Rendering loading/not found state', { 
