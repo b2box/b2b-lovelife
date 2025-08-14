@@ -635,7 +635,7 @@ const ProductView = () => {
                <thead>
                  {/* Primera fila del header */}
                   <tr>
-                    <th className="px-2 py-2 w-[40px] text-center font-medium text-xs" style={{ backgroundColor: 'white' }}>●</th>
+                    <th className="px-2 py-2 w-[40px] text-center font-medium text-xs" style={{ backgroundColor: 'white' }}></th>
                     <th className="px-3 py-2" style={{ backgroundColor: 'white' }}></th>
                     <th className="px-2 py-2" style={{ backgroundColor: 'white' }}></th>
                     <th className="px-2 py-2" style={{ backgroundColor: 'white' }}></th>
