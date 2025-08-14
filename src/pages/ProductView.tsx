@@ -903,10 +903,10 @@ const ProductView = () => {
                               {r.comps?.labeling ? (
                                 <div className="text-center">
                                   <div className="text-xs text-gray-600">Unidades: {r.qty}</div>
-                                  <div className="text-xs font-semibold">{content.currencySymbol}{(r.qty * getVariantPrice(r.variant, selectedTier) * (pricingSettings?.marketplace_labeling_pct || 0) / 100).toFixed(2)}</div>
+                                  <div className="text-xs font-semibold">{content.currencySymbol}{(r.qty * getVariantPrice(r.variant, selectedTier) * (pricingSettings?.marketplace_labeling_pct || 2) / 100).toFixed(2)}</div>
                                 </div>
                               ) : (
-                                <div className="text-xs text-gray-500">{(pricingSettings?.marketplace_labeling_pct || 0)}% precio unit.</div>
+                                <div className="text-xs text-gray-500">{content.currencySymbol}{(getVariantPrice(r.variant, selectedTier) * (pricingSettings?.marketplace_labeling_pct || 2) / 100).toFixed(2)} por producto</div>
                               )}
                             </div>
                           </td>
@@ -975,10 +975,10 @@ const ProductView = () => {
                               {r.comps?.packaging ? (
                                 <div className="text-center">
                                   <div className="text-xs text-gray-600">Unidades: {r.qty}</div>
-                                  <div className="text-xs font-semibold">{content.currencySymbol}{(r.qty * getVariantPrice(r.variant, selectedTier) * (pricingSettings?.optimized_packaging_pct || 0) / 100).toFixed(2)}</div>
+                                  <div className="text-xs font-semibold">{content.currencySymbol}{(r.qty * getVariantPrice(r.variant, selectedTier) * (pricingSettings?.optimized_packaging_pct || 5) / 100).toFixed(2)}</div>
                                 </div>
                               ) : (
-                                <div className="text-xs text-gray-500">{(pricingSettings?.optimized_packaging_pct || 0)}% precio unit.</div>
+                                <div className="text-xs text-gray-500">{content.currencySymbol}{(getVariantPrice(r.variant, selectedTier) * (pricingSettings?.optimized_packaging_pct || 5) / 100).toFixed(2)} por producto</div>
                               )}
                             </div>
                           </td>
