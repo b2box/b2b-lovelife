@@ -1325,13 +1325,25 @@ const ProductView = () => {
               {/* Barra de progreso dinámica */}
               <div className="relative h-[6px] bg-gray-200 rounded-full mb-4 overflow-hidden">
                 <div 
-                  className={`h-full bg-[#46cd8a] rounded-full transition-all duration-300 ease-out ${
+                  className={`h-full rounded-full transition-all duration-300 ease-out ${
                     totals.total >= minOrder 
                       ? 'animate-pulse shadow-xl shadow-[#46cd8a]/60' 
                       : ''
                   }`}
                   style={{
-                    width: `${Math.min((totals.total / minOrder) * 100, 100)}%`
+                    width: `${Math.min((totals.total / minOrder) * 100, 100)}%`,
+                    background: (() => {
+                      const progress = Math.min((totals.total / minOrder) * 100, 100);
+                      if (progress <= 25) {
+                        return '#FCD34D'; // Amarillo
+                      } else if (progress <= 50) {
+                        return `linear-gradient(to right, #FCD34D, #84CC16)`; // Amarillo a verde lima
+                      } else if (progress <= 75) {
+                        return `linear-gradient(to right, #84CC16, #46cd8a)`; // Verde lima a verde
+                      } else {
+                        return '#46cd8a'; // Verde completo
+                      }
+                    })()
                   }}
                 ></div>
                 {totals.total >= minOrder && (
