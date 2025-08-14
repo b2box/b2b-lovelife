@@ -1381,13 +1381,13 @@ const ProductView = () => {
               {/* Feature cards with hover information */}
               <div className="grid grid-cols-3 gap-2 mt-6">
                 <div className="flex items-center justify-center h-[80px] p-[3px]">
-                  <img src="/lovable-uploads/6433d444-166b-4cb1-b449-b0093f185ff7.png" alt="Método de envío" className="h-12 w-auto" loading="lazy" />
+                  <img src="/lovable-uploads/6433d444-166b-4cb1-b449-b0093f185ff7.png" alt="Método de envío" className="h-16 w-auto" loading="lazy" />
                 </div>
                 <div className="flex items-center justify-center h-[80px] p-[3px]">
-                  <img src="/lovable-uploads/edbaadf4-2130-4a5b-8646-b1077dc2fe7a.png" alt="Personalizar producto" className="h-12 w-auto" loading="lazy" />
+                  <img src="/lovable-uploads/edbaadf4-2130-4a5b-8646-b1077dc2fe7a.png" alt="Personalizar producto" className="h-16 w-auto" loading="lazy" />
                 </div>
                 <div className="flex items-center justify-center h-[80px] p-[3px]">
-                  <img src="/lovable-uploads/5821116c-5b69-46dc-9879-f33489a2dd42.png" alt="Precios sin sorpresas" className="h-12 w-auto" loading="lazy" />
+                  <img src="/lovable-uploads/5821116c-5b69-46dc-9879-f33489a2dd42.png" alt="Precios sin sorpresas" className="h-16 w-auto" loading="lazy" />
                 </div>
               </div>
 
