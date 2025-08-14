@@ -1078,7 +1078,7 @@ const ProductView = () => {
           <div className="mt-6 grid grid-cols-2 gap-4">
             <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 h-24">
               <span className="inline-flex items-center justify-center size-15 rounded-xl bg-muted text-muted-foreground flex-shrink-0" aria-hidden="true">
-                <Cog className="size-7" />
+                <img src="/lovable-uploads/91be58a9-70b1-4f0e-86d3-9e026f516983.png" alt="Personalización" className="size-7" />
               </span>
               <div className="flex-1">
                 <h3 className="font-semibold">Opciones de personalización</h3>
@@ -1087,7 +1087,7 @@ const ProductView = () => {
             </article>
             <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 h-24">
               <span className="inline-flex items-center justify-center size-10 rounded-xl bg-muted text-muted-foreground flex-shrink-0" aria-hidden="true">
-                <Cog className="size-5" />
+                <img src="/lovable-uploads/574f7d3f-9d34-4a70-936e-8025b876c89f.png" alt="Entrega" className="size-5" />
               </span>
               <div className="flex-1">
                 <h3 className="font-semibold">Entrega confiable</h3>
@@ -1096,7 +1096,7 @@ const ProductView = () => {
             </article>
             <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 h-24">
               <span className="inline-flex items-center justify-center size-10 rounded-xl bg-muted text-muted-foreground flex-shrink-0" aria-hidden="true">
-                <Cog className="size-5" />
+                <img src="/lovable-uploads/f7109894-c44a-4ff4-bc09-b9b6b983fce6.png" alt="Pago" className="size-5" />
               </span>
               <div className="flex-1">
                 <h3 className="font-semibold">Pago diferido</h3>
@@ -1105,7 +1105,7 @@ const ProductView = () => {
             </article>
             <article className="rounded-2xl border bg-card text-card-foreground p-4 flex items-start gap-4 h-24">
               <span className="inline-flex items-center justify-center size-10 rounded-xl bg-muted text-muted-foreground flex-shrink-0" aria-hidden="true">
-                <Cog className="size-5" />
+                <img src="/lovable-uploads/69b7b2dc-9b1d-4dd5-b248-2e3345fd83c0.png" alt="Calidad" className="size-5" />
               </span>
               <div className="flex-1">
                 <h3 className="font-semibold">Control de calidad</h3>
