@@ -634,8 +634,9 @@ const ProductView = () => {
              <table className="w-full text-sm border-separate border-spacing-0">
                <thead>
                  {/* Primera fila del header */}
-                 <tr>
-                   <th className="px-3 py-2" style={{ backgroundColor: 'white' }}></th>
+                  <tr>
+                    <th className="px-2 py-2 w-[40px] text-center font-medium text-xs" style={{ backgroundColor: 'white' }}>●</th>
+                    <th className="px-3 py-2" style={{ backgroundColor: 'white' }}></th>
                     <th className="px-2 py-2" style={{ backgroundColor: 'white' }}></th>
                     <th className="px-2 py-2" style={{ backgroundColor: 'white' }}></th>
                    <th className="text-center px-2 py-3 font-medium bg-brand-blue text-white rounded-tl-2xl" colSpan={4}>
@@ -783,11 +784,11 @@ const ProductView = () => {
                       <tr 
                         key={r.id}
                         className={`cursor-pointer hover:bg-muted/30 transition-all duration-200 border-b border-border ${
-                          isSelected ? 'bg-white shadow-lg' : ''
+                          isSelected ? 'bg-green-50 shadow-lg ring-2 ring-[#46cd8a]/20' : ''
                         }`}
                         style={isSelected ? { 
-                          borderLeft: '4px solid #abff97',
-                          boxShadow: '0 4px 12px rgba(171, 255, 151, 0.3)'
+                          borderLeft: '4px solid #46cd8a',
+                          boxShadow: '0 4px 12px rgba(70, 205, 138, 0.15)'
                         } : {}}
                         onClick={() => {
                           try {
@@ -797,6 +798,16 @@ const ProductView = () => {
                           }
                         }}
                       >
+                        {/* Selection indicator */}
+                        <td className="px-2 py-3 w-[40px]">
+                          <div className="flex justify-center">
+                            {isSelected ? (
+                              <div className="w-3 h-3 rounded-full bg-[#46cd8a] ring-2 ring-white shadow-sm"></div>
+                            ) : (
+                              <div className="w-3 h-3 rounded-full border-2 border-gray-300"></div>
+                            )}
+                          </div>
+                        </td>
                         {/* Producto */}
                         <td className="px-3 py-3 w-[200px]">
                           <div className="flex items-center gap-2">
