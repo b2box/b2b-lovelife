@@ -416,7 +416,7 @@ const ProductView = () => {
         {/* Layout de 2 columnas: 75% contenido + 25% columna derecha */}
         <div className="flex gap-6">
           {/* Columna principal: 75% */}
-          <main className="w-3/4 container mx-auto py-6 md:py-8">
+          <main className="w-3/4 px-6 py-6 md:py-8">
             {/* Breadcrumb simple - placeholder para el diseño final */}
             <nav aria-label="breadcrumb" className="text-sm text-muted-foreground mb-4">
               <button onClick={() => navigate("/app")} className="story-link">Productos</button>
