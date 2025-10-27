@@ -11,6 +11,7 @@ import IndexCN from "./pages/IndexCN";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import ProductView from "./pages/ProductView";
+import ShopifyProduct from "./pages/ShopifyProduct";
 import Admin from "./pages/Admin";
 import { MarketProvider } from "./contexts/MarketContext";
 
@@ -34,12 +35,13 @@ const App = () => {
               <Route path="/app" element={<Index />} />
               <Route path="/app/ar" element={<Index />} />
               <Route path="/app/co" element={<Index />} />
+              {/* Shopify product routes */}
+              <Route path="/product/:handle" element={<ShopifyProduct />} />
               {/* Product routes with /app prefix */}
               <Route path="/app/product/:slug" element={<ProductView />} />
               <Route path="/app/ar/product/:slug" element={<ProductView />} />
               <Route path="/app/co/product/:slug" element={<ProductView />} />
               {/* Product routes without /app prefix for direct access */}
-              <Route path="/product/:slug" element={<ProductView />} />
               <Route path="/ar/product/:slug" element={<ProductView />} />
               <Route path="/co/product/:slug" element={<ProductView />} />
               {/* Fallback routes for ID-based URLs */}

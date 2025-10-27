@@ -1,15 +1,10 @@
 import Navbar from "@/components/landing/Navbar";
 import Hero from "@/components/landing/Hero";
-import CategoryTabs from "@/components/landing/CategoryTabs";
-import PromoBanner from "@/components/landing/PromoBanner";
-import CategoryShowcase from "@/components/landing/CategoryShowcase";
 import Footer from "@/components/landing/Footer";
-import InfiniteProducts from "@/components/landing/InfiniteProducts";
-import { useLocation } from "react-router-dom";
-import HowItWorks from "@/components/landing/HowItWorks";
-import PublicCTA from "@/components/landing/PublicCTA";
-import NewArrivals from "@/components/landing/NewArrivals";
-import TestimonialsBanner from "@/components/landing/TestimonialsBanner";
+import { ShopifyProductCard } from "@/components/shopify/ShopifyProductCard";
+import { CartDrawer } from "@/components/shopify/CartDrawer";
+import { useShopifyProducts } from "@/hooks/useShopifyProducts";
+import { Loader2 } from "lucide-react";
 import { useSEOByMarket } from "@/hooks/useSEOByMarket";
 
 const jsonLd = () => ({
@@ -25,53 +20,54 @@ const jsonLd = () => ({
 });
 
 const Index = () => {
-  const location = useLocation();
-  const isApp = location.pathname.startsWith("/app");
-  
-  // Determine market based on app route
-  let market: "AR" | "CO" | "CN" = "CN";
-  if (location.pathname.includes("/app/ar")) {
-    market = "AR";
-  } else if (location.pathname.includes("/app/co")) {
-    market = "CO";
-  }
-  
-  useSEOByMarket(market);
+  useSEOByMarket("CN");
+  const { data: products, isLoading, error } = useShopifyProducts();
+
   return (
     <div className="min-h-screen bg-background">
+      <div className="fixed top-4 right-4 z-50">
+        <CartDrawer />
+      </div>
+      
       <Navbar />
       <main>
         <Hero />
-        {!isApp && (
-          <>
-            <section className="mt-4">
-              <HowItWorks />
-            </section>
-            <section className="mt-6">
-              <PromoBanner />
-            </section>
-            <section className="mt-6">
-              <InfiniteProducts publicMode={true} />
-            </section>
-          </>
-        )}
-        {isApp && (
-          <>
-            <section className="mt-4">
-              <CategoryTabs />
-            </section>
-            <section className="mt-6">
-              <InfiniteProducts publicMode={false} />
-            </section>
-          </>
-        )}
-        <section className="mt-16">
-          <TestimonialsBanner />
+        
+        <section className="container mx-auto px-4 py-16">
+          <h2 className="text-3xl font-bold mb-8 text-center">Our Products</h2>
+          
+          {isLoading && (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          )}
+          
+          {error && (
+            <div className="text-center py-12 text-destructive">
+              Error loading products. Please try again later.
+            </div>
+          )}
+          
+          {!isLoading && products && products.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-xl text-muted-foreground mb-4">No products found</p>
+              <p className="text-sm text-muted-foreground">
+                Create your first product by telling me what you'd like to sell and the price!
+              </p>
+            </div>
+          )}
+          
+          {products && products.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {products.map((product) => (
+                <ShopifyProductCard key={product.node.id} product={product} />
+              ))}
+            </div>
+          )}
         </section>
       </main>
+      
       <Footer />
-
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd()) }} />
     </div>
   );
 };
