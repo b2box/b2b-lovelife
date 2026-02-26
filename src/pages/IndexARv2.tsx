@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/landing/Navbar";
-import Hero from "@/components/landing/Hero";
+import HeroV2 from "@/components/landing/HeroV2";
 import CategoryTabs from "@/components/landing/CategoryTabs";
 import PromoBanner from "@/components/landing/PromoBanner";
 import CategoryShowcase from "@/components/landing/CategoryShowcase";
@@ -25,7 +25,7 @@ const IndexARv2 = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <main>
-        <Hero />
+        <HeroV2 />
         {!isApp && (
           <>
             <section className="mt-4">
