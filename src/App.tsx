@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import IndexAR from "./pages/IndexAR";
 import IndexCO from "./pages/IndexCO";
 import IndexCN from "./pages/IndexCN";
+import IndexARv2 from "./pages/IndexARv2";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import ProductView from "./pages/ProductView";
@@ -30,6 +31,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<IndexCN />} />
               <Route path="/ar" element={<IndexAR />} />
+              <Route path="/ar-v2" element={<IndexARv2 />} />
               <Route path="/co" element={<IndexCO />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/app" element={<Index />} />
